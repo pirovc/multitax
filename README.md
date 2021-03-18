@@ -104,12 +104,13 @@ Using pylca: https://github.com/pirovc/pylca
 
 Not yet implemented. The goal here is to map different taxonomies if the linkage data is available. That's what I think it will be possible.
 
-|        |NCBI   |GTDB   |SILVA   |OTT   |GG  |
-|NCBI    |-      |parc   |parc    |parc  |no  |
-|GTDB    |full   |-      |no      |no    |no  |
-|SILVA   |full   |no     |-       |parc  |no  |
-|OTT     |full   |no     |full    |-     |no  |
-|GG      |no     |no     |no      |no    |-   |
+ |        |NCBI   |GTDB   |SILVA   |OTT   |GG  |
+ |--------|-------|-------|--------|------|----|
+ |NCBI    |-      |parc   |parc    |parc  |no  |
+ |GTDB    |full   |-      |no      |no    |no  |
+ |SILVA   |full   |no     |-       |parc  |no  |
+ |OTT     |full   |no     |full    |-     |no  |
+ |GG      |no     |no     |no      |no    |-   |
 
 
 ## TODO list
