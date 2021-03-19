@@ -1,39 +1,39 @@
 from multitax.multitax import MultiTax
-from multitax.utils import open_files, download_files, write_close_files
 
 
 class NcbiTx(MultiTax):
 
-    # Default url
-    __urls = ["ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"]
-
     # merged.dmp
     __merged = {}
 
-    # Default NCBI
+    urls = ["ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"]
+    # Default NCBI root node
     root_node = "1"
 
-    def __init__(self, files: list=None, **kwargs):
-        fhs = open_files(files) if files else download_files(self.__urls, **kwargs)
-        self.__sources.extend(fhs.keys())
-        fhs_list = list(fhs.values())
-        # One element tar.gz -> taxdump.tar.gz
-        if len(fhs_list) == 1 and list(fhs)[0].endswith(".tar.gz"):
-            self._MultiTax__nodes, self._MultiTax__ranks, self._MultiTax__names, self.__merged = self.parse_taxdump(fhs_list[0])
-        else:
-            # nodes.dmp
-            self._MultiTax__nodes, self._MultiTax__ranks = self.parse_nodes(fhs_list[0])
-            # [names.dmp]
-            if len(fhs) == 2: self._MultiTax__names = self.parse_names(fhs_list[1])
-            # [merged.dmp]
-            if len(fhs) == 3: self.__merged = self.parse_merged(fhs_list[2])
-        
-        write_close_files(fhs, **kwargs)
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def __repr__(self):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
         return 'NcbiTx({})'.format(', '.join(args))
+
+    def parse(self, fhs):
+        fhs_list = list(fhs.values())
+        # One element tar.gz -> taxdump.tar.gz
+        if len(fhs_list) == 1 and list(fhs)[0].endswith(".tar.gz"):
+            nodes, ranks, names, self.__merged = self.parse_taxdump(fhs_list[0])
+        else:
+            # nodes.dmp
+            nodes, ranks = self.parse_nodes(fhs_list[0])
+            # [names.dmp]
+            if len(fhs) == 2: 
+                names = self.parse_names(fhs_list[1])
+            else:
+                names = {}
+            # [merged.dmp]
+            if len(fhs) == 3:
+                self.__merged = self.parse_merged(fhs_list[2])
+        return nodes, ranks, names
 
     def parse_taxdump(self, fh_taxdump):
         with fh_taxdump.extractfile('nodes.dmp') as fh_nodes:

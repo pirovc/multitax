@@ -1,20 +1,11 @@
 from multitax.multitax import MultiTax
-from multitax.utils import open_files, download_files, write_close_files
 
 
 class SilvaTx(MultiTax):
 
-    __urls = ["https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.1.txt.gz"]
+    urls = ["https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.1.txt.gz"]
 
-    def __init__(self, files: list=[], **kwargs):
-        # Set root node to use while parsing
-        if "root_node" in kwargs and kwargs["root_node"] is not None:
-            self.root_node = kwargs["root_node"]
-
-        fhs = open_files(files) if files else download_files(self.__urls, **kwargs)
-        self._MultiTax__nodes, self._MultiTax__ranks, self._MultiTax__names = self.parse(fhs.values())
-        write_close_files(fhs, **kwargs)
-
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def __repr__(self):
@@ -27,7 +18,7 @@ class SilvaTx(MultiTax):
         names = {}
 
         lin = {}
-        for fh in fhs:
+        for source, fh in fhs.items():
             for line in fh:
                 try:
                     name_lineage, taxid, rank, _ = line.split('\t', 3)

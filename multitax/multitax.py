@@ -1,3 +1,6 @@
+from multitax.utils import open_files, download_files, write_close_files
+
+
 class MultiTax:
 
     __version = "0.1.0"
@@ -21,6 +24,8 @@ class MultiTax:
     __sources = []
 
     def __init__(self,
+                 files: list=None,
+                 urls: list=None,
                  root_node: str=None,
                  root_parent: str=None,
                  root_name: str=None,
@@ -30,7 +35,6 @@ class MultiTax:
                  unknown_rank: str=None,
                  fixed_ranks: list=None,
                  build_lineages: bool=False,
-                 urls: list=None,
                  output_prefix: str=None):
 
         if root_node is not None:
@@ -48,17 +52,27 @@ class MultiTax:
         if root_name is not None:
             self.unknown_rank = unknown_rank
 
+        # open files from disk or download
+        fhs = open_files(files) if files else download_files(default_urls=self.urls, custom_ulrs=urls)
+        self.__nodes, self.__ranks, self.__names = self.parse(fhs)
+        write_close_files(fhs, output_prefix=output_prefix)
+
+        # Save sources for stats
+        self.__sources.extend(fhs.keys())
+
+        # Set root node in the tree
+        self.__set_root_node()
+
+        # Crete reverse names dict
+        if self.__names:
+            self.__set_node_names()
+
         if fixed_ranks:
             self.__fixed_ranks = fixed_ranks
             # todo filter?
 
-        self.__set_root_node()
-
-        if build_lineages:
-            self.build_lineages()
-
-        if self.__names:
-            self.__set_node_names()
+        #if build_lineages:
+        #    self.build_lineages()
 
     def __set_root_node(self):
         self.__nodes[self.root_node] = self.root_parent
@@ -148,8 +162,7 @@ class MultiTax:
 
     def stats(self):
         s = {}
-        s["sources"] = len(self.__nodes)
-        
+        s["sources"] = self.__sources
         s["nodes"] = len(self.__nodes)
         s["ranks"] = len(self.__ranks)
         s["names"] = len(self.__ranks)

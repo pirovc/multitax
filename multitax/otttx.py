@@ -1,36 +1,34 @@
 from multitax.multitax import MultiTax
-from multitax.utils import open_files, download_files, write_close_files
 
 
 class OttTx(MultiTax):
 
-    # Default root OTT
-    root_node = "805080"
-
     # forwards.tsv
     __forwards = {}
 
-    __urls = ["http://files.opentreeoflife.org/ott/ott3.2/ott3.2.tgz"]
+    urls = ["http://files.opentreeoflife.org/ott/ott3.2/ott3.2.tgz"]
+    # Default OTT root node
+    root_node = "805080"
 
-    def __init__(self, files: list=[], **kwargs):
-        fhs = open_files(files) if files else download_files(self.__urls, **kwargs)
-        fhs_list = list(fhs.values())
-        # One element tar.gz -> taxdump.tar.gz
-        if len(fhs_list) == 1 and list(fhs)[0].endswith(".tgz"):
-            self._MultiTax__nodes, self._MultiTax__ranks, self._MultiTax__names, self.__forwards = self.parse(fhs_list[0])
-        else:
-            # nodes.dmp
-            self._MultiTax__nodes, self._MultiTax__ranks, self._MultiTax__names = self.parse_taxonomy(fhs_list[0])
-            # [forwards.tsv]
-            if len(fhs) == 2: self.__forwards = self.parse_forwards(fhs_list[1])
-
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def __repr__(self):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
         return 'OttTx({})'.format(', '.join(args))
 
-    def parse(self, fh_taxdump):
+    def parse(self, fhs):
+        fhs_list = list(fhs.values())
+        if len(fhs_list) == 1 and list(fhs)[0].endswith(".tgz"):
+            nodes, ranks, names, self.__forwards = self.parse_ott(fhs_list[0])
+        else:
+            # nodes.dmp
+            nodes, ranks, names = self.parse_taxonomy(fhs_list[0])
+            # [forwards.tsv]
+            if len(fhs) == 2: self.__forwards = self.parse_forwards(fhs_list[1])
+        return nodes, ranks, names
+
+    def parse_ott(self, fh_taxdump):
         # Files inside folder
         for e in fh_taxdump.getnames():
             if e.endswith("taxonomy.tsv"):

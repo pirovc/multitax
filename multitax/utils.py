@@ -28,15 +28,15 @@ def open_files(files, max: int=1):
     return fhs
 
 
-def write_close_files(fhs, **kwargs):
+def write_close_files(fhs, output_prefix: str=None):
     # Check if output prefix was specified
-    if "output_prefix" in kwargs and kwargs["output_prefix"]:
-        if not os.path.exists(kwargs["output_prefix"]):
-            raise NotADirectoryError(kwargs["output_prefix"] + " directory does not exist")
+    if output_prefix:
+        if not os.path.exists(output_prefix):
+            raise NotADirectoryError(output_prefix + " directory does not exist")
         else:
             for file, fh in fhs.items():
                 print(file, fh)
-                # file = kwargs["output_prefix"] + "/" + os.path.basename(url)
+                # file = output_prefix + "/" + os.path.basename(url)
                 # if os.path.isfile(file):
                 #     raise FileExistsError(file + " already exists")
                 # with open(file, "w") as outf:
@@ -47,14 +47,12 @@ def write_close_files(fhs, **kwargs):
         fh.close()
 
 
-def download_files(default_urls, **kwargs):
+def download_files(default_urls, custom_ulrs: list=None):
     # Check default or custom urls
-    if "urls" in kwargs and kwargs["urls"]:
-        urls = kwargs["urls"]
-        if isinstance(urls, str):
-            urls = [urls]
-    else:
-        urls = default_urls
+    urls = custom_ulrs if custom_ulrs else default_urls
+
+    if isinstance(urls, str):
+        urls = [urls]
 
     fhs = OrderedDict()
     for url in urls:

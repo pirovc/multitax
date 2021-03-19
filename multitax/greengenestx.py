@@ -1,10 +1,7 @@
 from multitax.multitax import MultiTax
-from multitax.utils import open_files, download_files, write_close_files
 
 
 class GreengenesTx(MultiTax):
-
-    __urls = ["https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz"]
 
     __rank_codes = [("k__", "kingdom"),
                     ("p__", "phylum"),
@@ -14,15 +11,9 @@ class GreengenesTx(MultiTax):
                     ("g__", "genus"),
                     ("s__", "species")]
 
-    def __init__(self, files: list=[], **kwargs):
-        # Set root node to use while parsing
-        if "root_node" in kwargs and kwargs["root_node"] is not None:
-            self.root_node = kwargs["root_node"]
+    urls = ["https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz"]
 
-        fhs = open_files(files) if files else download_files(self.__urls, **kwargs)
-        self._MultiTax__nodes, self._MultiTax__ranks, self._MultiTax__names = self.parse(fhs.values())
-        write_close_files(fhs, **kwargs)
-
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def __repr__(self):
@@ -34,7 +25,7 @@ class GreengenesTx(MultiTax):
         ranks = {}
         names = {}
 
-        for fh in fhs:
+        for source, fh in fhs.items():
             for line in fh:
                 try:
                     _, lineage = line.rstrip().split('\t')
