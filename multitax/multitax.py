@@ -5,6 +5,9 @@ class MultiTax:
 
     __version = "0.1.0"
 
+    urls = []
+    sources = []
+
     unknown_node = None
     unknown_name = None
     unknown_rank = None
@@ -23,7 +26,6 @@ class MultiTax:
     __node_children = {}
     __lineages = {}
 
-    __sources = []
 
     def __init__(self,
                  files: list=None,
@@ -71,7 +73,7 @@ class MultiTax:
         close_files(fhs)
 
         # Save sources for stats
-        self.__sources.extend(fhs.keys())
+        self.sources.extend(fhs.keys())
 
         # Set root node in the tree
         self.__set_root_node()
@@ -88,6 +90,12 @@ class MultiTax:
 
         if build_lineages:
             self.build_lineages()
+
+    # main function to be overloaded
+    # receives file handlers
+    # return nodes, ranks and names dicts
+    def parse(self, fhs):
+        return {}, {}, {}
 
     def __set_root_node(self):
         self.__nodes[self.root_node] = self.root_parent
@@ -164,7 +172,7 @@ class MultiTax:
                                          ranks=ranks)))
 
     def get_name_lineage(self, node: str, root_node: str=None, ranks: list=None):
-        return list(map(self.get_name, 
+        return list(map(self.get_name,
                         self.get_lineage(node=node,
                                          root_node=root_node,
                                          ranks=ranks)))
@@ -202,7 +210,6 @@ class MultiTax:
 
     def stats(self):
         s = {}
-        s["sources"] = self.__sources
         s["nodes"] = len(self.__nodes)
         s["ranks"] = len(self.__ranks)
         s["names"] = len(self.__ranks)
@@ -215,4 +222,3 @@ class MultiTax:
     def build_lineages(self):
         for node in self.__nodes:
             self.__lineages[node] = self.get_lineage(node)
-

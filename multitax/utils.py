@@ -39,7 +39,7 @@ def download_files(default_urls, custom_ulrs: list=None, output_prefix: str=None
         # stream contents from url
         fhs = OrderedDict()
         for url in urls:
-            if url.endswith(".tar.gz") or url.endswith(".tgz"): 
+            if url.endswith(".tar.gz") or url.endswith(".tgz"):
                 # tar files have mixed headers and content
                 # whole file should be loaded in memory first and not streamed
                 fhs[url] = tarfile.open(fileobj=load_url_mem(url), mode='r:gz')
