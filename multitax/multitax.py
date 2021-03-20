@@ -140,6 +140,7 @@ class MultiTax:
         return list(map(self.get_name, self.get_lineage(node=node, root_node=root_node, ranks=ranks)))
 
     def get_lineage(self, node: str, root_node: str=None, ranks: list=None):
+        # If pre-build and not special subset is required
         if node in self.__lineages and root_node is None and ranks is None:
             return self.__lineages[node]
         else:
@@ -191,5 +192,15 @@ class MultiTax:
     #     pass
     # def filter(self, ranks: list=None, nodes: list=None, names: list=None):
     #     pass # filter itself
-    # def build_lineages(self, nodes: list=None, threads: int=1):
-    #     pass # build lineage for the default configuration of the class (fixed ranks and root node)
+
+    def build_lineages(self):
+        # for node in self.__nodes:
+        #     if node not in self.__lineages:
+        #         lin = self.get_lineage(node) 
+        #         self.__lineages[node] = lin
+        #         # Add sub-lineages already built
+        #         for i, l in enumerate(lin[1:-1]):
+        #             if l[:-1] in self.__lineages: break # if already found, lineage is present
+        #             self.__lineages[l[:-1]] = lin[:i+1]
+        for node in self.__nodes:
+            self.__lineages[node] = self.get_lineage(node)

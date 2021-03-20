@@ -71,6 +71,7 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
  - Taxonomies are parsed into nodes and annotated with names and ranks.
  - A single root node should be defined (root_node, root_parent, root_name, root_rank) and it is created when not provided.
  - Standard values for unknown/undefined nodes can be configured (unknown_node,unknown_name, unknown_rank)
+ - Files parsed form disk or downloaded. When downloaded, they are handled in memory. It is possible to dump the file to disk with `output_prefix` parameter.
 
 ## Main functions
 
