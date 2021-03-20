@@ -1,4 +1,4 @@
-from multitax.utils import open_files, download_files, write_close_files
+from multitax.utils import open_files, download_files, close_files, check_file, check_dir
 
 
 class MultiTax:
@@ -37,6 +37,15 @@ class MultiTax:
                  build_lineages: bool=False,
                  output_prefix: str=None):
 
+        if files:
+            if isinstance(files, str):
+                files = [files]
+            for file in files:
+                check_file(file)
+
+        if output_prefix:
+            check_dir(output_prefix)
+
         if root_node is not None:
             self.root_node = root_node
         if root_parent is not None:
@@ -53,9 +62,9 @@ class MultiTax:
             self.unknown_rank = unknown_rank
 
         # open files from disk or download
-        fhs = open_files(files) if files else download_files(default_urls=self.urls, custom_ulrs=urls)
+        fhs = open_files(files) if files else download_files(default_urls=self.urls, custom_ulrs=urls, output_prefix=output_prefix)
         self.__nodes, self.__ranks, self.__names = self.parse(fhs)
-        write_close_files(fhs, output_prefix=output_prefix)
+        close_files(fhs)
 
         # Save sources for stats
         self.__sources.extend(fhs.keys())
