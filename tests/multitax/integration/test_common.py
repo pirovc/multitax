@@ -1,10 +1,11 @@
 import unittest
+import os
+
 from multitax.gtdbtx import GtdbTx
 from multitax.ncbitx import NcbiTx
 from multitax.silvatx import SilvaTx
 from multitax.otttx import OttTx
 from multitax.greengenestx import GreengenesTx
-from multitax.emptytx import EmptyTx
 
 
 class TestCommon(unittest.TestCase):
@@ -28,10 +29,9 @@ class TestCommon(unittest.TestCase):
             tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
             self.assertGreater(tax.stats()["nodes"], 0)
 
-    def test_empty(self):
-        tax = EmptyTx()
-        stats = tax.stats()
-        # Only root node
-        self.assertEqual(stats["nodes"], 1)
-        # No input sources
-        self.assertFalse(tax.sources)
+    def test_urls(self):
+        for t in self.taxonomies:
+            # simulate url with "file://" and absolute path
+            urls = ["file://" + os.path.abspath(file) for file in self.taxonomies[t]["params"]["files"]]
+            tax = self.taxonomies[t]["class"](urls=urls)
+            self.assertGreater(tax.stats()["nodes"], 0)
