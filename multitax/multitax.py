@@ -18,7 +18,9 @@ class MultiTax:
     __nodes = {}
     __names = {}
     __ranks = {}
-    __node_names = {}
+
+    __name_nodes = {}
+    __node_children = {}
     __lineages = {}
 
     __sources = []
@@ -26,6 +28,7 @@ class MultiTax:
     def __init__(self,
                  files: list=None,
                  urls: list=None,
+                 output_prefix: str=None,
                  root_node: str=None,
                  root_parent: str=None,
                  root_name: str=None,
@@ -35,7 +38,8 @@ class MultiTax:
                  unknown_rank: str=None,
                  fixed_ranks: list=None,
                  build_lineages: bool=False,
-                 output_prefix: str=None):
+                 build_node_names: bool=False,
+                 build_node_children: bool=False):
 
         if files:
             if isinstance(files, str):
@@ -72,16 +76,18 @@ class MultiTax:
         # Set root node in the tree
         self.__set_root_node()
 
-        # Crete reverse names dict
-        if self.__names:
-            self.__set_node_names()
-
         if fixed_ranks:
             self.__fixed_ranks = fixed_ranks
-            # todo filter?
+            # filter?
 
-        #if build_lineages:
-        #    self.build_lineages()
+        if build_node_children:
+            self.__set_node_children()
+
+        if build_node_names:
+            self.__set_node_names()
+
+        if build_lineages:
+            self.build_lineages()
 
     def __set_root_node(self):
         self.__nodes[self.root_node] = self.root_parent
@@ -91,9 +97,34 @@ class MultiTax:
     def __set_node_names(self):
         # Reverse dict from names
         for k, v in self.__names.items():
-            if v not in self.__node_names:
-                self.__node_names[v] = []
-            self.__node_names[v].append(k)
+            if v not in self.__name_nodes:
+                self.__name_nodes[v] = []
+            self.__name_nodes[v].append(k)
+
+    def __set_node_children(self):
+        # Reverse dict from nodes
+        for k, v in self.__nodes.items():
+            if v not in self.__node_children:
+                self.__node_children[v] = []
+            self.__node_children[v].append(k)
+
+    def get_node(self, name):
+        # Setup on first use
+        if not self.__name_nodes:
+            self.__set_node_names()
+        if name in self.__name_nodes:
+            return self.__name_nodes[name]
+        else:
+            return [self.unknown_node]
+
+    def get_children(self, node):
+        # Setup on first use
+        if not self.__node_children:
+            self.__set_node_children()
+        if node in self.__node_children:
+            return self.__node_children[node]
+        else:
+            return []
 
     def get_parent(self, node):
         if node in self.__nodes:
@@ -115,29 +146,28 @@ class MultiTax:
             return self.unknown_rank
 
     def get_name(self, node):
-        # [how to extend name search, like in metametamerge: https://github.com/pirovc/metametamerge/blob/master/parse_files.py]
         if node in self.__names:
             return self.__names[node]
         else:
             return self.unknown_name
-
-    def get_node(self, name):
-        if name in self.__node_names:
-            return self.__node_names[name]
-        else:
-            return [self.unknown_node]
 
     def get_latest(self, node):
         if node in self.__nodes:
             return node
         else:
             return self.unknown_node
-    
+
     def get_rank_lineage(self, node: str, root_node: str=None, ranks: list=None):
-        return list(map(self.get_rank, self.get_lineage(node=node, root_node=root_node, ranks=ranks)))
+        return list(map(self.get_rank,
+                        self.get_lineage(node=node,
+                                         root_node=root_node,
+                                         ranks=ranks)))
 
     def get_name_lineage(self, node: str, root_node: str=None, ranks: list=None):
-        return list(map(self.get_name, self.get_lineage(node=node, root_node=root_node, ranks=ranks)))
+        return list(map(self.get_name, 
+                        self.get_lineage(node=node,
+                                         root_node=root_node,
+                                         ranks=ranks)))
 
     def get_lineage(self, node: str, root_node: str=None, ranks: list=None):
         # If pre-build and not special subset is required
@@ -182,6 +212,10 @@ class MultiTax:
             s[("nodes", ur)] = list(self.__ranks.values()).count(ur)
         return s
 
+    def build_lineages(self):
+        for node in self.__nodes:
+            self.__lineages[node] = self.get_lineage(node)
+
     # def get_sub_tree(node):
     #     pass
     # def get_leaf_nodes(self, node: str=None): # default, tax.root_node
@@ -193,14 +227,3 @@ class MultiTax:
     # def filter(self, ranks: list=None, nodes: list=None, names: list=None):
     #     pass # filter itself
 
-    def build_lineages(self):
-        # for node in self.__nodes:
-        #     if node not in self.__lineages:
-        #         lin = self.get_lineage(node) 
-        #         self.__lineages[node] = lin
-        #         # Add sub-lineages already built
-        #         for i, l in enumerate(lin[1:-1]):
-        #             if l[:-1] in self.__lineages: break # if already found, lineage is present
-        #             self.__lineages[l[:-1]] = lin[:i+1]
-        for node in self.__nodes:
-            self.__lineages[node] = self.get_lineage(node)
