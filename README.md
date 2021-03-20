@@ -35,11 +35,6 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
     tax.get_rank_lineage("g__Escherichia")
     # ['root', 'domain', 'phylum', 'class', 'order', 'family', 'genus']
 
-    # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
-    # ['root', 'Bacteria', 'Proteobacteria', 'Gammaproteobacteria', 'Enterobacterales', 'Enterobacteriaceae', 'Escherichia']
-    # ['root', 'domain', 'phylum', 'class', 'order', 'family', 'genus']
-    
-
     # The same goes for the other taxonomies
 
     # NCBI
