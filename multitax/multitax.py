@@ -216,14 +216,3 @@ class MultiTax:
         for node in self.__nodes:
             self.__lineages[node] = self.get_lineage(node)
 
-    # def get_sub_tree(node):
-    #     pass
-    # def get_leaf_nodes(self, node: str=None): # default, tax.root_node
-    #     pass # get sub_tree?
-    # def get_rank_nodes(self, rank: str):
-    #     pass
-    # def check_tree_consistency(self):
-    #     pass
-    # def filter(self, ranks: list=None, nodes: list=None, names: list=None):
-    #     pass # filter itself
-
