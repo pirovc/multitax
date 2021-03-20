@@ -3,6 +3,10 @@ from multitax.multitax import MultiTax
 
 class GtdbTx(MultiTax):
 
+    default_urls = ["https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/ar122_taxonomy.tsv.gz",
+                    "https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/bac120_taxonomy.tsv.gz"]
+
+    # GTDB rank codes
     __rank_codes = [("d__", "domain"),
                     ("p__", "phylum"),
                     ("c__", "class"),
@@ -11,11 +15,8 @@ class GtdbTx(MultiTax):
                     ("g__", "genus"),
                     ("s__", "species")]
 
-    urls = ["https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/ar122_taxonomy.tsv.gz",
-            "https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/bac120_taxonomy.tsv.gz"]
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    # def __init__(self, **kwargs):
+    #     super().__init__(**kwargs)
 
     def __repr__(self):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]

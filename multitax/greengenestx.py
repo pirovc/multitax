@@ -3,6 +3,9 @@ from multitax.multitax import MultiTax
 
 class GreengenesTx(MultiTax):
 
+    default_urls = ["https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz"]
+
+    # GG rank codes
     __rank_codes = [("k__", "kingdom"),
                     ("p__", "phylum"),
                     ("c__", "class"),
@@ -11,10 +14,8 @@ class GreengenesTx(MultiTax):
                     ("g__", "genus"),
                     ("s__", "species")]
 
-    urls = ["https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz"]
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    # def __init__(self, **kwargs):
+    #     super().__init__(**kwargs)
 
     def __repr__(self):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]

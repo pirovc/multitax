@@ -24,10 +24,7 @@ def close_files(fhs):
         fh.close()
 
 
-def download_files(default_urls, custom_ulrs: list=None, output_prefix: str=None):
-    # Check default or custom urls
-    urls = custom_ulrs if custom_ulrs else default_urls
-
+def download_files(urls, output_prefix: str=None):
     if isinstance(urls, str):
         urls = [urls]
 
@@ -89,6 +86,15 @@ def check_no_file(file):
         raise FileExistsError(file)
 
 
-def check_dir(d):
-    if not os.path.exists(d):
-        raise NotADirectoryError(d)
+def check_dir(directory):
+    if not os.path.exists(directory):
+        raise NotADirectoryError(directory)
+
+
+def reverse_dict(d):
+    rd = {}
+    for k, v in d.items():
+        if v not in rd:
+            rd[v] = []
+        rd.append(k)
+    return rd

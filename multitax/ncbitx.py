@@ -3,14 +3,13 @@ from multitax.multitax import MultiTax
 
 class NcbiTx(MultiTax):
 
-    # merged.dmp
-    __merged = {}
-
-    urls = ["ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"]
-    # Default NCBI root node
-    root_node = "1"
+    default_urls = ["ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"]
+    default_root_node = "1"
 
     def __init__(self, **kwargs):
+        # merged.dmp
+        self.__merged = {}
+        
         super().__init__(**kwargs)
 
     def __repr__(self):

@@ -3,14 +3,13 @@ from multitax.multitax import MultiTax
 
 class OttTx(MultiTax):
 
-    # forwards.tsv
-    __forwards = {}
-
-    urls = ["http://files.opentreeoflife.org/ott/ott3.2/ott3.2.tgz"]
-    # Default OTT root node
-    root_node = "805080"
+    default_urls = ["http://files.opentreeoflife.org/ott/ott3.2/ott3.2.tgz"]
+    default_root_node = "805080"
 
     def __init__(self, **kwargs):
+        # forwards.tsv
+        self.__forwards = {}
+
         super().__init__(**kwargs)
 
     def __repr__(self):

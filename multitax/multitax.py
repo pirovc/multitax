@@ -1,40 +1,22 @@
-from multitax.utils import open_files, download_files, close_files, check_file, check_dir
+from multitax.utils import open_files, download_files, close_files, check_file, check_dir, reverse_dict
 
 
-class MultiTax:
+class MultiTax(object):
 
-    __version = "0.1.0"
+    version = "0.1.0"
 
-    urls = []
-    sources = []
-
-    unknown_node = None
-    unknown_name = None
-    unknown_rank = None
-
-    root_node = "1"
-    root_parent = "0"
-    root_name = "root"
-    root_rank = "root"
-
-    __fixed_ranks = None
-    __nodes = {}
-    __names = {}
-    __ranks = {}
-
-    __name_nodes = {}
-    __node_children = {}
-    __lineages = {}
-
+    # Default values
+    default_urls = []
+    default_root_node = "1"
 
     def __init__(self,
                  files: list=None,
                  urls: list=None,
                  output_prefix: str=None,
                  root_node: str=None,
-                 root_parent: str=None,
-                 root_name: str=None,
-                 root_rank: str=None,
+                 root_parent: str="0",
+                 root_name: str="root",
+                 root_rank: str="root",
                  unknown_node: str=None,
                  unknown_name: str=None,
                  unknown_rank: str=None,
@@ -52,41 +34,34 @@ class MultiTax:
         if output_prefix:
             check_dir(output_prefix)
 
-        if root_node is not None:
-            self.root_node = root_node
-        if root_parent is not None:
-            self.root_parent = root_parent
-        if root_name is not None:
-            self.root_name = root_name
-        if root_rank is not None:
-            self.root_rank = root_rank
-        if unknown_node is not None:
-            self.unknown_node = unknown_node
-        if unknown_name is not None:
-            self.unknown_name = unknown_name
-        if root_name is not None:
-            self.unknown_rank = unknown_rank
+        self.fixed_ranks = fixed_ranks # filter?
+        self.root_node = root_node if root_node else self.default_root_node #filter? 
+        self.root_parent = root_parent
+        self.root_name = root_name
+        self.root_rank = root_rank
+        self.unknown_node = unknown_node
+        self.unknown_name = unknown_name
+        self.unknown_rank = unknown_rank
+
+        self.__lineages = {}
+        self.__name_nodes = reverse_dict(self.__names) if build_node_names else {}
+        self.__node_children = reverse_dict(self.__nodes) if build_node_children else {}
 
         # open files from disk or download
-        fhs = open_files(files) if files else download_files(default_urls=self.urls, custom_ulrs=urls, output_prefix=output_prefix)
+        if files:
+            fhs = open_files(files)
+        else:
+            fhs = download_files(urls=urls if urls else self.default_urls,
+                                 output_prefix=output_prefix)
+        # Parse files
         self.__nodes, self.__ranks, self.__names = self.parse(fhs)
         close_files(fhs)
 
-        # Save sources for stats
-        self.sources.extend(fhs.keys())
+        # Save sources for stats (files or urls)
+        self.sources = list(fhs.keys())
 
         # Set root node in the tree
-        self.__set_root_node()
-
-        if fixed_ranks:
-            self.__fixed_ranks = fixed_ranks
-            # filter?
-
-        if build_node_children:
-            self.__set_node_children()
-
-        if build_node_names:
-            self.__set_node_names()
+        self.__set_root()
 
         if build_lineages:
             self.build_lineages()
@@ -97,7 +72,7 @@ class MultiTax:
     def parse(self, fhs):
         return {}, {}, {}
 
-    def __set_root_node(self):
+    def __set_root(self):
         self.__nodes[self.root_node] = self.root_parent
         self.__ranks[self.root_node] = self.root_rank
         self.__names[self.root_node] = self.root_name
