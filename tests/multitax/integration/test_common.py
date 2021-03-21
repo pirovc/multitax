@@ -37,7 +37,15 @@ class TestCommon(unittest.TestCase):
         """
         for t in self.taxonomies:
             tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
-            self.assertGreater(tax.stats()["nodes"], 0)
+            self.assertGreater(tax.stats()["nodes"], 0, t + " failed")
+
+    def test_consistency(self):
+        """
+        Check consistency of test files
+        """
+        for t in self.taxonomies:
+            tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
+            self.assertFalse(tax.check_consistency(), t + " taxonomy is not consistent")
 
     def test_urls(self):
         """
@@ -47,7 +55,7 @@ class TestCommon(unittest.TestCase):
             # simulate url with "file://" and absolute path
             urls = ["file://" + os.path.abspath(file) for file in self.taxonomies[t]["params"]["files"]]
             tax = self.taxonomies[t]["class"](urls=urls)
-            self.assertGreater(tax.stats()["nodes"], 0)
+            self.assertGreater(tax.stats()["nodes"], 0, t + " failed with urls")
 
     def test_gzip_uncompressed(self):
         """
@@ -66,4 +74,4 @@ class TestCommon(unittest.TestCase):
                     # Check if results are equal with compressed and uncompressed files
                     tax_compressed = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
                     tax_uncompressed = self.taxonomies[t]["class"](files=uncompressed)
-                    self.assertEqual(tax_compressed.stats(), tax_uncompressed.stats())
+                    self.assertEqual(tax_compressed.stats(), tax_uncompressed.stats(), t + " failed with uncompressed files")

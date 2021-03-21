@@ -44,6 +44,8 @@ class OttTx(MultiTax):
         nodes = {}
         ranks = {}
         names = {}
+        # skip first line header
+        next(fh)
         for line in fh:
             try:
                 taxid, parent_taxid, name, rank, _ = line.split('\t|\t', 4)
@@ -56,6 +58,8 @@ class OttTx(MultiTax):
 
     def parse_forwards(self, fh):
         forwards = {}
+        # skip first line header
+        next(fh)
         for line in fh:
             try:
                 old_taxid, new_taxid = line.rstrip().split('\t')

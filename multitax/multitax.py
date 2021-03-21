@@ -163,13 +163,19 @@ class MultiTax(object):
                     if r in ranks:
                         lin[ranks.index(r)] = n
                     n = self.get_parent(n)
-                return lin
             else:
                 # Full lineage
                 while n not in [root_parent, self.unknown_node]:
                     lin.append(n)
                     n = self.get_parent(n)
-                return lin[::-1]
+                lin = lin[::-1]
+
+            # If first element of lineage is the tree root parent it could not find the defined root
+            # If the last node is unknown, tree is invalid (no connection to root)
+            if lin[0] == self.root_parent or n == self.unknown_node:
+                return None
+            else:
+                return lin
 
     def stats(self):
         s = {}
@@ -185,3 +191,10 @@ class MultiTax(object):
     def build_lineages(self):
         for node in self.__nodes:
             self.__lineages[node] = self.get_lineage(node)
+
+    def check_consistency(self):
+        orphan_nodes = []
+        for node in self.__nodes:
+            if not self.get_lineage(node):
+                orphan_nodes.append(node)
+        return orphan_nodes
