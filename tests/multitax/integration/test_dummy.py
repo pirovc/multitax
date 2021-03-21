@@ -1,12 +1,12 @@
 import unittest
 
-from multitax.emptytx import EmptyTx
+from multitax import DummyTx
 
 
-class TestEmpty(unittest.TestCase):
+class TestDummy(unittest.TestCase):
 
     def test_empty(self):
-        tax = EmptyTx()
+        tax = DummyTx()
         stats = tax.stats()
         # Only root node
         self.assertEqual(stats["nodes"], 1)

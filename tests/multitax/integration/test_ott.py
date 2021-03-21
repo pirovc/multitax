@@ -1,7 +1,7 @@
 import unittest
 
 from utils import setup_dir, uncompress_tar_gzip
-from multitax.otttx import OttTx
+from multitax import OttTx
 
 
 class TestOtt(unittest.TestCase):

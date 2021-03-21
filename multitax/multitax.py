@@ -1,4 +1,4 @@
-from multitax.utils import open_files, download_files, close_files, check_file, check_dir, reverse_dict
+from .utils import open_files, download_files, close_files, check_file, check_dir, reverse_dict
 
 
 class MultiTax(object):

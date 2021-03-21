@@ -1,7 +1,7 @@
 import unittest
 
 from utils import setup_dir, uncompress_tar_gzip
-from multitax.ncbitx import NcbiTx
+from multitax import NcbiTx
 
 
 class TestNcbi(unittest.TestCase):

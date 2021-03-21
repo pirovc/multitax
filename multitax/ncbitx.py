@@ -1,4 +1,4 @@
-from multitax.multitax import MultiTax
+from .multitax import MultiTax
 
 
 class NcbiTx(MultiTax):

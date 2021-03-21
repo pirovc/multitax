@@ -3,11 +3,7 @@ import os
 
 from utils import setup_dir, uncompress_gzip
 
-from multitax.gtdbtx import GtdbTx
-from multitax.ncbitx import NcbiTx
-from multitax.silvatx import SilvaTx
-from multitax.otttx import OttTx
-from multitax.greengenestx import GreengenesTx
+from multitax import GreengenesTx, GtdbTx, NcbiTx, OttTx, SilvaTx
 
 
 class TestCommon(unittest.TestCase):
