@@ -113,7 +113,7 @@ Using pylca: https://github.com/pirovc/pylca
 
 Not yet implemented. The goal here is to map different taxonomies if the linkage data is available. That's what I think it will be possible.
 
- |        |NCBI   |GTDB   |SILVA   |OTT   |GG  |
+ |from/to |NCBI   |GTDB   |SILVA   |OTT   |GG  |
  |--------|-------|-------|--------|------|----|
  |NCBI    |-      |part   |part    |part  |no  |
  |GTDB    |full   |-      |no      |no    |no  |
@@ -124,13 +124,14 @@ Not yet implemented. The goal here is to map different taxonomies if the linkage
 
 ## TODO list
 
-- tests
+- more tests
 - CustomTx
-- improve stats
+- better stats
 - check consistency
 - filter
 - write (tsv)
 - translate
+- release
 
 ## Similar projects I know/found
 
