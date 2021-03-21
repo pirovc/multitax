@@ -34,8 +34,10 @@ class MultiTax(object):
         if output_prefix:
             check_dir(output_prefix)
 
-        self.fixed_ranks = fixed_ranks # filter?
-        self.root_node = root_node if root_node else self.default_root_node #filter? 
+        #filter?
+        self.fixed_ranks = fixed_ranks
+        #filter?
+        self.root_node = root_node if root_node else self.default_root_node
         self.root_parent = root_parent
         self.root_name = root_name
         self.root_rank = root_rank
@@ -163,7 +165,7 @@ class MultiTax(object):
                 root_parent = self.root_parent
 
             if not ranks:
-                ranks = self.__fixed_ranks
+                ranks = self.fixed_ranks
 
             lin = []
             n = node

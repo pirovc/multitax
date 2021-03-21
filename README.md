@@ -32,14 +32,22 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
     # tax = GtdbTx() # Download and parse files on the fly
     # tax = GtdbTx(output_prefix="my/path/") # Download, write and parse files
     
-    # Common commands
-    
+    # Nodes
     tax.get_parent("g__Escherichia")
     # f__Enterobacteriaceae
     
     tax.get_children("g__Escherichia")
     # ['s__Escherichia flexneri', 's__Escherichia coli', 's__Escherichia dysenteriae', 's__Escherichia coli_D', 's__Escherichia albertii', 's__Escherichia marmotae', 's__Escherichia coli_C', 's__Escherichia sp005843885', 's__Escherichia sp000208585', 's__Escherichia fergusonii', 's__Escherichia sp001660175', 's__Escherichia sp004211955', 's__Escherichia sp002965065']
 
+    # Retrieve node(s) from name
+    tax.get_node(name="Escherichia")
+    # ['g__Escherichia']
+
+    # Retrieve rank from node
+    tax.get_rank("g__Escherichia")
+    # 'genus'
+
+    # Lineages
     tax.get_lineage("g__Escherichia")
     # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
 
@@ -49,7 +57,21 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
     tax.get_rank_lineage("g__Escherichia")
     # ['root', 'domain', 'phylum', 'class', 'order', 'family', 'genus']
 
+    # Lineage for specific ranks
+    tax.get_lineage("g__Escherichia", ranks=["class", "family", "genus"])
+    # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
+
+    # Lineage with specific root
+    tax.get_lineage("g__Escherichia", root_node="p__Proteobacteria")
+    # ['p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
+
+    # Check stats
+    tax.stats()
+    # {'nodes': 45503, 'ranks': 45503, 'names': 45503, 'unique_ranks': 8, ('nodes', 'class'): 379, ('nodes', 'domain'): 2, ('nodes', 'species'): 31910, ('nodes', 'order'): 1034, ('nodes', 'genus'): 9428, ('nodes', 'root'): 1, ('nodes', 'phylum'): 149, ('nodes', 'family'): 2600}
+
+    #
     # The same goes for the other taxonomies
+    #
 
     # NCBI
     from multitax.ncbitx import NcbiTx
