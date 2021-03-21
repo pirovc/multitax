@@ -141,7 +141,7 @@ class MultiTax(object):
                                          ranks=ranks)))
 
     def get_lineage(self, node: str, root_node: str=None, ranks: list=None):
-        # If pre-build and not special subset is required
+        # If is already pre-built and no special subset is required
         if node in self.__lineages and root_node is None and ranks is None:
             return self.__lineages[node]
         else:
@@ -197,4 +197,4 @@ class MultiTax(object):
         for node in self.__nodes:
             if not self.get_lineage(node):
                 orphan_nodes.append(node)
-        return orphan_nodes
+        return None
