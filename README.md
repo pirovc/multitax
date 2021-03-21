@@ -5,10 +5,24 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
 ## Goals
  
  - Fast, intuitive, generalied and easy to use
- - Enable analysis from multiple tools using different taxonomies
- - Enable tools and scripts to easily extend compatibility with multiple taxonomies without extra if any implementation effort
+ - Enable tools and scripts to easily extend compatibility with multiple taxonomies without any effort
 
-## Usage
+## Installation
+
+    python setup.py install --record files.txt
+
+## Basic Example with GTDB
+
+    from multitax.gtdbtx import GtdbTx
+    
+    # Download taxonomy files
+    tax = GtdbTx()
+
+    # Get lineage for the Escherichia genus  
+    tax.get_lineage("g__Escherichia")
+    # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
+
+## Further Usage
 
     # GTDB
     from multitax.gtdbtx import GtdbTx
