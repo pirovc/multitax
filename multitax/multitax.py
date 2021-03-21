@@ -79,24 +79,10 @@ class MultiTax(object):
         self.__ranks[self.root_node] = self.root_rank
         self.__names[self.root_node] = self.root_name
 
-    def __set_node_names(self):
-        # Reverse dict from names
-        for k, v in self.__names.items():
-            if v not in self.__name_nodes:
-                self.__name_nodes[v] = []
-            self.__name_nodes[v].append(k)
-
-    def __set_node_children(self):
-        # Reverse dict from nodes
-        for k, v in self.__nodes.items():
-            if v not in self.__node_children:
-                self.__node_children[v] = []
-            self.__node_children[v].append(k)
-
     def get_node(self, name):
         # Setup on first use
         if not self.__name_nodes:
-            self.__set_node_names()
+            self.__name_nodes = reverse_dict(self.__names)
         if name in self.__name_nodes:
             return self.__name_nodes[name]
         else:
@@ -105,7 +91,7 @@ class MultiTax(object):
     def get_children(self, node):
         # Setup on first use
         if not self.__node_children:
-            self.__set_node_children()
+            self.__node_children = reverse_dict(self.__nodes)
         if node in self.__node_children:
             return self.__node_children[node]
         else:

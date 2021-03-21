@@ -96,5 +96,5 @@ def reverse_dict(d):
     for k, v in d.items():
         if v not in rd:
             rd[v] = []
-        rd.append(k)
+        rd[v].append(k)
     return rd
