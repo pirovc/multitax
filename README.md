@@ -15,7 +15,7 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
 
     from multitax.gtdbtx import GtdbTx
     
-    # Download taxonomy files
+    # Download taxonomy
     tax = GtdbTx()
 
     # Get lineage for the Escherichia genus  
@@ -24,30 +24,25 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
 
 ## Further Usage
 
-    # GTDB
     from multitax.gtdbtx import GtdbTx
     
     # Parse local files
     tax = GtdbTx(files=["bac120_taxonomy.tsv.gz", "ar122_taxonomy.tsv.gz"])
-    # tax = GtdbTx() # Download and parse files on the fly
-    # tax = GtdbTx(output_prefix="my/path/") # Download, write and parse files
-    
-    # Nodes
+    # Download, write and parse files
+    tax = GtdbTx(output_prefix="my/path/") 
+
     tax.get_parent("g__Escherichia")
     # f__Enterobacteriaceae
     
     tax.get_children("g__Escherichia")
     # ['s__Escherichia flexneri', 's__Escherichia coli', 's__Escherichia dysenteriae', 's__Escherichia coli_D', 's__Escherichia albertii', 's__Escherichia marmotae', 's__Escherichia coli_C', 's__Escherichia sp005843885', 's__Escherichia sp000208585', 's__Escherichia fergusonii', 's__Escherichia sp001660175', 's__Escherichia sp004211955', 's__Escherichia sp002965065']
 
-    # Retrieve node(s) from name
     tax.get_node(name="Escherichia")
     # ['g__Escherichia']
 
-    # Retrieve rank from node
     tax.get_rank("g__Escherichia")
     # 'genus'
 
-    # Lineages
     tax.get_lineage("g__Escherichia")
     # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
 
@@ -57,15 +52,12 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
     tax.get_rank_lineage("g__Escherichia")
     # ['root', 'domain', 'phylum', 'class', 'order', 'family', 'genus']
 
-    # Lineage for specific ranks
     tax.get_lineage("g__Escherichia", ranks=["class", "family", "genus"])
-    # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
+    # ['c__Gammaproteobacteria', 'f__Enterobacteriaceae', 'g__Escherichia']
 
-    # Lineage with specific root
     tax.get_lineage("g__Escherichia", root_node="p__Proteobacteria")
     # ['p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
 
-    # Check stats
     tax.stats()
     # {'nodes': 45503, 'ranks': 45503, 'names': 45503, 'unique_ranks': 8, ('nodes', 'class'): 379, ('nodes', 'domain'): 2, ('nodes', 'species'): 31910, ('nodes', 'order'): 1034, ('nodes', 'genus'): 9428, ('nodes', 'root'): 1, ('nodes', 'phylum'): 149, ('nodes', 'family'): 2600}
 
@@ -123,10 +115,10 @@ Not yet implemented. The goal here is to map different taxonomies if the linkage
 
  |        |NCBI   |GTDB   |SILVA   |OTT   |GG  |
  |--------|-------|-------|--------|------|----|
- |NCBI    |-      |parc   |parc    |parc  |no  |
+ |NCBI    |-      |part   |part    |part  |no  |
  |GTDB    |full   |-      |no      |no    |no  |
- |SILVA   |full   |no     |-       |parc  |no  |
- |OTT     |full   |no     |full    |-     |no  |
+ |SILVA   |full   |no     |-       |part  |no  |
+ |OTT     |part   |no     |part    |-     |no  |
  |GG      |no     |no     |no      |no    |-   |
 
 
