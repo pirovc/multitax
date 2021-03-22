@@ -1,4 +1,4 @@
-from .utils import open_files, download_files, close_files, check_file, check_dir, reverse_dict
+from .utils import open_files, download_files, close_files, check_file, check_no_file, check_dir, reverse_dict
 
 
 class MultiTax(object):
@@ -219,3 +219,32 @@ class MultiTax(object):
             self.__lineages = {}
             self.__name_nodes = {}
             self.__node_children = {}
+
+    def write(self, output_file, cols: list=["node", "parent", "rank", "name"], sep: str="\t", lineage_sep: str="|", ranks: list=None, gz: bool=False):
+        import gzip
+        if gz:
+            output_file = output_file if output_file.endswith(".gz") else output_file + ".gz"
+            check_no_file(output_file)
+            outf = gzip.open(output_file, "wt")
+        else:
+            check_no_file(output_file)
+            outf = open(output_file, "w")
+
+        write_field = {"node": lambda node: node,
+                       "latest": self.get_latest,
+                       "parent": self.get_parent,
+                       "rank": self.get_rank,
+                       "name": self.get_name,
+                       "children": lambda node: lineage_sep.join(self.get_children(node)),
+                       "lineage": lambda node: lineage_sep.join(self.get_lineage(node, ranks=ranks)),
+                       "rank_lineage": lambda node: lineage_sep.join(self.get_rank_lineage(node, ranks=ranks)),
+                       "name_lineage": lambda node: lineage_sep.join(self.get_name_lineage(node, ranks=ranks))}
+
+        for c in cols:
+            if c not in write_field:
+                raise ValueError(c + " is not a a valid field: " + ",".join(write_field))
+
+        for node in self.__nodes:
+            print(*[write_field[c](node) for c in cols], sep=sep, end="\n", file=outf)
+
+        outf.close()

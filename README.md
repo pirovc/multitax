@@ -4,8 +4,10 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
 
 ## Goals
  
+ - Common interface to work with different taxonomies
  - Fast, intuitive, generalized and easy to use
- - Enable tools and scripts to easily integrate and extend compatibility with multiple taxonomies without any effort
+ - Enable integration and compatibility with multiple taxonomies without any effort
+ - Translation between taxonomies
 
 ## Installation
 
@@ -61,6 +63,18 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
     tax.stats()
     # {'nodes': 45503, 'ranks': 45503, 'names': 45503, 'unique_ranks': 8, ('nodes', 'class'): 379, ('nodes', 'domain'): 2, ('nodes', 'species'): 31910, ('nodes', 'order'): 1034, ('nodes', 'genus'): 9428, ('nodes', 'root'): 1, ('nodes', 'phylum'): 149, ('nodes', 'family'): 2600}
 
+    tax.filter(['g__Escherichia', 's__Pseudomonas aeruginosa'])
+    tax.stats()
+    # {'nodes': 11, 'ranks': 11, 'names': 11, 'unique_ranks': 8, ('nodes', 'species'): 1, ('nodes', 'phylum'): 1, ('nodes', 'family'): 2, ('nodes', 'domain'): 1, ('nodes', 'root'): 1, ('nodes', 'class'): 1, ('nodes', 'genus'): 2, ('nodes', 'order'): 2}
+
+    tax.write("custom_tax.tsv", cols=["node", "rank", "name_lineage"])
+
+    g__Escherichia             genus    root|Bacteria|Proteobacteria|Gammaproteobacteria|Enterobacterales|Enterobacteriaceae|Escherichia
+    f__Enterobacteriaceae      family   root|Bacteria|Proteobacteria|Gammaproteobacteria|Enterobacterales|Enterobacteriaceae
+    o__Enterobacterales        order    root|Bacteria|Proteobacteria|Gammaproteobacteria|Enterobacterales
+    c__Gammaproteobacteria     class    root|Bacteria|Proteobacteria|Gammaproteobacteria
+    ...
+    
     #
     # The same goes for the other taxonomies
     #
