@@ -13,7 +13,6 @@ class MultiTax(object):
                  files: list=None,
                  urls: list=None,
                  output_prefix: str=None,
-                 fixed_ranks: list=None,
                  root_node: str=None,
                  root_parent: str="0",
                  root_name: str="root",
@@ -22,7 +21,7 @@ class MultiTax(object):
                  unknown_name: str=None,
                  unknown_rank: str=None,
                  build_lineages: bool=False,
-                 build_node_names: bool=False,
+                 build_name_nodes: bool=False,
                  build_node_children: bool=False):
 
         if files:
@@ -41,7 +40,6 @@ class MultiTax(object):
         self.unknown_node = unknown_node
         self.unknown_name = unknown_name
         self.unknown_rank = unknown_rank
-        self.fixed_ranks = fixed_ranks
 
         # Main structures
         self.__nodes = {}
@@ -68,7 +66,7 @@ class MultiTax(object):
         self.__set_root()
 
         # build auxiliary structures
-        if build_node_names:
+        if build_name_nodes:
             self.__name_nodes = reverse_dict(self.__names)
         if build_node_children:
             self.__node_children = reverse_dict(self.__nodes)
@@ -156,9 +154,6 @@ class MultiTax(object):
                 root_parent = self.get_parent(root_node)
             else:
                 root_parent = self.root_parent
-
-            if not ranks:
-                ranks = self.fixed_ranks
 
             lin = []
             n = node
