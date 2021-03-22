@@ -24,11 +24,13 @@ class NcbiTx(MultiTax):
         else:
             # nodes.dmp
             nodes, ranks = self.parse_nodes(fhs_list[0])
+            
             # [names.dmp]
-            if len(fhs) == 2: 
+            if len(fhs) >= 2: 
                 names = self.parse_names(fhs_list[1])
             else:
                 names = {}
+
             # [merged.dmp]
             if len(fhs) == 3:
                 self.__merged = self.parse_merged(fhs_list[2])
