@@ -13,6 +13,7 @@ class MultiTax(object):
                  files: list=None,
                  urls: list=None,
                  output_prefix: str=None,
+                 fixed_ranks: list=None,
                  root_node: str=None,
                  root_parent: str="0",
                  root_name: str="root",
@@ -20,7 +21,6 @@ class MultiTax(object):
                  unknown_node: str=None,
                  unknown_name: str=None,
                  unknown_rank: str=None,
-                 fixed_ranks: list=None,
                  build_lineages: bool=False,
                  build_node_names: bool=False,
                  build_node_children: bool=False):
@@ -34,9 +34,6 @@ class MultiTax(object):
         if output_prefix:
             check_dir(output_prefix)
 
-        #filter?
-        self.fixed_ranks = fixed_ranks
-        #filter?
         self.root_node = root_node if root_node else self.default_root_node
         self.root_parent = root_parent
         self.root_name = root_name
@@ -44,18 +41,23 @@ class MultiTax(object):
         self.unknown_node = unknown_node
         self.unknown_name = unknown_name
         self.unknown_rank = unknown_rank
+        self.fixed_ranks = fixed_ranks
 
+        # Main structures
+        self.__nodes = {}
+        self.__ranks = {}
+        self.__names = {}
         self.__lineages = {}
-        self.__name_nodes = reverse_dict(self.__names) if build_node_names else {}
-        self.__node_children = reverse_dict(self.__nodes) if build_node_children else {}
+        self.__name_nodes = {}
+        self.__node_children = {}
 
-        # open files from disk or download
+        # Open/Download/Write files
         if files:
             fhs = open_files(files)
         else:
             fhs = download_files(urls=urls if urls else self.default_urls,
                                  output_prefix=output_prefix)
-        # Parse files
+        # Parse taxonomy
         self.__nodes, self.__ranks, self.__names = self.parse(fhs)
         close_files(fhs)
 
@@ -65,6 +67,11 @@ class MultiTax(object):
         # Set root node in the tree
         self.__set_root()
 
+        # build auxiliary structures
+        if build_node_names:
+            self.__name_nodes = reverse_dict(self.__names)
+        if build_node_children:
+            self.__node_children = reverse_dict(self.__nodes)
         if build_lineages:
             self.build_lineages()
 
@@ -199,7 +206,7 @@ class MultiTax(object):
                 orphan_nodes.append(node)
         return None
 
-    def filter(self, nodes: list=None):
+    def filter(self, nodes):
         if nodes:
             # Keep track of nodes to be removed
             filtered_nodes = set(self.__nodes)
