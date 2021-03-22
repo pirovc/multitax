@@ -126,6 +126,16 @@ class MultiTax(object):
         else:
             return self.unknown_node
 
+    def get_leaves(self, node):
+        # recursive function to get leaf nodes
+        leaves = []
+        children = self.get_children(node)
+        if not children:
+            return [node]
+        for child in children:
+            leaves.extend(self.get_leaves(child))
+        return leaves
+
     def get_parent_rank(self, node, rank):
         while node not in [self.root_parent, self.unknown_node]:
             if self.get_rank(node) == rank:
@@ -201,24 +211,42 @@ class MultiTax(object):
                 orphan_nodes.append(node)
         return None
 
-    def filter(self, nodes):
-        if nodes:
-            # Keep track of nodes to be removed
-            filtered_nodes = set(self.__nodes)
+    def filter(self, nodes: list, desc: bool=False):
+        if isinstance(nodes, str):
+            nodes = [nodes]
+
+        # Keep track of nodes to be filtered out
+        filtered_nodes = set(self.__nodes)
+        # Always keep root
+        filtered_nodes.discard(self.root_node)
+
+        if not desc:
+            # Keep ancestors of the given nodes (full lineage up-to root)
             for node in nodes:
-                # If present on the lineage of nodes to keep, remove
                 for n in self.get_lineage(node):
+                    # Discard nodes from set to be kept
                     filtered_nodes.discard(n)
+        else:
+            # Keep descendants of the given nodes
+            for node in nodes:
+                # For each leaf of the selected nodes
+                for leaf in self.get_leaves(node):
+                    # Build lineage of each leaf up-to node itself
+                    for n in self.get_lineage(leaf, root_node=node):
+                        # Discard nodes from set to be kept
+                        filtered_nodes.discard(n)
+            # Link node to root
+            self.__nodes[node] = self.root_node
 
-            # Re-set data structures
-            for node in filtered_nodes:
-                del self.__nodes[node]
-                del self.__names[node]
-                del self.__ranks[node]
-
-            self.__lineages = {}
-            self.__name_nodes = {}
-            self.__node_children = {}
+        # Filter nodes
+        for node in filtered_nodes:
+            del self.__nodes[node]
+            del self.__names[node]
+            del self.__ranks[node]
+        # Reset data structures
+        self.__lineages = {}
+        self.__name_nodes = {}
+        self.__node_children = {}
 
     def write(self, output_file, cols: list=["node", "parent", "rank", "name"], sep: str="\t", lineage_sep: str="|", ranks: list=None, gz: bool=False):
         import gzip

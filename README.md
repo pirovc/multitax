@@ -60,10 +60,15 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
     tax.get_lineage("g__Escherichia", root_node="p__Proteobacteria")
     # ['p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
 
+    tax.get_leaves("p__Hadarchaeota")
+    # ['s__DG-33 sp004375695', 's__DG-33 sp001515185', 's__Hadarchaeum yellowstonense', 's__B75-G9 sp003661465', 's__WYZ-LMO6 sp004347925', 's__B88-G9 sp003660555']
+
     tax.stats()
     # {'nodes': 45503, 'ranks': 45503, 'names': 45503, 'unique_ranks': 8, ('nodes', 'class'): 379, ('nodes', 'domain'): 2, ('nodes', 'species'): 31910, ('nodes', 'order'): 1034, ('nodes', 'genus'): 9428, ('nodes', 'root'): 1, ('nodes', 'phylum'): 149, ('nodes', 'family'): 2600}
 
     tax.filter(['g__Escherichia', 's__Pseudomonas aeruginosa'])
+    # Keep only lineage of ancestors (desc=True to keep only lineage of descendants)
+    
     tax.stats()
     # {'nodes': 11, 'ranks': 11, 'names': 11, 'unique_ranks': 8, ('nodes', 'species'): 1, ('nodes', 'phylum'): 1, ('nodes', 'family'): 2, ('nodes', 'domain'): 1, ('nodes', 'root'): 1, ('nodes', 'class'): 1, ('nodes', 'genus'): 2, ('nodes', 'order'): 2}
 
