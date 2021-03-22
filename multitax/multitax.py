@@ -108,13 +108,6 @@ class MultiTax(object):
         else:
             return self.unknown_node
 
-    def get_parent_rank(self, node, rank):
-        while node not in [self.root_parent, self.unknown_node]:
-            if self.get_rank(node) == rank:
-                return node
-            node = self.get_parent(node)
-        return self.unknown_node
-
     def get_rank(self, node):
         if node in self.__ranks:
             return self.__ranks[node]
@@ -132,6 +125,13 @@ class MultiTax(object):
             return node
         else:
             return self.unknown_node
+
+    def get_parent_rank(self, node, rank):
+        while node not in [self.root_parent, self.unknown_node]:
+            if self.get_rank(node) == rank:
+                return node
+            node = self.get_parent(node)
+        return self.unknown_node
 
     def get_rank_lineage(self, node: str, root_node: str=None, ranks: list=None):
         return list(map(self.get_rank,

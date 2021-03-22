@@ -24,7 +24,9 @@ class OttTx(MultiTax):
             # nodes.dmp
             nodes, ranks, names = self.parse_taxonomy(fhs_list[0])
             # [forwards.tsv]
-            if len(fhs) == 2: self.__forwards = self.parse_forwards(fhs_list[1])
+            if len(fhs) == 2:
+                self.__forwards = self.parse_forwards(fhs_list[1])
+
         return nodes, ranks, names
 
     def parse_ott(self, fh_taxdump):
@@ -73,12 +75,6 @@ class OttTx(MultiTax):
             return self.__forwards[node]
         else:
             return self.unknown_node
-
-    def get_parent(self, node):
-        n = super().get_parent(node)
-        if n == self.unknown_node:
-            n = super().get_parent(self.get_forwards(node))
-        return n
 
     def get_latest(self, node):
         n = super().get_latest(node)

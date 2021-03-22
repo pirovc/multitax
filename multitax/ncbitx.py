@@ -84,12 +84,6 @@ class NcbiTx(MultiTax):
         else:
             return self.unknown_node
 
-    def get_parent(self, node):
-        n = super().get_parent(node)
-        if n == self.unknown_node:
-            n = super().get_parent(self.get_merged(node))
-        return n
-
     def get_latest(self, node):
         n = super().get_latest(node)
         if n == self.unknown_node:
