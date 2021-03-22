@@ -4,8 +4,8 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
 
 ## Goals
  
- - Fast, intuitive, generalied and easy to use
- - Enable tools and scripts to easily extend compatibility with multiple taxonomies without any effort
+ - Fast, intuitive, generalized and easy to use
+ - Enable tools and scripts to easily integrate and extend compatibility with multiple taxonomies without any effort
 
 ## Installation
 
@@ -124,11 +124,10 @@ Not yet implemented. The goal here is to map different taxonomies if the linkage
 
 ## TODO list
 
-- more tests
+- unit tests
+- integration tests
 - CustomTx
 - better stats
-- check consistency
-- filter
 - write (tsv)
 - translate
 - release

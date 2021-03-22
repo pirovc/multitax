@@ -27,7 +27,7 @@ class TestOtt(unittest.TestCase):
         self.assertIn("taxonomy.tsv", uncompressed_files)
         self.assertIn("forwards.tsv", uncompressed_files)
         tax_uncompressed = OttTx(files=[self.tmp_dir + "taxonomy.tsv",
-                                         self.tmp_dir + "forwards.tsv"])
+                                        self.tmp_dir + "forwards.tsv"])
 
         # Results of compressed and uncompressed should match
         self.assertEqual(tax_uncompressed.stats(), tax_compressed.stats())

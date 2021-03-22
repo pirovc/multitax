@@ -86,7 +86,7 @@ class MultiTax(object):
         if name in self.__name_nodes:
             return self.__name_nodes[name]
         else:
-            return [self.unknown_node]
+            return []
 
     def get_children(self, node):
         # Setup on first use
@@ -173,7 +173,7 @@ class MultiTax(object):
             # If first element of lineage is the tree root parent it could not find the defined root
             # If the last node is unknown, tree is invalid (no connection to root)
             if lin[0] == self.root_parent or n == self.unknown_node:
-                return None
+                return []
             else:
                 return lin
 
@@ -198,3 +198,22 @@ class MultiTax(object):
             if not self.get_lineage(node):
                 orphan_nodes.append(node)
         return None
+
+    def filter(self, nodes: list=None):
+        if nodes:
+            # Keep track of nodes to be removed
+            filtered_nodes = set(self.__nodes)
+            for node in nodes:
+                # If present on the lineage of nodes to keep, remove
+                for n in self.get_lineage(node):
+                    filtered_nodes.discard(n)
+
+            # Re-set data structures
+            for node in filtered_nodes:
+                del self.__nodes[node]
+                del self.__names[node]
+                del self.__ranks[node]
+
+            self.__lineages = {}
+            self.__name_nodes = {}
+            self.__node_children = {}

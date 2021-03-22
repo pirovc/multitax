@@ -85,3 +85,11 @@ class OttTx(MultiTax):
         if n == self.unknown_node:
             n = self.get_forwards(node)
         return n
+
+    def filter(self, nodes):
+        super().filter(nodes)
+        filtered_forwards = set(self.__forwards)
+        for node in self._MultiTax__nodes:
+            filtered_forwards.discard(node)
+        for node in filtered_forwards:
+            del self.__forwards[node]

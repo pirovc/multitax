@@ -93,3 +93,11 @@ class NcbiTx(MultiTax):
         if n == self.unknown_node:
             n = self.get_merged(node)
         return n
+
+    def filter(self, nodes):
+        super().filter(nodes)
+        filtered_merged = set(self.__merged)
+        for node in self._MultiTax__nodes:
+            filtered_merged.discard(node)
+        for node in filtered_merged:
+            del self.__merged[node]
