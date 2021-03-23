@@ -5,9 +5,8 @@ class MultiTax(object):
 
     version = "0.1.0"
 
-    # Default values
-    default_urls = []
-    default_root_node = "1"
+    _urls = []
+    _root_node = "1"
 
     def __init__(self,
                  files: list=None,
@@ -33,7 +32,7 @@ class MultiTax(object):
         if output_prefix:
             check_dir(output_prefix)
 
-        self.root_node = root_node if root_node else self.default_root_node
+        self.root_node = root_node if root_node else self._root_node
         self.root_parent = root_parent
         self.root_name = root_name
         self.root_rank = root_rank
@@ -53,7 +52,7 @@ class MultiTax(object):
         if files:
             fhs = open_files(files)
         else:
-            fhs = download_files(urls=urls if urls else self.default_urls,
+            fhs = download_files(urls=urls if urls else self._urls,
                                  output_prefix=output_prefix)
         # Parse taxonomy
         self.__nodes, self.__ranks, self.__names = self.parse(fhs)
@@ -220,13 +219,7 @@ class MultiTax(object):
         # Always keep root
         filtered_nodes.discard(self.root_node)
 
-        if not desc:
-            # Keep ancestors of the given nodes (full lineage up-to root)
-            for node in nodes:
-                for n in self.get_lineage(node):
-                    # Discard nodes from set to be kept
-                    filtered_nodes.discard(n)
-        else:
+        if desc:
             # Keep descendants of the given nodes
             for node in nodes:
                 # For each leaf of the selected nodes
@@ -235,8 +228,14 @@ class MultiTax(object):
                     for n in self.get_lineage(leaf, root_node=node):
                         # Discard nodes from set to be kept
                         filtered_nodes.discard(n)
-            # Link node to root
-            self.__nodes[node] = self.root_node
+                # Link node to root
+                self.__nodes[node] = self.root_node
+        else:
+            # Keep ancestors of the given nodes (full lineage up-to root)
+            for node in nodes:
+                for n in self.get_lineage(node):
+                    # Discard nodes from set to be kept
+                    filtered_nodes.discard(n)
 
         # Filter nodes
         for node in filtered_nodes:

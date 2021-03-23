@@ -80,6 +80,12 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
     c__Gammaproteobacteria     class    root|Bacteria|Proteobacteria|Gammaproteobacteria
     ...
     
+    tax.build_lineages()
+    # pre-build lineages in memory
+
+    tax.check_consistency()
+    # check if taxonomy tree is valid
+    
     #
     # The same goes for the other taxonomies
     #
@@ -150,9 +156,11 @@ Not yet implemented. The goal here is to map different taxonomies if the linkage
 - write (tsv)
 - translate
 - release
+- strategy to always retrieve "latest" files
 
-## Similar projects I know/found
+## Similar projects
 
 - https://github.com/FOI-Bioinformatics/flextaxd
 - https://github.com/shenwei356/taxonkit
+- https://github.com/bioforensics/pytaxonkit
 - https://github.com/chanzuckerberg/taxoniq

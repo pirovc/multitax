@@ -3,8 +3,8 @@ from .multitax import MultiTax
 
 class NcbiTx(MultiTax):
 
-    default_urls = ["ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"]
-    default_root_node = "1"
+    _urls = ["ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"]
+    _root_node = "1"
 
     def __init__(self, **kwargs):
         # merged.dmp
@@ -90,8 +90,8 @@ class NcbiTx(MultiTax):
             n = self.get_merged(node)
         return n
 
-    def filter(self, nodes):
-        super().filter(nodes)
+    def filter(self, nodes: list, desc: bool=False):
+        super().filter(nodes, desc)
         filtered_merged = set(self.__merged)
         for node in self._MultiTax__nodes:
             filtered_merged.discard(node)

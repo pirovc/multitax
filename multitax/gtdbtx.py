@@ -3,17 +3,16 @@ from .multitax import MultiTax
 
 class GtdbTx(MultiTax):
 
-    default_urls = ["https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/ar122_taxonomy.tsv.gz",
-                    "https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/bac120_taxonomy.tsv.gz"]
-
-    # GTDB rank codes
-    __rank_codes = [("d__", "domain"),
-                    ("p__", "phylum"),
-                    ("c__", "class"),
-                    ("o__", "order"),
-                    ("f__", "family"),
-                    ("g__", "genus"),
-                    ("s__", "species")]
+    _urls = ["https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/ar122_taxonomy.tsv.gz",
+             "https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/bac120_taxonomy.tsv.gz"]
+    _root_node = "1"
+    _rank_codes = [("d__", "domain"),
+                   ("p__", "phylum"),
+                   ("c__", "class"),
+                   ("o__", "order"),
+                   ("f__", "family"),
+                   ("g__", "genus"),
+                   ("s__", "species")]
 
     # def __init__(self, **kwargs):
     #     super().__init__(**kwargs)
@@ -35,14 +34,14 @@ class GtdbTx(MultiTax):
                 lin = lineage.split(";")
                 for i in range(len(lin))[::-1]:
                     # assert rank
-                    assert lin[i][:3] == self.__rank_codes[i][0]
+                    assert lin[i][:3] == self._rank_codes[i][0]
                     # taxid = "c__Deinococci", rank = "class", name = "Deinococci"
                     taxid = lin[i]
                     name = lin[i][3:]
                     # empty entry "s__"
                     if not name:
                         continue
-                    rank = self.__rank_codes[i][1]
+                    rank = self._rank_codes[i][1]
                     if i == 0:
                         parent_taxid = self.root_node
                     else:

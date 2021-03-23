@@ -2,9 +2,12 @@ from .multitax import MultiTax
 
 
 class OttTx(MultiTax):
+    """
+    Specialized class from MultiTax to parse the Open tree taxonomy
+    """
 
-    default_urls = ["http://files.opentreeoflife.org/ott/ott3.2/ott3.2.tgz"]
-    default_root_node = "805080"
+    _urls = ["http://files.opentreeoflife.org/ott/ott3.2/ott3.2.tgz"]
+    _root_node = "805080"
 
     def __init__(self, **kwargs):
         # forwards.tsv
@@ -82,8 +85,8 @@ class OttTx(MultiTax):
             n = self.get_forwards(node)
         return n
 
-    def filter(self, nodes):
-        super().filter(nodes)
+    def filter(self, nodes: list, desc: bool=False):
+        super().filter(nodes, desc)
         filtered_forwards = set(self.__forwards)
         for node in self._MultiTax__nodes:
             filtered_forwards.discard(node)
