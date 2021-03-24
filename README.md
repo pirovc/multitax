@@ -15,11 +15,7 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
 
 ## Documentation
     
-    docs/
-
-    or
-
-    https://pirovc.github.io/multitax/
+https://pirovc.github.io/multitax/
 
 ## Basic Example with GTDB
 
