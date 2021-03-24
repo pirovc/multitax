@@ -7,7 +7,7 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
  - Common interface to work with different taxonomies
  - Fast, intuitive, generalized and easy to use
  - Enable integration and compatibility with multiple taxonomies without any effort
- - Translation between taxonomies
+ - Translation between taxonomies (not yet implemented)
 
 ## Installation
 
@@ -44,6 +44,9 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
 
     tax.rank("g__Escherichia")
     # 'genus'
+
+    tax.parent_rank("s__Lentisphaera araneosa", "phylum")
+    # 'p__Verrucomicrobiota'
 
     tax.lineage("g__Escherichia")
     # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
@@ -114,12 +117,12 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
     tax.lineage("f__Enterobacteriaceae")
     # ['1', 'k__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacteriales', 'f__Enterobacteriaceae']
 
-## General info
+## General information
 
- - Taxonomies are parsed into nodes and annotated with names and ranks.
- - A single root node should be defined (root_node, root_parent, root_name, root_rank) and it is created when not provided.
- - Standard values for unknown/undefined nodes can be configured (unknown_node,unknown_name, unknown_rank)
- - Files parsed form disk or downloaded. When downloaded, they are handled in memory. It is possible to dump the file to disk with `output_prefix` parameter.
+ - Taxonomies are parsed into nodes. Each node can be annotated with a name and a rank.
+ - A single root node is defined by default. This node can be changed `root_node` as well as its annotations `root_parent`, `root_name`, `root_rank`.
+ - Standard values for unknown/undefined nodes can be configured (`unknown_node`,`unknown_name`, `unknown_rank`). Those are default values returned when nodes/names/ranks are not found.
+ - Files can be loaded from disk `files` or are automatically downloaded. Alternative `urls` can be provided. When downloaded, files are handled in memory. It is possible to dump the downloaded file to disk with `output_prefix`.
 
 ## LCA integration
 
@@ -129,7 +132,7 @@ Using pylca: https://github.com/pirovc/pylca
     from multitax import GtdbTx
 
     tax = GtdbTx()
-    L = LCA(tax._MultiTax__nodes)
+    L = LCA(tax._nodes)
 
     L("s__Escherichia dysenteriae", "s__Pseudomonas aeruginosa")
     # 'c__Gammaproteobacteria'
@@ -152,11 +155,10 @@ Not yet implemented. The goal here is to map different taxonomies if the linkage
 - unit tests
 - integration tests
 - CustomTx
+- DummyTx
 - better stats
-- write (tsv)
 - translate
 - release
-- strategy to always retrieve "latest" files
 
 ## Similar projects
 
