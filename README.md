@@ -21,7 +21,7 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
     tax = GtdbTx()
 
     # Get lineage for the Escherichia genus  
-    tax.get_lineage("g__Escherichia")
+    tax.lineage("g__Escherichia")
     # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
 
 ## Further Usage
@@ -33,34 +33,34 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
     # Download, write and parse files
     tax = GtdbTx(output_prefix="my/path/") 
 
-    tax.get_parent("g__Escherichia")
+    tax.parent("g__Escherichia")
     # f__Enterobacteriaceae
     
-    tax.get_children("g__Escherichia")
+    tax.children("g__Escherichia")
     # ['s__Escherichia flexneri', 's__Escherichia coli', 's__Escherichia dysenteriae', 's__Escherichia coli_D', 's__Escherichia albertii', 's__Escherichia marmotae', 's__Escherichia coli_C', 's__Escherichia sp005843885', 's__Escherichia sp000208585', 's__Escherichia fergusonii', 's__Escherichia sp001660175', 's__Escherichia sp004211955', 's__Escherichia sp002965065']
 
-    tax.get_node(name="Escherichia")
+    tax.node(name="Escherichia")
     # ['g__Escherichia']
 
-    tax.get_rank("g__Escherichia")
+    tax.rank("g__Escherichia")
     # 'genus'
 
-    tax.get_lineage("g__Escherichia")
+    tax.lineage("g__Escherichia")
     # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
 
-    tax.get_name_lineage("g__Escherichia")
+    tax.name_lineage("g__Escherichia")
     # ['root', 'Bacteria', 'Proteobacteria', 'Gammaproteobacteria', 'Enterobacterales', 'Enterobacteriaceae', 'Escherichia']
 
-    tax.get_rank_lineage("g__Escherichia")
+    tax.rank_lineage("g__Escherichia")
     # ['root', 'domain', 'phylum', 'class', 'order', 'family', 'genus']
 
-    tax.get_lineage("g__Escherichia", ranks=["class", "family", "genus"])
+    tax.lineage("g__Escherichia", ranks=["class", "family", "genus"])
     # ['c__Gammaproteobacteria', 'f__Enterobacteriaceae', 'g__Escherichia']
 
-    tax.get_lineage("g__Escherichia", root_node="p__Proteobacteria")
+    tax.lineage("g__Escherichia", root_node="p__Proteobacteria")
     # ['p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
 
-    tax.get_leaves("p__Hadarchaeota")
+    tax.leaves("p__Hadarchaeota")
     # ['s__DG-33 sp004375695', 's__DG-33 sp001515185', 's__Hadarchaeum yellowstonense', 's__B75-G9 sp003661465', 's__WYZ-LMO6 sp004347925', 's__B88-G9 sp003660555']
 
     tax.stats()
@@ -93,25 +93,25 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
     # NCBI
     from multitax import NcbiTx
     tax = NcbiTx(files="taxdump.tar.gz")
-    tax.get_lineage("561")    
+    tax.lineage("561")    
     # ['1', '131567', '2', '1224', '1236', '91347', '543', '561']
 
     # Silva
     from multitax import SilvaTx
     tax = SilvaTx(files="tax_slv_ssu_138.1.txt.gz")
-    tax.get_lineage("46463")    
+    tax.lineage("46463")    
     # ['1', '3', '2375', '3303', '46449', '46454', '46463']
 
     # Open Tree taxonomy
     from multitax import OttTx
     tax = OttTx(files="ott3.2.tgz")
-    tax.get_lineage("474503")
+    tax.lineage("474503")
     # ['805080', '93302', '844192', '248067', '822744', '768012', '424023', '474503']
 
     # GreenGenes
     from multitax import GreengenesTx
     tax = GreengenesTx(files="gg_13_5_taxonomy.txt.gz")
-    tax.get_lineage("f__Enterobacteriaceae")
+    tax.lineage("f__Enterobacteriaceae")
     # ['1', 'k__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacteriales', 'f__Enterobacteriaceae']
 
 ## General info

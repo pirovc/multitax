@@ -11,7 +11,7 @@ class OttTx(MultiTax):
 
     def __init__(self, **kwargs):
         # forwards.tsv
-        self.__forwards = {}
+        self._forwards = {}
 
         super().__init__(**kwargs)
 
@@ -22,13 +22,13 @@ class OttTx(MultiTax):
     def parse(self, fhs):
         fhs_list = list(fhs.values())
         if len(fhs_list) == 1 and list(fhs)[0].endswith(".tgz"):
-            nodes, ranks, names, self.__forwards = self.parse_ott(fhs_list[0])
+            nodes, ranks, names, self._forwards = self.parse_ott(fhs_list[0])
         else:
             # nodes.dmp
             nodes, ranks, names = self.parse_taxonomy(fhs_list[0])
             # [forwards.tsv]
             if len(fhs) == 2:
-                self.__forwards = self.parse_forwards(fhs_list[1])
+                self._forwards = self.parse_forwards(fhs_list[1])
 
         return nodes, ranks, names
 
@@ -73,22 +73,22 @@ class OttTx(MultiTax):
             forwards[old_taxid] = new_taxid
         return forwards
 
-    def get_forwards(self, node):
-        if node in self.__forwards:
-            return self.__forwards[node]
+    def forwards(self, node):
+        if node in self._forwards:
+            return self._forwards[node]
         else:
             return self.unknown_node
 
-    def get_latest(self, node):
-        n = super().get_latest(node)
+    def latest(self, node):
+        n = super().latest(node)
         if n == self.unknown_node:
-            n = self.get_forwards(node)
+            n = self.forwards(node)
         return n
 
     def filter(self, nodes: list, desc: bool=False):
         super().filter(nodes, desc)
-        filtered_forwards = set(self.__forwards)
-        for node in self._MultiTax__nodes:
+        filtered_forwards = set(self._forwards)
+        for node in self._nodes:
             filtered_forwards.discard(node)
         for node in filtered_forwards:
-            del self.__forwards[node]
+            del self._forwards[node]

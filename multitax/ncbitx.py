@@ -7,9 +7,9 @@ class NcbiTx(MultiTax):
     _root_node = "1"
 
     def __init__(self, **kwargs):
-        # merged.dmp
-        self.__merged = {}
-        
+        # [merged.dmp]
+        self._merged = {}
+
         super().__init__(**kwargs)
 
     def __repr__(self):
@@ -20,20 +20,20 @@ class NcbiTx(MultiTax):
         fhs_list = list(fhs.values())
         # One element tar.gz -> taxdump.tar.gz
         if len(fhs_list) == 1 and list(fhs)[0].endswith(".tar.gz"):
-            nodes, ranks, names, self.__merged = self.parse_taxdump(fhs_list[0])
+            nodes, ranks, names, self._merged = self.parse_taxdump(fhs_list[0])
         else:
             # nodes.dmp
             nodes, ranks = self.parse_nodes(fhs_list[0])
-            
+
             # [names.dmp]
-            if len(fhs) >= 2: 
+            if len(fhs) >= 2:
                 names = self.parse_names(fhs_list[1])
             else:
                 names = {}
 
             # [merged.dmp]
             if len(fhs) == 3:
-                self.__merged = self.parse_merged(fhs_list[2])
+                self._merged = self.parse_merged(fhs_list[2])
         return nodes, ranks, names
 
     def parse_taxdump(self, fh_taxdump):
@@ -78,22 +78,22 @@ class NcbiTx(MultiTax):
             merged[old_taxid] = new_taxid
         return merged
 
-    def get_merged(self, node):
-        if node in self.__merged:
-            return self.__merged[node]
+    def merged(self, node):
+        if node in self._merged:
+            return self._merged[node]
         else:
             return self.unknown_node
 
-    def get_latest(self, node):
-        n = super().get_latest(node)
+    def latest(self, node):
+        n = super().latest(node)
         if n == self.unknown_node:
-            n = self.get_merged(node)
+            n = self.merged(node)
         return n
 
     def filter(self, nodes: list, desc: bool=False):
         super().filter(nodes, desc)
-        filtered_merged = set(self.__merged)
-        for node in self._MultiTax__nodes:
+        filtered_merged = set(self._merged)
+        for node in self._nodes:
             filtered_merged.discard(node)
         for node in filtered_merged:
-            del self.__merged[node]
+            del self._merged[node]
