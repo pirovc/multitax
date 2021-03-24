@@ -3,9 +3,8 @@ from .multitax import MultiTax
 
 class GtdbTx(MultiTax):
 
-    _urls = ["https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/ar122_taxonomy.tsv.gz",
-             "https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/bac120_taxonomy.tsv.gz"]
-    _root_node = "1"
+    _default_urls = ["https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/ar122_taxonomy.tsv.gz",
+                     "https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/bac120_taxonomy.tsv.gz"]
     _rank_codes = [("d__", "domain"),
                    ("p__", "phylum"),
                    ("c__", "class"),
@@ -14,14 +13,11 @@ class GtdbTx(MultiTax):
                    ("g__", "genus"),
                    ("s__", "species")]
 
-    # def __init__(self, **kwargs):
-    #     super().__init__(**kwargs)
-
     def __repr__(self):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
         return 'GtdbTx({})'.format(', '.join(args))
 
-    def parse(self, fhs):
+    def _parse(self, fhs):
         nodes = {}
         ranks = {}
         names = {}
@@ -43,7 +39,7 @@ class GtdbTx(MultiTax):
                         continue
                     rank = self._rank_codes[i][1]
                     if i == 0:
-                        parent_taxid = self.root_node
+                        parent_taxid = self._default_root_node
                     else:
                         parent_taxid = lin[i-1]
                     if taxid not in nodes:

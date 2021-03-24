@@ -3,17 +3,13 @@ from .multitax import MultiTax
 
 class SilvaTx(MultiTax):
 
-    _urls = ["https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.1.txt.gz"]
-    _root_node = "1"
-
-    # def __init__(self, **kwargs):
-    #     super().__init__(**kwargs)
+    _default_urls = ["https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.1.txt.gz"]
 
     def __repr__(self):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
         return 'SilvaTx({})'.format(', '.join(args))
 
-    def parse(self, fhs):
+    def _parse(self, fhs):
         nodes = {}
         ranks = {}
         names = {}
@@ -45,6 +41,6 @@ class SilvaTx(MultiTax):
                 del l[-1] # remove last element
             # Connect last node to root
             if t not in nodes:
-                nodes[t] = self.root_node
+                nodes[t] = self._default_root_node
 
         return nodes, ranks, names

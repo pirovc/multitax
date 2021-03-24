@@ -3,8 +3,7 @@ from .multitax import MultiTax
 
 class NcbiTx(MultiTax):
 
-    _urls = ["ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"]
-    _root_node = "1"
+    _default_urls = ["ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"]
 
     def __init__(self, **kwargs):
         # [merged.dmp]
@@ -16,36 +15,36 @@ class NcbiTx(MultiTax):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
         return 'NcbiTx({})'.format(', '.join(args))
 
-    def parse(self, fhs):
+    def _parse(self, fhs):
         fhs_list = list(fhs.values())
         # One element tar.gz -> taxdump.tar.gz
         if len(fhs_list) == 1 and list(fhs)[0].endswith(".tar.gz"):
-            nodes, ranks, names, self._merged = self.parse_taxdump(fhs_list[0])
+            nodes, ranks, names, self._merged = self._parse_taxdump(fhs_list[0])
         else:
             # nodes.dmp
-            nodes, ranks = self.parse_nodes(fhs_list[0])
+            nodes, ranks = self._parse_nodes(fhs_list[0])
 
             # [names.dmp]
             if len(fhs) >= 2:
-                names = self.parse_names(fhs_list[1])
+                names = self._parse_names(fhs_list[1])
             else:
                 names = {}
 
             # [merged.dmp]
             if len(fhs) == 3:
-                self._merged = self.parse_merged(fhs_list[2])
+                self._merged = self._parse_merged(fhs_list[2])
         return nodes, ranks, names
 
-    def parse_taxdump(self, fh_taxdump):
+    def _parse_taxdump(self, fh_taxdump):
         with fh_taxdump.extractfile('nodes.dmp') as fh_nodes:
-            nodes, ranks = self.parse_nodes(fh_nodes)
+            nodes, ranks = self._parse_nodes(fh_nodes)
         with fh_taxdump.extractfile('names.dmp') as fh_names:
-            names = self.parse_names(fh_names)
+            names = self._parse_names(fh_names)
         with fh_taxdump.extractfile('merged.dmp') as fh_merged:
-            merged = self.parse_merged(fh_merged)
+            merged = self._parse_merged(fh_merged)
         return nodes, ranks, names, merged
 
-    def parse_nodes(self, fh):
+    def _parse_nodes(self, fh):
         nodes = {}
         ranks = {}
         for line in fh:
@@ -57,7 +56,7 @@ class NcbiTx(MultiTax):
             nodes[taxid] = parent_taxid
         return nodes, ranks
 
-    def parse_names(self, fh):
+    def _parse_names(self, fh):
         names = {}
         for line in fh:
             try:
@@ -68,7 +67,7 @@ class NcbiTx(MultiTax):
                 names[node] = name
         return names
 
-    def parse_merged(self, fh):
+    def _parse_merged(self, fh):
         merged = {}
         for line in fh:
             try:

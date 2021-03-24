@@ -3,9 +3,7 @@ from .multitax import MultiTax
 
 class GreengenesTx(MultiTax):
 
-    _urls = ["https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz"]
-    _root_node = "1"
-
+    _default_urls = ["https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz"]
     _rank_codes = [("k__", "kingdom"),
                    ("p__", "phylum"),
                    ("c__", "class"),
@@ -13,9 +11,6 @@ class GreengenesTx(MultiTax):
                    ("f__", "family"),
                    ("g__", "genus"),
                    ("s__", "species")]
-
-    # def __init__(self, **kwargs):
-    #     super().__init__(**kwargs)
 
     def __repr__(self):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
@@ -42,7 +37,7 @@ class GreengenesTx(MultiTax):
                     if not name: continue # empty entry "s__"
                     rank = self._rank_codes[i][1]
                     if i==0:
-                        parent_taxid = self.root_node
+                        parent_taxid = self._default_root_node
                     else:
                         parent_taxid = lin[i-1]
                     if taxid not in nodes:
