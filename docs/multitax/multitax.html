@@ -142,19 +142,19 @@
 <span class="sd">        Constructor of the class</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        * **files** ***[str, list]***: One or more local files to parse</span>
-<span class="sd">        * **urls** ***[str, list]***: One or more urls to download and parse</span>
-<span class="sd">        * **output_prefix** ***[str]***: Directory to write downloaded files</span>
-<span class="sd">        * **root_node** ***[str]***: </span>
-<span class="sd">        * **root_parent** ***[str]***: </span>
-<span class="sd">        * **root_name** ***[str]***: </span>
-<span class="sd">        * **root_rank** ***[str]***: </span>
-<span class="sd">        * **unknown_node** ***[str]***: </span>
-<span class="sd">        * **unknown_name** ***[str]***: </span>
-<span class="sd">        * **unknown_rank** ***[str]***: </span>
-<span class="sd">        * **build_node_children** ***[bool]***: </span>
-<span class="sd">        * **build_name_nodes** ***[bool]***: </span>
-<span class="sd">        * **build_rank_nodes** ***[bool]***: </span>
+<span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
+<span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse</span>
+<span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files</span>
+<span class="sd">        * **root_node** *[str]*: Define an alternative root node (has to exist in the taxonomy)</span>
+<span class="sd">        * **root_parent** *[str]*: Define an alternative root parent</span>
+<span class="sd">        * **root_name** *[str]*: Define an alternative root name</span>
+<span class="sd">        * **root_rank** *[str]*: Define an alternative root rank</span>
+<span class="sd">        * **unknown_node** *[str]*: Define a default return value for unknow/undefined nodes</span>
+<span class="sd">        * **unknown_name** *[str]*: Define a default return value for unknow/undefined names</span>
+<span class="sd">        * **unknown_rank** *[str]*: Define a default return value for unknow/undefined ranks</span>
+<span class="sd">        * **build_node_children** *[bool]*: Pre-build node,children dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_name_nodes** *[bool]*: Pre-build name,nodes dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_rank_nodes** *[bool]*: Pre-build rank,nodes dict (otherwise it will be created on first use)</span>
 <span class="sd">     </span>
 <span class="sd">        Examples:</span>
 
@@ -170,13 +170,6 @@
 
         <span class="k">if</span> <span class="n">output_prefix</span><span class="p">:</span>
             <span class="n">check_dir</span><span class="p">(</span><span class="n">output_prefix</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">root_parent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="n">root_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span> <span class="o">=</span> <span class="n">root_rank</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span> <span class="o">=</span> <span class="n">unknown_node</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_name</span> <span class="o">=</span> <span class="n">unknown_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_rank</span> <span class="o">=</span> <span class="n">unknown_rank</span>
 
         <span class="c1"># Main structures</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="p">{}</span>
@@ -201,7 +194,15 @@
 
         <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
 
-        <span class="c1"># Set root node</span>
+        <span class="c1"># Set undefined values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span> <span class="o">=</span> <span class="n">unknown_node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_name</span> <span class="o">=</span> <span class="n">unknown_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_rank</span> <span class="o">=</span> <span class="n">unknown_rank</span>
+
+        <span class="c1"># Set root values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">root_parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="n">root_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span> <span class="o">=</span> <span class="n">root_rank</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_root</span><span class="p">(</span><span class="n">custom_root_node</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="c1"># build auxiliary structures</span>
@@ -250,7 +251,7 @@
 
     <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return list of nodes containing a certain text</span>
+<span class="sd">        Return list of nodes which containing a certain text in their names</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup on first use</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">:</span>
@@ -552,19 +553,19 @@
 <span class="sd">        Constructor of the class</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        * **files** ***[str, list]***: One or more local files to parse</span>
-<span class="sd">        * **urls** ***[str, list]***: One or more urls to download and parse</span>
-<span class="sd">        * **output_prefix** ***[str]***: Directory to write downloaded files</span>
-<span class="sd">        * **root_node** ***[str]***: </span>
-<span class="sd">        * **root_parent** ***[str]***: </span>
-<span class="sd">        * **root_name** ***[str]***: </span>
-<span class="sd">        * **root_rank** ***[str]***: </span>
-<span class="sd">        * **unknown_node** ***[str]***: </span>
-<span class="sd">        * **unknown_name** ***[str]***: </span>
-<span class="sd">        * **unknown_rank** ***[str]***: </span>
-<span class="sd">        * **build_node_children** ***[bool]***: </span>
-<span class="sd">        * **build_name_nodes** ***[bool]***: </span>
-<span class="sd">        * **build_rank_nodes** ***[bool]***: </span>
+<span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
+<span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse</span>
+<span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files</span>
+<span class="sd">        * **root_node** *[str]*: Define an alternative root node (has to exist in the taxonomy)</span>
+<span class="sd">        * **root_parent** *[str]*: Define an alternative root parent</span>
+<span class="sd">        * **root_name** *[str]*: Define an alternative root name</span>
+<span class="sd">        * **root_rank** *[str]*: Define an alternative root rank</span>
+<span class="sd">        * **unknown_node** *[str]*: Define a default return value for unknow/undefined nodes</span>
+<span class="sd">        * **unknown_name** *[str]*: Define a default return value for unknow/undefined names</span>
+<span class="sd">        * **unknown_rank** *[str]*: Define a default return value for unknow/undefined ranks</span>
+<span class="sd">        * **build_node_children** *[bool]*: Pre-build node,children dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_name_nodes** *[bool]*: Pre-build name,nodes dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_rank_nodes** *[bool]*: Pre-build rank,nodes dict (otherwise it will be created on first use)</span>
 <span class="sd">     </span>
 <span class="sd">        Examples:</span>
 
@@ -580,13 +581,6 @@
 
         <span class="k">if</span> <span class="n">output_prefix</span><span class="p">:</span>
             <span class="n">check_dir</span><span class="p">(</span><span class="n">output_prefix</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">root_parent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="n">root_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span> <span class="o">=</span> <span class="n">root_rank</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span> <span class="o">=</span> <span class="n">unknown_node</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_name</span> <span class="o">=</span> <span class="n">unknown_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_rank</span> <span class="o">=</span> <span class="n">unknown_rank</span>
 
         <span class="c1"># Main structures</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="p">{}</span>
@@ -611,7 +605,15 @@
 
         <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
 
-        <span class="c1"># Set root node</span>
+        <span class="c1"># Set undefined values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span> <span class="o">=</span> <span class="n">unknown_node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_name</span> <span class="o">=</span> <span class="n">unknown_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_rank</span> <span class="o">=</span> <span class="n">unknown_rank</span>
+
+        <span class="c1"># Set root values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">root_parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="n">root_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span> <span class="o">=</span> <span class="n">root_rank</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_root</span><span class="p">(</span><span class="n">custom_root_node</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="c1"># build auxiliary structures</span>
@@ -660,7 +662,7 @@
 
     <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return list of nodes containing a certain text</span>
+<span class="sd">        Return list of nodes which containing a certain text in their names</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup on first use</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">:</span>
@@ -968,19 +970,19 @@
 <span class="sd">        Constructor of the class</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        * **files** ***[str, list]***: One or more local files to parse</span>
-<span class="sd">        * **urls** ***[str, list]***: One or more urls to download and parse</span>
-<span class="sd">        * **output_prefix** ***[str]***: Directory to write downloaded files</span>
-<span class="sd">        * **root_node** ***[str]***: </span>
-<span class="sd">        * **root_parent** ***[str]***: </span>
-<span class="sd">        * **root_name** ***[str]***: </span>
-<span class="sd">        * **root_rank** ***[str]***: </span>
-<span class="sd">        * **unknown_node** ***[str]***: </span>
-<span class="sd">        * **unknown_name** ***[str]***: </span>
-<span class="sd">        * **unknown_rank** ***[str]***: </span>
-<span class="sd">        * **build_node_children** ***[bool]***: </span>
-<span class="sd">        * **build_name_nodes** ***[bool]***: </span>
-<span class="sd">        * **build_rank_nodes** ***[bool]***: </span>
+<span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
+<span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse</span>
+<span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files</span>
+<span class="sd">        * **root_node** *[str]*: Define an alternative root node (has to exist in the taxonomy)</span>
+<span class="sd">        * **root_parent** *[str]*: Define an alternative root parent</span>
+<span class="sd">        * **root_name** *[str]*: Define an alternative root name</span>
+<span class="sd">        * **root_rank** *[str]*: Define an alternative root rank</span>
+<span class="sd">        * **unknown_node** *[str]*: Define a default return value for unknow/undefined nodes</span>
+<span class="sd">        * **unknown_name** *[str]*: Define a default return value for unknow/undefined names</span>
+<span class="sd">        * **unknown_rank** *[str]*: Define a default return value for unknow/undefined ranks</span>
+<span class="sd">        * **build_node_children** *[bool]*: Pre-build node,children dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_name_nodes** *[bool]*: Pre-build name,nodes dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_rank_nodes** *[bool]*: Pre-build rank,nodes dict (otherwise it will be created on first use)</span>
 <span class="sd">     </span>
 <span class="sd">        Examples:</span>
 
@@ -996,13 +998,6 @@
 
         <span class="k">if</span> <span class="n">output_prefix</span><span class="p">:</span>
             <span class="n">check_dir</span><span class="p">(</span><span class="n">output_prefix</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">root_parent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="n">root_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span> <span class="o">=</span> <span class="n">root_rank</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span> <span class="o">=</span> <span class="n">unknown_node</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_name</span> <span class="o">=</span> <span class="n">unknown_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_rank</span> <span class="o">=</span> <span class="n">unknown_rank</span>
 
         <span class="c1"># Main structures</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1027,7 +1022,15 @@
 
         <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
 
-        <span class="c1"># Set root node</span>
+        <span class="c1"># Set undefined values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span> <span class="o">=</span> <span class="n">unknown_node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_name</span> <span class="o">=</span> <span class="n">unknown_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_rank</span> <span class="o">=</span> <span class="n">unknown_rank</span>
+
+        <span class="c1"># Set root values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">root_parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="n">root_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span> <span class="o">=</span> <span class="n">root_rank</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_root</span><span class="p">(</span><span class="n">custom_root_node</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="c1"># build auxiliary structures</span>
@@ -1046,19 +1049,19 @@
 <p>Parameters:</p>
 
 <ul>
-<li><strong>files</strong> <strong><em>[str, list]</em></strong>: One or more local files to parse</li>
-<li><strong>urls</strong> <strong><em>[str, list]</em></strong>: One or more urls to download and parse</li>
-<li><strong>output_prefix</strong> <strong><em>[str]</em></strong>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_parent</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_name</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_rank</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_node</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_name</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_rank</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>build_node_children</strong> <strong><em>[bool]</em></strong>: </li>
-<li><strong>build_name_nodes</strong> <strong><em>[bool]</em></strong>: </li>
-<li><strong>build_rank_nodes</strong> <strong><em>[bool]</em></strong>: </li>
+<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
+<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy)</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define an alternative root parent</li>
+<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name</li>
+<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank</li>
+<li><strong>unknown_node</strong> <em>[str]</em>: Define a default return value for unknow/undefined nodes</li>
+<li><strong>unknown_name</strong> <em>[str]</em>: Define a default return value for unknow/undefined names</li>
+<li><strong>unknown_rank</strong> <em>[str]</em>: Define a default return value for unknow/undefined ranks</li>
+<li><strong>build_node_children</strong> <em>[bool]</em>: Pre-build node,children dict (otherwise it will be created on first use)</li>
+<li><strong>build_name_nodes</strong> <em>[bool]</em>: Pre-build name,nodes dict (otherwise it will be created on first use)</li>
+<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
 </ul>
 
 <p>Examples:</p>
@@ -1121,7 +1124,7 @@ tax = GtdbTx()
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return list of nodes containing a certain text</span>
+<span class="sd">        Return list of nodes which containing a certain text in their names</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup on first use</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">:</span>
@@ -1136,7 +1139,7 @@ tax = GtdbTx()
 
         </details>
 
-            <div class="docstring"><p>Return list of nodes containing a certain text</p>
+            <div class="docstring"><p>Return list of nodes which containing a certain text in their names</p>
 </div>
 
 

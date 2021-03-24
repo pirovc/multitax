@@ -349,7 +349,6 @@ multitax    </h1>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">GreengenesTx</span><span class="p">(</span><span class="n">MultiTax</span><span class="p">):</span>
-
     <span class="n">_default_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz&quot;</span><span class="p">]</span>
     <span class="n">_rank_codes</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;k__&quot;</span><span class="p">,</span> <span class="s2">&quot;kingdom&quot;</span><span class="p">),</span>
                    <span class="p">(</span><span class="s2">&quot;p__&quot;</span><span class="p">,</span> <span class="s2">&quot;phylum&quot;</span><span class="p">),</span>
@@ -424,19 +423,19 @@ multitax    </h1>
 <p>Parameters:</p>
 
 <ul>
-<li><strong>files</strong> <strong><em>[str, list]</em></strong>: One or more local files to parse</li>
-<li><strong>urls</strong> <strong><em>[str, list]</em></strong>: One or more urls to download and parse</li>
-<li><strong>output_prefix</strong> <strong><em>[str]</em></strong>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_parent</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_name</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_rank</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_node</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_name</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_rank</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>build_node_children</strong> <strong><em>[bool]</em></strong>: </li>
-<li><strong>build_name_nodes</strong> <strong><em>[bool]</em></strong>: </li>
-<li><strong>build_rank_nodes</strong> <strong><em>[bool]</em></strong>: </li>
+<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
+<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy)</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define an alternative root parent</li>
+<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name</li>
+<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank</li>
+<li><strong>unknown_node</strong> <em>[str]</em>: Define a default return value for unknow/undefined nodes</li>
+<li><strong>unknown_name</strong> <em>[str]</em>: Define a default return value for unknow/undefined names</li>
+<li><strong>unknown_rank</strong> <em>[str]</em>: Define a default return value for unknow/undefined ranks</li>
+<li><strong>build_node_children</strong> <em>[bool]</em>: Pre-build node,children dict (otherwise it will be created on first use)</li>
+<li><strong>build_name_nodes</strong> <em>[bool]</em>: Pre-build name,nodes dict (otherwise it will be created on first use)</li>
+<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
 </ul>
 
 <p>Examples:</p>
@@ -489,7 +488,6 @@ tax = GtdbTx()
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">GtdbTx</span><span class="p">(</span><span class="n">MultiTax</span><span class="p">):</span>
-
     <span class="n">_default_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/ar122_taxonomy.tsv.gz&quot;</span><span class="p">,</span>
                      <span class="s2">&quot;https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/bac120_taxonomy.tsv.gz&quot;</span><span class="p">]</span>
     <span class="n">_rank_codes</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;d__&quot;</span><span class="p">,</span> <span class="s2">&quot;domain&quot;</span><span class="p">),</span>
@@ -563,19 +561,19 @@ tax = GtdbTx()
 <p>Parameters:</p>
 
 <ul>
-<li><strong>files</strong> <strong><em>[str, list]</em></strong>: One or more local files to parse</li>
-<li><strong>urls</strong> <strong><em>[str, list]</em></strong>: One or more urls to download and parse</li>
-<li><strong>output_prefix</strong> <strong><em>[str]</em></strong>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_parent</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_name</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_rank</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_node</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_name</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_rank</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>build_node_children</strong> <strong><em>[bool]</em></strong>: </li>
-<li><strong>build_name_nodes</strong> <strong><em>[bool]</em></strong>: </li>
-<li><strong>build_rank_nodes</strong> <strong><em>[bool]</em></strong>: </li>
+<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
+<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy)</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define an alternative root parent</li>
+<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name</li>
+<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank</li>
+<li><strong>unknown_node</strong> <em>[str]</em>: Define a default return value for unknow/undefined nodes</li>
+<li><strong>unknown_name</strong> <em>[str]</em>: Define a default return value for unknow/undefined names</li>
+<li><strong>unknown_rank</strong> <em>[str]</em>: Define a default return value for unknow/undefined ranks</li>
+<li><strong>build_node_children</strong> <em>[bool]</em>: Pre-build node,children dict (otherwise it will be created on first use)</li>
+<li><strong>build_name_nodes</strong> <em>[bool]</em>: Pre-build name,nodes dict (otherwise it will be created on first use)</li>
+<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
 </ul>
 
 <p>Examples:</p>
@@ -628,7 +626,6 @@ tax = GtdbTx()
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">NcbiTx</span><span class="p">(</span><span class="n">MultiTax</span><span class="p">):</span>
-
     <span class="n">_default_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -748,19 +745,19 @@ tax = GtdbTx()
 <p>Parameters:</p>
 
 <ul>
-<li><strong>files</strong> <strong><em>[str, list]</em></strong>: One or more local files to parse</li>
-<li><strong>urls</strong> <strong><em>[str, list]</em></strong>: One or more urls to download and parse</li>
-<li><strong>output_prefix</strong> <strong><em>[str]</em></strong>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_parent</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_name</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_rank</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_node</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_name</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_rank</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>build_node_children</strong> <strong><em>[bool]</em></strong>: </li>
-<li><strong>build_name_nodes</strong> <strong><em>[bool]</em></strong>: </li>
-<li><strong>build_rank_nodes</strong> <strong><em>[bool]</em></strong>: </li>
+<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
+<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy)</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define an alternative root parent</li>
+<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name</li>
+<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank</li>
+<li><strong>unknown_node</strong> <em>[str]</em>: Define a default return value for unknow/undefined nodes</li>
+<li><strong>unknown_name</strong> <em>[str]</em>: Define a default return value for unknow/undefined names</li>
+<li><strong>unknown_rank</strong> <em>[str]</em>: Define a default return value for unknow/undefined ranks</li>
+<li><strong>build_node_children</strong> <em>[bool]</em>: Pre-build node,children dict (otherwise it will be created on first use)</li>
+<li><strong>build_name_nodes</strong> <em>[bool]</em>: Pre-build name,nodes dict (otherwise it will be created on first use)</li>
+<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
 </ul>
 
 <p>Examples:</p>
@@ -885,10 +882,6 @@ If desc=True, keep all descendants instead.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">OttTx</span><span class="p">(</span><span class="n">MultiTax</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Specialized class from MultiTax to parse the Open tree taxonomy</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">_default_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;http://files.opentreeoflife.org/ott/ott3.2/ott3.2.tgz&quot;</span><span class="p">]</span>
     <span class="n">_default_root_node</span> <span class="o">=</span> <span class="s2">&quot;805080&quot;</span>
 
@@ -978,9 +971,7 @@ If desc=True, keep all descendants instead.</p>
 
         </details>
 
-            <div class="docstring"><p>Specialized class from MultiTax to parse the Open tree taxonomy</p>
-</div>
-
+    
 
                             <div id="OttTx.__init__" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#OttTx.__init__">#&nbsp;&nbsp</a>
@@ -1003,19 +994,19 @@ If desc=True, keep all descendants instead.</p>
 <p>Parameters:</p>
 
 <ul>
-<li><strong>files</strong> <strong><em>[str, list]</em></strong>: One or more local files to parse</li>
-<li><strong>urls</strong> <strong><em>[str, list]</em></strong>: One or more urls to download and parse</li>
-<li><strong>output_prefix</strong> <strong><em>[str]</em></strong>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_parent</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_name</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_rank</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_node</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_name</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_rank</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>build_node_children</strong> <strong><em>[bool]</em></strong>: </li>
-<li><strong>build_name_nodes</strong> <strong><em>[bool]</em></strong>: </li>
-<li><strong>build_rank_nodes</strong> <strong><em>[bool]</em></strong>: </li>
+<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
+<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy)</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define an alternative root parent</li>
+<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name</li>
+<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank</li>
+<li><strong>unknown_node</strong> <em>[str]</em>: Define a default return value for unknow/undefined nodes</li>
+<li><strong>unknown_name</strong> <em>[str]</em>: Define a default return value for unknow/undefined names</li>
+<li><strong>unknown_rank</strong> <em>[str]</em>: Define a default return value for unknow/undefined ranks</li>
+<li><strong>build_node_children</strong> <em>[bool]</em>: Pre-build node,children dict (otherwise it will be created on first use)</li>
+<li><strong>build_name_nodes</strong> <em>[bool]</em>: Pre-build name,nodes dict (otherwise it will be created on first use)</li>
+<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
 </ul>
 
 <p>Examples:</p>
@@ -1140,7 +1131,6 @@ If desc=True, keep all descendants instead.</p>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">SilvaTx</span><span class="p">(</span><span class="n">MultiTax</span><span class="p">):</span>
-
     <span class="n">_default_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.1.txt.gz&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1210,19 +1200,19 @@ If desc=True, keep all descendants instead.</p>
 <p>Parameters:</p>
 
 <ul>
-<li><strong>files</strong> <strong><em>[str, list]</em></strong>: One or more local files to parse</li>
-<li><strong>urls</strong> <strong><em>[str, list]</em></strong>: One or more urls to download and parse</li>
-<li><strong>output_prefix</strong> <strong><em>[str]</em></strong>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_parent</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_name</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>root_rank</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_node</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_name</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>unknown_rank</strong> <strong><em>[str]</em></strong>: </li>
-<li><strong>build_node_children</strong> <strong><em>[bool]</em></strong>: </li>
-<li><strong>build_name_nodes</strong> <strong><em>[bool]</em></strong>: </li>
-<li><strong>build_rank_nodes</strong> <strong><em>[bool]</em></strong>: </li>
+<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
+<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy)</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define an alternative root parent</li>
+<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name</li>
+<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank</li>
+<li><strong>unknown_node</strong> <em>[str]</em>: Define a default return value for unknow/undefined nodes</li>
+<li><strong>unknown_name</strong> <em>[str]</em>: Define a default return value for unknow/undefined names</li>
+<li><strong>unknown_rank</strong> <em>[str]</em>: Define a default return value for unknow/undefined ranks</li>
+<li><strong>build_node_children</strong> <em>[bool]</em>: Pre-build node,children dict (otherwise it will be created on first use)</li>
+<li><strong>build_name_nodes</strong> <em>[bool]</em>: Pre-build name,nodes dict (otherwise it will be created on first use)</li>
+<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
 </ul>
 
 <p>Examples:</p>

@@ -2,10 +2,6 @@ from .multitax import MultiTax
 
 
 class OttTx(MultiTax):
-    """
-    Specialized class from MultiTax to parse the Open tree taxonomy
-    """
-
     _default_urls = ["http://files.opentreeoflife.org/ott/ott3.2/ott3.2.tgz"]
     _default_root_node = "805080"
 

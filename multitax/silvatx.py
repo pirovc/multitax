@@ -2,7 +2,6 @@ from .multitax import MultiTax
 
 
 class SilvaTx(MultiTax):
-
     _default_urls = ["https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.1.txt.gz"]
 
     def __init__(self, **kwargs):

@@ -26,19 +26,19 @@ class MultiTax(object):
         Constructor of the class
 
         Parameters:
-        * **files** ***[str, list]***: One or more local files to parse
-        * **urls** ***[str, list]***: One or more urls to download and parse
-        * **output_prefix** ***[str]***: Directory to write downloaded files
-        * **root_node** ***[str]***: 
-        * **root_parent** ***[str]***: 
-        * **root_name** ***[str]***: 
-        * **root_rank** ***[str]***: 
-        * **unknown_node** ***[str]***: 
-        * **unknown_name** ***[str]***: 
-        * **unknown_rank** ***[str]***: 
-        * **build_node_children** ***[bool]***: 
-        * **build_name_nodes** ***[bool]***: 
-        * **build_rank_nodes** ***[bool]***: 
+        * **files** *[str, list]*: One or more local files to parse
+        * **urls** *[str, list]*: One or more urls to download and parse
+        * **output_prefix** *[str]*: Directory to write downloaded files
+        * **root_node** *[str]*: Define an alternative root node (has to exist in the taxonomy)
+        * **root_parent** *[str]*: Define an alternative root parent
+        * **root_name** *[str]*: Define an alternative root name
+        * **root_rank** *[str]*: Define an alternative root rank
+        * **unknown_node** *[str]*: Define a default return value for unknow/undefined nodes
+        * **unknown_name** *[str]*: Define a default return value for unknow/undefined names
+        * **unknown_rank** *[str]*: Define a default return value for unknow/undefined ranks
+        * **build_node_children** *[bool]*: Pre-build node,children dict (otherwise it will be created on first use)
+        * **build_name_nodes** *[bool]*: Pre-build name,nodes dict (otherwise it will be created on first use)
+        * **build_rank_nodes** *[bool]*: Pre-build rank,nodes dict (otherwise it will be created on first use)
      
         Examples:
 
@@ -54,13 +54,6 @@ class MultiTax(object):
 
         if output_prefix:
             check_dir(output_prefix)
-
-        self.root_parent = root_parent
-        self.root_name = root_name
-        self.root_rank = root_rank
-        self.unknown_node = unknown_node
-        self.unknown_name = unknown_name
-        self.unknown_rank = unknown_rank
 
         # Main structures
         self._nodes = {}
@@ -85,7 +78,15 @@ class MultiTax(object):
 
         close_files(fhs)
 
-        # Set root node
+        # Set undefined values
+        self.unknown_node = unknown_node
+        self.unknown_name = unknown_name
+        self.unknown_rank = unknown_rank
+
+        # Set root values
+        self.root_parent = root_parent
+        self.root_name = root_name
+        self.root_rank = root_rank
         self._set_root(custom_root_node=root_node if root_node else None)
 
         # build auxiliary structures
@@ -134,7 +135,7 @@ class MultiTax(object):
 
     def search_name(self, text):
         """
-        Return list of nodes containing a certain text
+        Return list of nodes which containing a certain text in their names
         """
         # Setup on first use
         if not self._name_nodes:

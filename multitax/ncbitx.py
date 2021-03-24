@@ -2,7 +2,6 @@ from .multitax import MultiTax
 
 
 class NcbiTx(MultiTax):
-
     _default_urls = ["ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"]
 
     def __init__(self, **kwargs):

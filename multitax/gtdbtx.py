@@ -2,7 +2,6 @@ from .multitax import MultiTax
 
 
 class GtdbTx(MultiTax):
-
     _default_urls = ["https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/ar122_taxonomy.tsv.gz",
                      "https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/bac120_taxonomy.tsv.gz"]
     _rank_codes = [("d__", "domain"),

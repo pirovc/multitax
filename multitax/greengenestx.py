@@ -2,7 +2,6 @@ from .multitax import MultiTax
 
 
 class GreengenesTx(MultiTax):
-
     _default_urls = ["https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz"]
     _rank_codes = [("k__", "kingdom"),
                    ("p__", "phylum"),
