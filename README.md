@@ -13,6 +13,14 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
 
     python setup.py install --record files.txt
 
+## Documentation
+    
+    docs/
+
+    or
+
+    https://pirovc.github.io/multitax/
+
 ## Basic Example with GTDB
 
     from multitax import GtdbTx
@@ -24,7 +32,7 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
     tax.lineage("g__Escherichia")
     # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
 
-## Further Usage
+## Further Examples
 
     from multitax import GtdbTx
     
