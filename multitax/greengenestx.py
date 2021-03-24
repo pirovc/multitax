@@ -12,11 +12,16 @@ class GreengenesTx(MultiTax):
                    ("g__", "genus"),
                    ("s__", "species")]
 
+    def __init__(self, **kwargs):
+        # forwards.tsv
+        self._forwards = {}
+        super().__init__(**kwargs)
+
     def __repr__(self):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
         return 'GreengenesTx({})'.format(', '.join(args))
 
-    def parse(self, fhs):
+    def _parse(self, fhs):
         nodes = {}
         ranks = {}
         names = {}

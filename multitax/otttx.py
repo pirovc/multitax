@@ -10,9 +10,8 @@ class OttTx(MultiTax):
     _default_root_node = "805080"
 
     def __init__(self, **kwargs):
-        # forwards.tsv
+        # [forwards.tsv]
         self._forwards = {}
-
         super().__init__(**kwargs)
 
     def __repr__(self):

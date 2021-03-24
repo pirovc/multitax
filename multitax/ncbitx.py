@@ -8,7 +8,6 @@ class NcbiTx(MultiTax):
     def __init__(self, **kwargs):
         # [merged.dmp]
         self._merged = {}
-
         super().__init__(**kwargs)
 
     def __repr__(self):

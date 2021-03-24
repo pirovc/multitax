@@ -13,6 +13,9 @@ class GtdbTx(MultiTax):
                    ("g__", "genus"),
                    ("s__", "species")]
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def __repr__(self):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
         return 'GtdbTx({})'.format(', '.join(args))

@@ -19,10 +19,33 @@ class MultiTax(object):
                  unknown_node: str=None,
                  unknown_name: str=None,
                  unknown_rank: str=None,
-                 build_lineages: bool=False,
                  build_name_nodes: bool=False,
-                 build_node_children: bool=False):
+                 build_node_children: bool=False,
+                 build_rank_nodes: bool=False):
+        """
+        Constructor of the class
 
+        Parameters:
+        * **files** ***[str, list]***: One or more local files to parse
+        * **urls** ***[str, list]***: One or more urls to download and parse
+        * **output_prefix** ***[str]***: Directory to write downloaded files
+        * **root_node** ***[str]***: 
+        * **root_parent** ***[str]***: 
+        * **root_name** ***[str]***: 
+        * **root_rank** ***[str]***: 
+        * **unknown_node** ***[str]***: 
+        * **unknown_name** ***[str]***: 
+        * **unknown_rank** ***[str]***: 
+        * **build_node_children** ***[bool]***: 
+        * **build_name_nodes** ***[bool]***: 
+        * **build_rank_nodes** ***[bool]***: 
+     
+        Examples:
+
+            # Downloads default GTDB taxonomy
+            tax = GtdbTx()
+
+        """
         if files:
             if isinstance(files, str):
                 files = [files]
@@ -46,6 +69,7 @@ class MultiTax(object):
         self._lineages = {}
         self._name_nodes = {}
         self._node_children = {}
+        self._rank_nodes = {}
 
         # Open/Download/Write files
         if files:
@@ -61,19 +85,16 @@ class MultiTax(object):
 
         close_files(fhs)
 
-        # If a different root_node is define, filter tree
-        if root_node:
-            self._set_root(custom_root_node=root_node)
-        else:
-            self._set_root()
+        # Set root node
+        self._set_root(custom_root_node=root_node if root_node else None)
 
         # build auxiliary structures
-        if build_name_nodes:
-            self._name_nodes = reverse_dict(self._names)
         if build_node_children:
             self._node_children = reverse_dict(self._nodes)
-        if build_lineages:
-            self.build_lineages()
+        if build_name_nodes:
+            self._name_nodes = reverse_dict(self._names)
+        if build_rank_nodes:
+            self._rank_nodes = reverse_dict(self._ranks)
 
     def _parse(self, fhs):
         """
@@ -84,6 +105,9 @@ class MultiTax(object):
         return {}, {}, {}
 
     def _set_root(self, custom_root_node: str=None):
+        """
+        Set root node define by each class default (_default_root_node) or custom
+        """
         if custom_root_node:
             self.root_node = custom_root_node
             # If custom root node is defined, keep only its descendants
@@ -96,7 +120,33 @@ class MultiTax(object):
         self._ranks[self.root_node] = self.root_rank
         self._names[self.root_node] = self.root_name
 
-    def node(self, name):
+    def children(self, node):
+        """
+        Return list of children of a given node
+        """
+        # Setup on first use
+        if not self._node_children:
+            self._node_children = reverse_dict(self._nodes)
+        if node in self._node_children:
+            return self._node_children[node]
+        else:
+            return []
+
+    def search_name(self, text):
+        """
+        Return list of nodes containing a certain text
+        """
+        # Setup on first use
+        if not self._name_nodes:
+            self._name_nodes = reverse_dict(self._names)
+
+        matching_nodes = []
+        for name in self._name_nodes:
+            if text in name:
+                matching_nodes.extend(self._name_nodes[name])
+        return matching_nodes
+
+    def nodes_name(self, name):
         """
         Return list of nodes of a given name
         """
@@ -108,15 +158,15 @@ class MultiTax(object):
         else:
             return []
 
-    def children(self, node):
+    def nodes_rank(self, rank):
         """
-        Return list of children of a given node
+        Return list of nodes of a given rank
         """
         # Setup on first use
-        if not self._node_children:
-            self._node_children = reverse_dict(self._nodes)
-        if node in self._node_children:
-            return self._node_children[node]
+        if not self._rank_nodes:
+            self._rank_nodes = reverse_dict(self._ranks)
+        if rank in self._rank_nodes:
+            return self._rank_nodes[rank]
         else:
             return []
 
@@ -205,12 +255,6 @@ class MultiTax(object):
             else:
                 return lin
 
-    def parent_rank(self, node, rank):
-        """
-        Return parent node of the specified rank.
-        """
-        return self.lineage(node=node, ranks=[rank])[0]
-
     def rank_lineage(self, node: str, root_node: str=None, ranks: list=None):
         """
         Return lineage of ranks.
@@ -229,6 +273,12 @@ class MultiTax(object):
                                      root_node=root_node,
                                      ranks=ranks)))
 
+    def parent_rank(self, node, rank):
+        """
+        Return parent node of the specified rank.
+        """
+        return self.lineage(node=node, ranks=[rank])[0]
+
     def stats(self):
         """
         General stats of the loaded taxonomy.
@@ -236,7 +286,7 @@ class MultiTax(object):
         s = {}
         s["nodes"] = len(self._nodes)
         s["ranks"] = len(self._ranks)
-        s["names"] = len(self._ranks)
+        s["names"] = len(self._names)
         unique_ranks = set(self._ranks.values())
         s["unique_ranks"] = len(set(self._ranks.values()))
         for ur in unique_ranks:
@@ -313,7 +363,7 @@ class MultiTax(object):
 
     def write(self, output_file, cols: list=["node", "parent", "rank", "name"], sep: str="\t", lineage_sep: str="|", ranks: list=None, gz: bool=False):
         """
-        Write loaded taxonomy to a text file. 
+        Write taxonomy to a file.
         cols can be: "node", "latest", "parent", "rank", "name", "leaves", "children", "lineage", "rank_lineage", "name_lineage
         Default cols: "node", "parent", "rank", "name"
         """
