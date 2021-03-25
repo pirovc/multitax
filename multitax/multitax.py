@@ -1,5 +1,5 @@
 from .utils import open_files, download_files, close_files, check_file, check_no_file, check_dir, reverse_dict
-
+from collections import Counter
 
 class MultiTax(object):
 
@@ -23,7 +23,7 @@ class MultiTax(object):
                  build_node_children: bool=False,
                  build_rank_nodes: bool=False):
         """
-        Constructor of the class
+        Main constructor of MultiTax and sub-classes
 
         Parameters:
         * **files** *[str, list]*: One or more local files to parse
@@ -278,20 +278,49 @@ class MultiTax(object):
         """
         Return parent node of the specified rank.
         """
-        return self.lineage(node=node, ranks=[rank])[0]
+        parent = self.lineage(node=node, ranks=[rank])
+        return parent[0] if parent else None
 
     def stats(self):
         """
-        General stats of the loaded taxonomy.
+        General stats of the taxonomic tree
+
+        Paramenters: None
+
+        Returns:
+
+        * **[dict]** with total counts "nodes", "ranks", "names", "leaves" and rank specific counts "ranked_nodes", "ranked_leaves" with total of counts for each rank
+        
+        Example:
+
+            from pprint import pprint
+            from multitax import GtdbTx
+            tax = GtdbTx()
+
+            pprint(tax.stats())
+            {'leaves': 30238,
+             'names': 42739,
+             'nodes': 42739,
+             'ranked_leaves': Counter({'species': 30238}),
+             'ranked_nodes': Counter({'species': 30238,
+                                      'genus': 8778,
+                                      'family': 2323,
+                                      'order': 930,
+                                      'class': 337,
+                                      'phylum': 131,
+                                      'domain': 1,
+                                      'root': 1}),
+             'ranks': 42739}
         """
         s = {}
         s["nodes"] = len(self._nodes)
         s["ranks"] = len(self._ranks)
         s["names"] = len(self._names)
-        unique_ranks = set(self._ranks.values())
-        s["unique_ranks"] = len(set(self._ranks.values()))
-        for ur in unique_ranks:
-            s[("nodes", ur)] = list(self._ranks.values()).count(ur)
+        all_leaves = self.leaves(self.root_node)
+        s["leaves"] = len(all_leaves)
+        s["ranked_nodes"] = Counter(self._ranks.values())
+        s["ranked_leaves"] = Counter(map(self.rank, all_leaves))
+
         return s
 
     def build_lineages(self, root_node: str=None, ranks: list=None):
@@ -323,8 +352,37 @@ class MultiTax(object):
 
     def filter(self, nodes: list, desc: bool=False):
         """
-        Filter nodes from the taxonomy. By default keep all ancestors of requested nodes.
+        Filter taxonomy to selected nodes.
+        By default keep all the ancestors of the given nodes.
         If desc=True, keep all descendants instead.
+        It will delete pre-build lineages.
+
+        Parameters:
+        * ...
+
+        Returns: None
+
+        Example:
+
+            from multitax import GtdbTx
+            tax = GtdbTx()
+
+            tax.lineage('s__Enterovibrio marina')
+            # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Vibrionaceae', 'g__Enterovibrio', 's__Enterovibrio marina']
+
+            # Keep only ancestors of 'g__Enterovibrio'
+            tax.filter('g__Enterovibrio')
+            tax.stats()
+            # {'nodes': 7, 'ranks': 7, 'names': 7, 'unique_ranks': 7, ('nodes', 'class'): 1, ('nodes', 'root'): 1, ('nodes', 'phylum'): 1, ('nodes', 'domain'): 1, ('nodes', 'genus'): 1, ('nodes', 'order'): 1, ('nodes', 'family'): 1}
+
+            # Reload taxonomy
+            tax = GtdbTx()
+
+            # Keep only descendants of 'g__Enterovibrio'
+            tax.filter('g__Enterovibrio', desc=True)
+            tax.stats()
+            #{'nodes': 17, 'ranks': 17, 'names': 17, 'unique_ranks': 3, ('nodes', 'root'): 1, ('nodes', 'species'): 15, ('nodes', 'genus'): 1}
+
         """
         if isinstance(nodes, str):
             nodes = [nodes]
@@ -359,8 +417,9 @@ class MultiTax(object):
             del self._ranks[node]
         # Reset data structures
         self._lineages = {}
-        self._name_nodes = {}
         self._node_children = {}
+        self._name_nodes = {}
+        self._rank_nodes = {}
 
     def write(self, output_file, cols: list=["node", "parent", "rank", "name"], sep: str="\t", lineage_sep: str="|", ranks: list=None, gz: bool=False):
         """

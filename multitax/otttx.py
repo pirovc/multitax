@@ -80,10 +80,7 @@ class OttTx(MultiTax):
             n = self.forwards(node)
         return n
 
-    def filter(self, nodes: list, desc: bool=False):
-        super().filter(nodes, desc)
-        filtered_forwards = set(self._forwards)
-        for node in self._nodes:
-            filtered_forwards.discard(node)
-        for node in filtered_forwards:
-            del self._forwards[node]
+    def stats(self):
+        s = super().stats()
+        s["merged"] = len(self._forwards)
+        return s

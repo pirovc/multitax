@@ -31,10 +31,10 @@
                     <a class="function" href="#open_files">open_files</a>
             </li>
             <li>
-                    <a class="function" href="#close_files">close_files</a>
+                    <a class="function" href="#download_files">download_files</a>
             </li>
             <li>
-                    <a class="function" href="#download_files">download_files</a>
+                    <a class="function" href="#close_files">close_files</a>
             </li>
             <li>
                     <a class="function" href="#save_urls">save_urls</a>
@@ -82,6 +82,14 @@
 
 
 <span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    * **files** *[list]*: List of files to open (text, &quot;.gz&quot;, &quot;.tar.gz&quot;, &quot;.tgz&quot;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    * OrderedDict {file: file handler} (same order as input)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">fhs</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tar.gz&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tgz&quot;</span><span class="p">):</span>
@@ -93,12 +101,17 @@
     <span class="k">return</span> <span class="n">fhs</span>
 
 
-<span class="k">def</span> <span class="nf">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">fhs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-
 <span class="k">def</span> <span class="nf">download_files</span><span class="p">(</span><span class="n">urls</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Download and open files (memory/stream) or write to disk (multitax.utils.save_urls)</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    * **urls** *[list]*: List of files to download (text, &quot;.gz&quot;, &quot;.tar.gz&quot;, &quot;.tgz&quot;)</span>
+<span class="sd">    * **output_prefix** *[str]*: Output directory to save files</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    * OrderedDict {file: file handler} (same order as input)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">urls</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">urls</span><span class="p">]</span>
 
@@ -121,7 +134,26 @@
         <span class="k">return</span> <span class="n">fhs</span>
 
 
+<span class="k">def</span> <span class="nf">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    * **fhs** *[dict]*: {file: file handler}</span>
+
+<span class="sd">    Returns: Nothing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">fhs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
 <span class="k">def</span> <span class="nf">save_urls</span><span class="p">(</span><span class="n">urls</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    * **urls** *[list]*: List of urls to download</span>
+<span class="sd">    * **output_prefix** *[str]*: Output directory to save files</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    * list of files saved</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
         <span class="n">outfile</span> <span class="o">=</span> <span class="n">output_prefix</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
@@ -135,6 +167,13 @@
 
 
 <span class="k">def</span> <span class="nf">load_url_mem</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    * **url** *[str]*: URL to load into memory</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    * io.BytesIO of the requested url</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">urlstream</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
     <span class="c1"># From https://stackoverflow.com/questions/18623842/read-contents-tarfile-into-python-seeking-backwards-is-not-allowed</span>
     <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
@@ -188,6 +227,14 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    * **files** *[list]*: List of files to open (text, &quot;.gz&quot;, &quot;.tar.gz&quot;, &quot;.tgz&quot;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    * OrderedDict {file: file handler} (same order as input)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">fhs</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tar.gz&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tgz&quot;</span><span class="p">):</span>
@@ -201,27 +248,19 @@
 
         </details>
 
-    
+            <div class="docstring"><p>Parameters:</p>
 
-                </section>
-                <section id="close_files">
-                            <div class="attr function"><a class="headerlink" href="#close_files">#&nbsp;&nbsp</a>
+<ul>
+<li><strong>files</strong> <em>[list]</em>: List of files to open (text, ".gz", ".tar.gz", ".tgz")</li>
+</ul>
 
-        
-            <span class="def">def</span>
-            <span class="name">close_files</span><span class="signature">(fhs)</span>:
-    </div>
+<p>Returns:</p>
 
-                <details>
-            <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">fhs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre></div>
+<ul>
+<li>OrderedDict {file: file handler} (same order as input)</li>
+</ul>
+</div>
 
-        </details>
-
-    
 
                 </section>
                 <section id="download_files">
@@ -235,6 +274,16 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">download_files</span><span class="p">(</span><span class="n">urls</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Download and open files (memory/stream) or write to disk (multitax.utils.save_urls)</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    * **urls** *[list]*: List of files to download (text, &quot;.gz&quot;, &quot;.tar.gz&quot;, &quot;.tgz&quot;)</span>
+<span class="sd">    * **output_prefix** *[str]*: Output directory to save files</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    * OrderedDict {file: file handler} (same order as input)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">urls</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="n">urls</span><span class="p">]</span>
 
@@ -259,7 +308,56 @@
 
         </details>
 
-    
+            <div class="docstring"><p>Download and open files (memory/stream) or write to disk (<a href="#save_urls">multitax.utils.save_urls</a>)</p>
+
+<p>Parameters:</p>
+
+<ul>
+<li><strong>urls</strong> <em>[list]</em>: List of files to download (text, ".gz", ".tar.gz", ".tgz")</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Output directory to save files</li>
+</ul>
+
+<p>Returns:</p>
+
+<ul>
+<li>OrderedDict {file: file handler} (same order as input)</li>
+</ul>
+</div>
+
+
+                </section>
+                <section id="close_files">
+                            <div class="attr function"><a class="headerlink" href="#close_files">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">close_files</span><span class="signature">(fhs)</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    * **fhs** *[dict]*: {file: file handler}</span>
+
+<span class="sd">    Returns: Nothing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">fhs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Parameters:</p>
+
+<ul>
+<li><strong>fhs</strong> <em>[dict]</em>: {file: file handler}</li>
+</ul>
+
+<p>Returns: Nothing</p>
+</div>
+
 
                 </section>
                 <section id="save_urls">
@@ -273,6 +371,14 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">save_urls</span><span class="p">(</span><span class="n">urls</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    * **urls** *[list]*: List of urls to download</span>
+<span class="sd">    * **output_prefix** *[str]*: Output directory to save files</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    * list of files saved</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
         <span class="n">outfile</span> <span class="o">=</span> <span class="n">output_prefix</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
@@ -287,7 +393,20 @@
 
         </details>
 
-    
+            <div class="docstring"><p>Parameters:</p>
+
+<ul>
+<li><strong>urls</strong> <em>[list]</em>: List of urls to download</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Output directory to save files</li>
+</ul>
+
+<p>Returns:</p>
+
+<ul>
+<li>list of files saved</li>
+</ul>
+</div>
+
 
                 </section>
                 <section id="load_url_mem">
@@ -301,6 +420,13 @@
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_url_mem</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    * **url** *[str]*: URL to load into memory</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    * io.BytesIO of the requested url</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">urlstream</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
     <span class="c1"># From https://stackoverflow.com/questions/18623842/read-contents-tarfile-into-python-seeking-backwards-is-not-allowed</span>
     <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
@@ -316,7 +442,19 @@
 
         </details>
 
-    
+            <div class="docstring"><p>Parameters:</p>
+
+<ul>
+<li><strong>url</strong> <em>[str]</em>: URL to load into memory</li>
+</ul>
+
+<p>Returns:</p>
+
+<ul>
+<li>io.BytesIO of the requested url</li>
+</ul>
+</div>
+
 
                 </section>
                 <section id="check_file">

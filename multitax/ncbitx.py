@@ -87,10 +87,7 @@ class NcbiTx(MultiTax):
             n = self.merged(node)
         return n
 
-    def filter(self, nodes: list, desc: bool=False):
-        super().filter(nodes, desc)
-        filtered_merged = set(self._merged)
-        for node in self._nodes:
-            filtered_merged.discard(node)
-        for node in filtered_merged:
-            del self._merged[node]
+    def stats(self):
+        s = super().stats()
+        s["merged"] = len(self._merged)
+        return s

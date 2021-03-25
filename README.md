@@ -160,7 +160,6 @@ Not yet implemented. The goal here is to map different taxonomies if the linkage
 - integration tests
 - CustomTx
 - DummyTx
-- better stats
 - translate
 - release
 

@@ -8,6 +8,14 @@ from collections import OrderedDict
 
 
 def open_files(files):
+    """
+    Parameters:
+    * **files** *[list]*: List of files to open (text, ".gz", ".tar.gz", ".tgz")
+
+    Returns:
+    * OrderedDict {file: file handler} (same order as input)
+    """
+
     fhs = OrderedDict()
     for file in files:
         if file.endswith(".tar.gz") or file.endswith(".tgz"):
@@ -19,12 +27,17 @@ def open_files(files):
     return fhs
 
 
-def close_files(fhs):
-    for fh in fhs.values():
-        fh.close()
-
-
 def download_files(urls, output_prefix: str=None):
+    """
+    Download and open files (memory/stream) or write to disk (multitax.utils.save_urls)
+
+    Parameters:
+    * **urls** *[list]*: List of files to download (text, ".gz", ".tar.gz", ".tgz")
+    * **output_prefix** *[str]*: Output directory to save files
+
+    Returns:
+    * OrderedDict {file: file handler} (same order as input)
+    """
     if isinstance(urls, str):
         urls = [urls]
 
@@ -47,7 +60,26 @@ def download_files(urls, output_prefix: str=None):
         return fhs
 
 
+def close_files(fhs):
+    """
+    Parameters:
+    * **fhs** *[dict]*: {file: file handler}
+
+    Returns: Nothing
+    """
+    for fh in fhs.values():
+        fh.close()
+
+
 def save_urls(urls, output_prefix):
+    """
+    Parameters:
+    * **urls** *[list]*: List of urls to download
+    * **output_prefix** *[str]*: Output directory to save files
+
+    Returns:
+    * list of files saved
+    """
     files = []
     for url in urls:
         outfile = output_prefix + "/" + os.path.basename(url)
@@ -61,6 +93,13 @@ def save_urls(urls, output_prefix):
 
 
 def load_url_mem(url):
+    """
+    Parameters:
+    * **url** *[str]*: URL to load into memory
+
+    Returns:
+    * io.BytesIO of the requested url
+    """
     urlstream = urllib.request.urlopen(url)
     # From https://stackoverflow.com/questions/18623842/read-contents-tarfile-into-python-seeking-backwards-is-not-allowed
     tmpfile = io.BytesIO()

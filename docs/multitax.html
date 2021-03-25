@@ -78,7 +78,7 @@
                                 <a class="function" href="#NcbiTx.latest">latest</a>
                         </li>
                         <li>
-                                <a class="function" href="#NcbiTx.filter">filter</a>
+                                <a class="function" href="#NcbiTx.stats">stats</a>
                         </li>
                 </ul>
 
@@ -96,7 +96,7 @@
                                 <a class="function" href="#OttTx.latest">latest</a>
                         </li>
                         <li>
-                                <a class="function" href="#OttTx.filter">filter</a>
+                                <a class="function" href="#OttTx.stats">stats</a>
                         </li>
                 </ul>
 
@@ -418,7 +418,7 @@ multitax    </h1>
 
         </details>
 
-            <div class="docstring"><p>Constructor of the class</p>
+            <div class="docstring"><p>Main constructor of MultiTax and sub-classes</p>
 
 <p>Parameters:</p>
 
@@ -556,7 +556,7 @@ tax = GtdbTx()
 
         </details>
 
-            <div class="docstring"><p>Constructor of the class</p>
+            <div class="docstring"><p>Main constructor of MultiTax and sub-classes</p>
 
 <p>Parameters:</p>
 
@@ -711,13 +711,10 @@ tax = GtdbTx()
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merged</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">n</span>
 
-    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">desc</span><span class="p">)</span>
-        <span class="n">filtered_merged</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
-            <span class="n">filtered_merged</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">filtered_merged</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
+        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;merged&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span>
 </pre></div>
 
         </details>
@@ -740,7 +737,7 @@ tax = GtdbTx()
 
         </details>
 
-            <div class="docstring"><p>Constructor of the class</p>
+            <div class="docstring"><p>Main constructor of MultiTax and sub-classes</p>
 
 <p>Parameters:</p>
 
@@ -816,29 +813,55 @@ Mainly used for accessing NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 
 
                             </div>
-                            <div id="NcbiTx.filter" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#NcbiTx.filter">#&nbsp;&nbsp</a>
+                            <div id="NcbiTx.stats" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#NcbiTx.stats">#&nbsp;&nbsp</a>
 
         
             <span class="def">def</span>
-            <span class="name">filter</span><span class="signature">(self, nodes: list, desc: bool = False)</span>:
+            <span class="name">stats</span><span class="signature">(self)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">desc</span><span class="p">)</span>
-        <span class="n">filtered_merged</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
-            <span class="n">filtered_merged</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">filtered_merged</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
+        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;merged&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Filter nodes from the taxonomy. By default keep all ancestors of requested nodes.
-If desc=True, keep all descendants instead.</p>
+            <div class="docstring"><p>General stats of the taxonomic tree</p>
+
+<p>Paramenters: None</p>
+
+<p>Returns:</p>
+
+<ul>
+<li><strong>[dict]</strong> with total counts "nodes", "ranks", "names", "leaves" and rank specific counts "ranked_nodes", "ranked_leaves" with total of counts for each rank</li>
+</ul>
+
+<p>Example:</p>
+
+<pre><code>from pprint import pprint
+from multitax import GtdbTx
+tax = GtdbTx()
+
+pprint(tax.stats())
+{'leaves': 30238,
+ 'names': 42739,
+ 'nodes': 42739,
+ 'ranked_leaves': Counter({'species': 30238}),
+ 'ranked_nodes': Counter({'species': 30238,
+                          'genus': 8778,
+                          'family': 2323,
+                          'order': 930,
+                          'class': 337,
+                          'phylum': 131,
+                          'domain': 1,
+                          'root': 1}),
+ 'ranks': 42739}
+</code></pre>
 </div>
 
 
@@ -860,10 +883,10 @@ If desc=True, keep all descendants instead.</p>
                 <dd id="NcbiTx.rank_lineage" class="function"><a href="multitax/multitax.html#MultiTax.rank_lineage">rank_lineage</a></dd>
                 <dd id="NcbiTx.name_lineage" class="function"><a href="multitax/multitax.html#MultiTax.name_lineage">name_lineage</a></dd>
                 <dd id="NcbiTx.parent_rank" class="function"><a href="multitax/multitax.html#MultiTax.parent_rank">parent_rank</a></dd>
-                <dd id="NcbiTx.stats" class="function"><a href="multitax/multitax.html#MultiTax.stats">stats</a></dd>
                 <dd id="NcbiTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="NcbiTx.clear_lineages" class="function"><a href="multitax/multitax.html#MultiTax.clear_lineages">clear_lineages</a></dd>
                 <dd id="NcbiTx.check_consistency" class="function"><a href="multitax/multitax.html#MultiTax.check_consistency">check_consistency</a></dd>
+                <dd id="NcbiTx.filter" class="function"><a href="multitax/multitax.html#MultiTax.filter">filter</a></dd>
                 <dd id="NcbiTx.write" class="function"><a href="multitax/multitax.html#MultiTax.write">write</a></dd>
 
             </div>
@@ -960,13 +983,10 @@ If desc=True, keep all descendants instead.</p>
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forwards</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">n</span>
 
-    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">desc</span><span class="p">)</span>
-        <span class="n">filtered_forwards</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
-            <span class="n">filtered_forwards</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">filtered_forwards</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
+        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;merged&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span>
 </pre></div>
 
         </details>
@@ -989,7 +1009,7 @@ If desc=True, keep all descendants instead.</p>
 
         </details>
 
-            <div class="docstring"><p>Constructor of the class</p>
+            <div class="docstring"><p>Main constructor of MultiTax and sub-classes</p>
 
 <p>Parameters:</p>
 
@@ -1065,29 +1085,55 @@ Mainly used for accessing NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 
 
                             </div>
-                            <div id="OttTx.filter" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#OttTx.filter">#&nbsp;&nbsp</a>
+                            <div id="OttTx.stats" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#OttTx.stats">#&nbsp;&nbsp</a>
 
         
             <span class="def">def</span>
-            <span class="name">filter</span><span class="signature">(self, nodes: list, desc: bool = False)</span>:
+            <span class="name">stats</span><span class="signature">(self)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">desc</span><span class="p">)</span>
-        <span class="n">filtered_forwards</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
-            <span class="n">filtered_forwards</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">filtered_forwards</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
+        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;merged&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Filter nodes from the taxonomy. By default keep all ancestors of requested nodes.
-If desc=True, keep all descendants instead.</p>
+            <div class="docstring"><p>General stats of the taxonomic tree</p>
+
+<p>Paramenters: None</p>
+
+<p>Returns:</p>
+
+<ul>
+<li><strong>[dict]</strong> with total counts "nodes", "ranks", "names", "leaves" and rank specific counts "ranked_nodes", "ranked_leaves" with total of counts for each rank</li>
+</ul>
+
+<p>Example:</p>
+
+<pre><code>from pprint import pprint
+from multitax import GtdbTx
+tax = GtdbTx()
+
+pprint(tax.stats())
+{'leaves': 30238,
+ 'names': 42739,
+ 'nodes': 42739,
+ 'ranked_leaves': Counter({'species': 30238}),
+ 'ranked_nodes': Counter({'species': 30238,
+                          'genus': 8778,
+                          'family': 2323,
+                          'order': 930,
+                          'class': 337,
+                          'phylum': 131,
+                          'domain': 1,
+                          'root': 1}),
+ 'ranks': 42739}
+</code></pre>
 </div>
 
 
@@ -1109,10 +1155,10 @@ If desc=True, keep all descendants instead.</p>
                 <dd id="OttTx.rank_lineage" class="function"><a href="multitax/multitax.html#MultiTax.rank_lineage">rank_lineage</a></dd>
                 <dd id="OttTx.name_lineage" class="function"><a href="multitax/multitax.html#MultiTax.name_lineage">name_lineage</a></dd>
                 <dd id="OttTx.parent_rank" class="function"><a href="multitax/multitax.html#MultiTax.parent_rank">parent_rank</a></dd>
-                <dd id="OttTx.stats" class="function"><a href="multitax/multitax.html#MultiTax.stats">stats</a></dd>
                 <dd id="OttTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="OttTx.clear_lineages" class="function"><a href="multitax/multitax.html#MultiTax.clear_lineages">clear_lineages</a></dd>
                 <dd id="OttTx.check_consistency" class="function"><a href="multitax/multitax.html#MultiTax.check_consistency">check_consistency</a></dd>
+                <dd id="OttTx.filter" class="function"><a href="multitax/multitax.html#MultiTax.filter">filter</a></dd>
                 <dd id="OttTx.write" class="function"><a href="multitax/multitax.html#MultiTax.write">write</a></dd>
 
             </div>
@@ -1195,7 +1241,7 @@ If desc=True, keep all descendants instead.</p>
 
         </details>
 
-            <div class="docstring"><p>Constructor of the class</p>
+            <div class="docstring"><p>Main constructor of MultiTax and sub-classes</p>
 
 <p>Parameters:</p>
 

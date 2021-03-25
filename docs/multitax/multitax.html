@@ -115,7 +115,7 @@
                         <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">open_files</span><span class="p">,</span> <span class="n">download_files</span><span class="p">,</span> <span class="n">close_files</span><span class="p">,</span> <span class="n">check_file</span><span class="p">,</span> <span class="n">check_no_file</span><span class="p">,</span> <span class="n">check_dir</span><span class="p">,</span> <span class="n">reverse_dict</span>
-
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 
 <span class="k">class</span> <span class="nc">MultiTax</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
@@ -139,7 +139,7 @@
                  <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor of the class</span>
+<span class="sd">        Main constructor of MultiTax and sub-classes</span>
 
 <span class="sd">        Parameters:</span>
 <span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
@@ -394,20 +394,49 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return parent node of the specified rank.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span><span class="n">rank</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span><span class="n">rank</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">parent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        General stats of the loaded taxonomy.</span>
+<span class="sd">        General stats of the taxonomic tree</span>
+
+<span class="sd">        Paramenters: None</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        * **[dict]** with total counts &quot;nodes&quot;, &quot;ranks&quot;, &quot;names&quot;, &quot;leaves&quot; and rank specific counts &quot;ranked_nodes&quot;, &quot;ranked_leaves&quot; with total of counts for each rank</span>
+<span class="sd">        </span>
+<span class="sd">        Example:</span>
+
+<span class="sd">            from pprint import pprint</span>
+<span class="sd">            from multitax import GtdbTx</span>
+<span class="sd">            tax = GtdbTx()</span>
+
+<span class="sd">            pprint(tax.stats())</span>
+<span class="sd">            {&#39;leaves&#39;: 30238,</span>
+<span class="sd">             &#39;names&#39;: 42739,</span>
+<span class="sd">             &#39;nodes&#39;: 42739,</span>
+<span class="sd">             &#39;ranked_leaves&#39;: Counter({&#39;species&#39;: 30238}),</span>
+<span class="sd">             &#39;ranked_nodes&#39;: Counter({&#39;species&#39;: 30238,</span>
+<span class="sd">                                      &#39;genus&#39;: 8778,</span>
+<span class="sd">                                      &#39;family&#39;: 2323,</span>
+<span class="sd">                                      &#39;order&#39;: 930,</span>
+<span class="sd">                                      &#39;class&#39;: 337,</span>
+<span class="sd">                                      &#39;phylum&#39;: 131,</span>
+<span class="sd">                                      &#39;domain&#39;: 1,</span>
+<span class="sd">                                      &#39;root&#39;: 1}),</span>
+<span class="sd">             &#39;ranks&#39;: 42739}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">s</span><span class="p">[</span><span class="s2">&quot;nodes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
         <span class="n">s</span><span class="p">[</span><span class="s2">&quot;ranks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">)</span>
         <span class="n">s</span><span class="p">[</span><span class="s2">&quot;names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">)</span>
-        <span class="n">unique_ranks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;unique_ranks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
-        <span class="k">for</span> <span class="n">ur</span> <span class="ow">in</span> <span class="n">unique_ranks</span><span class="p">:</span>
-            <span class="n">s</span><span class="p">[(</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="n">ur</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">ur</span><span class="p">)</span>
+        <span class="n">all_leaves</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">)</span>
+        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;leaves&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_leaves</span><span class="p">)</span>
+        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;ranked_nodes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;ranked_leaves&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="n">all_leaves</span><span class="p">))</span>
+
         <span class="k">return</span> <span class="n">s</span>
 
     <span class="k">def</span> <span class="nf">build_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -439,8 +468,37 @@
 
     <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Filter nodes from the taxonomy. By default keep all ancestors of requested nodes.</span>
+<span class="sd">        Filter taxonomy to selected nodes.</span>
+<span class="sd">        By default keep all the ancestors of the given nodes.</span>
 <span class="sd">        If desc=True, keep all descendants instead.</span>
+<span class="sd">        It will delete pre-build lineages.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        * ...</span>
+
+<span class="sd">        Returns: None</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            from multitax import GtdbTx</span>
+<span class="sd">            tax = GtdbTx()</span>
+
+<span class="sd">            tax.lineage(&#39;s__Enterovibrio marina&#39;)</span>
+<span class="sd">            # [&#39;1&#39;, &#39;d__Bacteria&#39;, &#39;p__Proteobacteria&#39;, &#39;c__Gammaproteobacteria&#39;, &#39;o__Enterobacterales&#39;, &#39;f__Vibrionaceae&#39;, &#39;g__Enterovibrio&#39;, &#39;s__Enterovibrio marina&#39;]</span>
+
+<span class="sd">            # Keep only ancestors of &#39;g__Enterovibrio&#39;</span>
+<span class="sd">            tax.filter(&#39;g__Enterovibrio&#39;)</span>
+<span class="sd">            tax.stats()</span>
+<span class="sd">            # {&#39;nodes&#39;: 7, &#39;ranks&#39;: 7, &#39;names&#39;: 7, &#39;unique_ranks&#39;: 7, (&#39;nodes&#39;, &#39;class&#39;): 1, (&#39;nodes&#39;, &#39;root&#39;): 1, (&#39;nodes&#39;, &#39;phylum&#39;): 1, (&#39;nodes&#39;, &#39;domain&#39;): 1, (&#39;nodes&#39;, &#39;genus&#39;): 1, (&#39;nodes&#39;, &#39;order&#39;): 1, (&#39;nodes&#39;, &#39;family&#39;): 1}</span>
+
+<span class="sd">            # Reload taxonomy</span>
+<span class="sd">            tax = GtdbTx()</span>
+
+<span class="sd">            # Keep only descendants of &#39;g__Enterovibrio&#39;</span>
+<span class="sd">            tax.filter(&#39;g__Enterovibrio&#39;, desc=True)</span>
+<span class="sd">            tax.stats()</span>
+<span class="sd">            #{&#39;nodes&#39;: 17, &#39;ranks&#39;: 17, &#39;names&#39;: 17, &#39;unique_ranks&#39;: 3, (&#39;nodes&#39;, &#39;root&#39;): 1, (&#39;nodes&#39;, &#39;species&#39;): 15, (&#39;nodes&#39;, &#39;genus&#39;): 1}</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">nodes</span><span class="p">]</span>
@@ -475,8 +533,9 @@
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="c1"># Reset data structures</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_children</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lineage_sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -550,7 +609,7 @@
                  <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor of the class</span>
+<span class="sd">        Main constructor of MultiTax and sub-classes</span>
 
 <span class="sd">        Parameters:</span>
 <span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
@@ -805,20 +864,49 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return parent node of the specified rank.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span><span class="n">rank</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span><span class="n">rank</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">parent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        General stats of the loaded taxonomy.</span>
+<span class="sd">        General stats of the taxonomic tree</span>
+
+<span class="sd">        Paramenters: None</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        * **[dict]** with total counts &quot;nodes&quot;, &quot;ranks&quot;, &quot;names&quot;, &quot;leaves&quot; and rank specific counts &quot;ranked_nodes&quot;, &quot;ranked_leaves&quot; with total of counts for each rank</span>
+<span class="sd">        </span>
+<span class="sd">        Example:</span>
+
+<span class="sd">            from pprint import pprint</span>
+<span class="sd">            from multitax import GtdbTx</span>
+<span class="sd">            tax = GtdbTx()</span>
+
+<span class="sd">            pprint(tax.stats())</span>
+<span class="sd">            {&#39;leaves&#39;: 30238,</span>
+<span class="sd">             &#39;names&#39;: 42739,</span>
+<span class="sd">             &#39;nodes&#39;: 42739,</span>
+<span class="sd">             &#39;ranked_leaves&#39;: Counter({&#39;species&#39;: 30238}),</span>
+<span class="sd">             &#39;ranked_nodes&#39;: Counter({&#39;species&#39;: 30238,</span>
+<span class="sd">                                      &#39;genus&#39;: 8778,</span>
+<span class="sd">                                      &#39;family&#39;: 2323,</span>
+<span class="sd">                                      &#39;order&#39;: 930,</span>
+<span class="sd">                                      &#39;class&#39;: 337,</span>
+<span class="sd">                                      &#39;phylum&#39;: 131,</span>
+<span class="sd">                                      &#39;domain&#39;: 1,</span>
+<span class="sd">                                      &#39;root&#39;: 1}),</span>
+<span class="sd">             &#39;ranks&#39;: 42739}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">s</span><span class="p">[</span><span class="s2">&quot;nodes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
         <span class="n">s</span><span class="p">[</span><span class="s2">&quot;ranks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">)</span>
         <span class="n">s</span><span class="p">[</span><span class="s2">&quot;names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">)</span>
-        <span class="n">unique_ranks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;unique_ranks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
-        <span class="k">for</span> <span class="n">ur</span> <span class="ow">in</span> <span class="n">unique_ranks</span><span class="p">:</span>
-            <span class="n">s</span><span class="p">[(</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="n">ur</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">ur</span><span class="p">)</span>
+        <span class="n">all_leaves</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">)</span>
+        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;leaves&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_leaves</span><span class="p">)</span>
+        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;ranked_nodes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;ranked_leaves&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="n">all_leaves</span><span class="p">))</span>
+
         <span class="k">return</span> <span class="n">s</span>
 
     <span class="k">def</span> <span class="nf">build_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -850,8 +938,37 @@
 
     <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Filter nodes from the taxonomy. By default keep all ancestors of requested nodes.</span>
+<span class="sd">        Filter taxonomy to selected nodes.</span>
+<span class="sd">        By default keep all the ancestors of the given nodes.</span>
 <span class="sd">        If desc=True, keep all descendants instead.</span>
+<span class="sd">        It will delete pre-build lineages.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        * ...</span>
+
+<span class="sd">        Returns: None</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            from multitax import GtdbTx</span>
+<span class="sd">            tax = GtdbTx()</span>
+
+<span class="sd">            tax.lineage(&#39;s__Enterovibrio marina&#39;)</span>
+<span class="sd">            # [&#39;1&#39;, &#39;d__Bacteria&#39;, &#39;p__Proteobacteria&#39;, &#39;c__Gammaproteobacteria&#39;, &#39;o__Enterobacterales&#39;, &#39;f__Vibrionaceae&#39;, &#39;g__Enterovibrio&#39;, &#39;s__Enterovibrio marina&#39;]</span>
+
+<span class="sd">            # Keep only ancestors of &#39;g__Enterovibrio&#39;</span>
+<span class="sd">            tax.filter(&#39;g__Enterovibrio&#39;)</span>
+<span class="sd">            tax.stats()</span>
+<span class="sd">            # {&#39;nodes&#39;: 7, &#39;ranks&#39;: 7, &#39;names&#39;: 7, &#39;unique_ranks&#39;: 7, (&#39;nodes&#39;, &#39;class&#39;): 1, (&#39;nodes&#39;, &#39;root&#39;): 1, (&#39;nodes&#39;, &#39;phylum&#39;): 1, (&#39;nodes&#39;, &#39;domain&#39;): 1, (&#39;nodes&#39;, &#39;genus&#39;): 1, (&#39;nodes&#39;, &#39;order&#39;): 1, (&#39;nodes&#39;, &#39;family&#39;): 1}</span>
+
+<span class="sd">            # Reload taxonomy</span>
+<span class="sd">            tax = GtdbTx()</span>
+
+<span class="sd">            # Keep only descendants of &#39;g__Enterovibrio&#39;</span>
+<span class="sd">            tax.filter(&#39;g__Enterovibrio&#39;, desc=True)</span>
+<span class="sd">            tax.stats()</span>
+<span class="sd">            #{&#39;nodes&#39;: 17, &#39;ranks&#39;: 17, &#39;names&#39;: 17, &#39;unique_ranks&#39;: 3, (&#39;nodes&#39;, &#39;root&#39;): 1, (&#39;nodes&#39;, &#39;species&#39;): 15, (&#39;nodes&#39;, &#39;genus&#39;): 1}</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">nodes</span><span class="p">]</span>
@@ -886,8 +1003,9 @@
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="c1"># Reset data structures</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_children</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lineage_sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -967,7 +1085,7 @@
                  <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor of the class</span>
+<span class="sd">        Main constructor of MultiTax and sub-classes</span>
 
 <span class="sd">        Parameters:</span>
 <span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
@@ -1044,7 +1162,7 @@
 
         </details>
 
-            <div class="docstring"><p>Constructor of the class</p>
+            <div class="docstring"><p>Main constructor of MultiTax and sub-classes</p>
 
 <p>Parameters:</p>
 
@@ -1467,7 +1585,8 @@ Central function iterating the tree structure</p>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return parent node of the specified rank.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span><span class="n">rank</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span><span class="n">rank</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">parent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="kc">None</span>
 </pre></div>
 
         </details>
@@ -1489,22 +1608,80 @@ Central function iterating the tree structure</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        General stats of the loaded taxonomy.</span>
+<span class="sd">        General stats of the taxonomic tree</span>
+
+<span class="sd">        Paramenters: None</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        * **[dict]** with total counts &quot;nodes&quot;, &quot;ranks&quot;, &quot;names&quot;, &quot;leaves&quot; and rank specific counts &quot;ranked_nodes&quot;, &quot;ranked_leaves&quot; with total of counts for each rank</span>
+<span class="sd">        </span>
+<span class="sd">        Example:</span>
+
+<span class="sd">            from pprint import pprint</span>
+<span class="sd">            from multitax import GtdbTx</span>
+<span class="sd">            tax = GtdbTx()</span>
+
+<span class="sd">            pprint(tax.stats())</span>
+<span class="sd">            {&#39;leaves&#39;: 30238,</span>
+<span class="sd">             &#39;names&#39;: 42739,</span>
+<span class="sd">             &#39;nodes&#39;: 42739,</span>
+<span class="sd">             &#39;ranked_leaves&#39;: Counter({&#39;species&#39;: 30238}),</span>
+<span class="sd">             &#39;ranked_nodes&#39;: Counter({&#39;species&#39;: 30238,</span>
+<span class="sd">                                      &#39;genus&#39;: 8778,</span>
+<span class="sd">                                      &#39;family&#39;: 2323,</span>
+<span class="sd">                                      &#39;order&#39;: 930,</span>
+<span class="sd">                                      &#39;class&#39;: 337,</span>
+<span class="sd">                                      &#39;phylum&#39;: 131,</span>
+<span class="sd">                                      &#39;domain&#39;: 1,</span>
+<span class="sd">                                      &#39;root&#39;: 1}),</span>
+<span class="sd">             &#39;ranks&#39;: 42739}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">s</span><span class="p">[</span><span class="s2">&quot;nodes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
         <span class="n">s</span><span class="p">[</span><span class="s2">&quot;ranks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">)</span>
         <span class="n">s</span><span class="p">[</span><span class="s2">&quot;names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">)</span>
-        <span class="n">unique_ranks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;unique_ranks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
-        <span class="k">for</span> <span class="n">ur</span> <span class="ow">in</span> <span class="n">unique_ranks</span><span class="p">:</span>
-            <span class="n">s</span><span class="p">[(</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="n">ur</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">ur</span><span class="p">)</span>
+        <span class="n">all_leaves</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">)</span>
+        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;leaves&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_leaves</span><span class="p">)</span>
+        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;ranked_nodes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;ranked_leaves&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="n">all_leaves</span><span class="p">))</span>
+
         <span class="k">return</span> <span class="n">s</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>General stats of the loaded taxonomy.</p>
+            <div class="docstring"><p>General stats of the taxonomic tree</p>
+
+<p>Paramenters: None</p>
+
+<p>Returns:</p>
+
+<ul>
+<li><strong>[dict]</strong> with total counts "nodes", "ranks", "names", "leaves" and rank specific counts "ranked_nodes", "ranked_leaves" with total of counts for each rank</li>
+</ul>
+
+<p>Example:</p>
+
+<pre><code>from pprint import pprint
+from multitax import GtdbTx
+tax = GtdbTx()
+
+pprint(tax.stats())
+{'leaves': 30238,
+ 'names': 42739,
+ 'nodes': 42739,
+ 'ranked_leaves': Counter({'species': 30238}),
+ 'ranked_nodes': Counter({'species': 30238,
+                          'genus': 8778,
+                          'family': 2323,
+                          'order': 930,
+                          'class': 337,
+                          'phylum': 131,
+                          'domain': 1,
+                          'root': 1}),
+ 'ranks': 42739}
+</code></pre>
 </div>
 
 
@@ -1602,8 +1779,37 @@ Central function iterating the tree structure</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Filter nodes from the taxonomy. By default keep all ancestors of requested nodes.</span>
+<span class="sd">        Filter taxonomy to selected nodes.</span>
+<span class="sd">        By default keep all the ancestors of the given nodes.</span>
 <span class="sd">        If desc=True, keep all descendants instead.</span>
+<span class="sd">        It will delete pre-build lineages.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        * ...</span>
+
+<span class="sd">        Returns: None</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">            from multitax import GtdbTx</span>
+<span class="sd">            tax = GtdbTx()</span>
+
+<span class="sd">            tax.lineage(&#39;s__Enterovibrio marina&#39;)</span>
+<span class="sd">            # [&#39;1&#39;, &#39;d__Bacteria&#39;, &#39;p__Proteobacteria&#39;, &#39;c__Gammaproteobacteria&#39;, &#39;o__Enterobacterales&#39;, &#39;f__Vibrionaceae&#39;, &#39;g__Enterovibrio&#39;, &#39;s__Enterovibrio marina&#39;]</span>
+
+<span class="sd">            # Keep only ancestors of &#39;g__Enterovibrio&#39;</span>
+<span class="sd">            tax.filter(&#39;g__Enterovibrio&#39;)</span>
+<span class="sd">            tax.stats()</span>
+<span class="sd">            # {&#39;nodes&#39;: 7, &#39;ranks&#39;: 7, &#39;names&#39;: 7, &#39;unique_ranks&#39;: 7, (&#39;nodes&#39;, &#39;class&#39;): 1, (&#39;nodes&#39;, &#39;root&#39;): 1, (&#39;nodes&#39;, &#39;phylum&#39;): 1, (&#39;nodes&#39;, &#39;domain&#39;): 1, (&#39;nodes&#39;, &#39;genus&#39;): 1, (&#39;nodes&#39;, &#39;order&#39;): 1, (&#39;nodes&#39;, &#39;family&#39;): 1}</span>
+
+<span class="sd">            # Reload taxonomy</span>
+<span class="sd">            tax = GtdbTx()</span>
+
+<span class="sd">            # Keep only descendants of &#39;g__Enterovibrio&#39;</span>
+<span class="sd">            tax.filter(&#39;g__Enterovibrio&#39;, desc=True)</span>
+<span class="sd">            tax.stats()</span>
+<span class="sd">            #{&#39;nodes&#39;: 17, &#39;ranks&#39;: 17, &#39;names&#39;: 17, &#39;unique_ranks&#39;: 3, (&#39;nodes&#39;, &#39;root&#39;): 1, (&#39;nodes&#39;, &#39;species&#39;): 15, (&#39;nodes&#39;, &#39;genus&#39;): 1}</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">nodes</span><span class="p">]</span>
@@ -1638,14 +1844,47 @@ Central function iterating the tree structure</p>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="c1"># Reset data structures</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_children</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="p">{}</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Filter nodes from the taxonomy. By default keep all ancestors of requested nodes.
-If desc=True, keep all descendants instead.</p>
+            <div class="docstring"><p>Filter taxonomy to selected nodes.
+By default keep all the ancestors of the given nodes.
+If desc=True, keep all descendants instead.
+It will delete pre-build lineages.</p>
+
+<p>Parameters:</p>
+
+<ul>
+<li>...</li>
+</ul>
+
+<p>Returns: None</p>
+
+<p>Example:</p>
+
+<pre><code>from multitax import GtdbTx
+tax = GtdbTx()
+
+tax.lineage('s__Enterovibrio marina')
+# ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Vibrionaceae', 'g__Enterovibrio', 's__Enterovibrio marina']
+
+# Keep only ancestors of 'g__Enterovibrio'
+tax.filter('g__Enterovibrio')
+tax.stats()
+# {'nodes': 7, 'ranks': 7, 'names': 7, 'unique_ranks': 7, ('nodes', 'class'): 1, ('nodes', 'root'): 1, ('nodes', 'phylum'): 1, ('nodes', 'domain'): 1, ('nodes', 'genus'): 1, ('nodes', 'order'): 1, ('nodes', 'family'): 1}
+
+# Reload taxonomy
+tax = GtdbTx()
+
+# Keep only descendants of 'g__Enterovibrio'
+tax.filter('g__Enterovibrio', desc=True)
+tax.stats()
+#{'nodes': 17, 'ranks': 17, 'names': 17, 'unique_ranks': 3, ('nodes', 'root'): 1, ('nodes', 'species'): 15, ('nodes', 'genus'): 1}
+</code></pre>
 </div>
 
 
