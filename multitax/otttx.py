@@ -72,11 +72,11 @@ class OttTx(MultiTax):
         if node in self._forwards:
             return self._forwards[node]
         else:
-            return self.unknown_node
+            return self.undefined_node
 
     def latest(self, node):
         n = super().latest(node)
-        if n == self.unknown_node:
+        if n == self.undefined_node:
             n = self.forwards(node)
         return n
 

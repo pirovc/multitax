@@ -1,16 +1,16 @@
 import unittest
+import sys
 
+sys.path.append("tests/multitax/")
 from utils import setup_dir, uncompress_tar_gzip
 from multitax import OttTx
 
 
 class TestOtt(unittest.TestCase):
-    base_dir = "tests/multitax/integration/"
-    tmp_dir = base_dir + "tmp_ott/"
 
-    data_dir = base_dir + "data_minimal/"
-    #data_dir = base_dir + "data_complete/"
-
+    tmp_dir = "tests/multitax/integration/tmp_ott/"
+    data_dir = "tests/multitax/data_minimal/"
+    #data_dir = "tests/multitax/data_complete/"
     default_params = {"files": data_dir + "ott.tgz"}
 
     @classmethod

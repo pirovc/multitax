@@ -1,15 +1,17 @@
 import unittest
+import sys
 
+sys.path.append("tests/multitax/")
 from utils import setup_dir, uncompress_tar_gzip
+
 from multitax import NcbiTx
 
 
 class TestNcbi(unittest.TestCase):
-    base_dir = "tests/multitax/integration/"
-    tmp_dir = base_dir + "tmp_ncbi/"
 
-    data_dir = base_dir + "data_minimal/"
-    #data_dir = base_dir + "data_complete/"
+    tmp_dir = "tests/multitax/integration/tmp_ncbi/"
+    data_dir = "tests/multitax/data_minimal/"
+    #data_dir = "tests/multitax/data_complete/"
 
     default_params = {"files": data_dir + "ncbi.tar.gz"}
 

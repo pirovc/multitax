@@ -162,20 +162,61 @@ multitax    </h1>
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">CustomTx</span><span class="p">(</span><span class="n">MultiTax</span><span class="p">):</span>
-    
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="n">_required_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">]</span>
+    <span class="n">_possible_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor of the class CustomTx</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        * **cols** ***[list, dict]***: List of fields to be parsed or a dictionary</span>
-<span class="sd">        * \*\*kwargs defined at `multitax.multitax.MultiTax`</span>
+<span class="sd">        * **cols** *[list, dict]*: List of fields to be parsed or a dictionary with {field: column index}. Options: &quot;node&quot;, &quot;parent&quot;, &quot;rank&quot;, &quot;name&quot;</span>
+<span class="sd">        * **sep** *[str]*: Separator of fields</span>
+<span class="sd">        * **\*\*kwargs** defined at `multitax.multitax.MultiTax`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cols</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sep</span> <span class="o">=</span> <span class="n">sep</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">=</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
         <span class="k">return</span> <span class="s1">&#39;CustomTx(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">):</span>
+
+        <span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">ranks</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">source</span><span class="p">,</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">fhs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sep</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sep</span><span class="p">)</span>
+
+                <span class="n">node</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">]]</span>
+                <span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">[</span><span class="s2">&quot;parent&quot;</span><span class="p">]]</span>
+                <span class="k">if</span> <span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">:</span>
+                    <span class="n">names</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span>
+                <span class="k">if</span> <span class="s2">&quot;rank&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">:</span>
+                    <span class="n">ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">]]</span>
+            <span class="k">return</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span>
+
+    <span class="k">def</span> <span class="nf">_parse_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cols</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cols</span><span class="p">)}</span>
+
+        <span class="k">for</span> <span class="n">rc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_required_cols</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">rc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">rc</span> <span class="o">+</span> <span class="s2">&quot; is a required column&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_possible_cols</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="s2">&quot; is not a valid column: &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_possible_cols</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">cols</span>
 </pre></div>
 
         </details>
@@ -186,18 +227,27 @@ multitax    </h1>
                                         <div class="attr function"><a class="headerlink" href="#CustomTx.__init__">#&nbsp;&nbsp</a>
 
         
-            <span class="name">CustomTx</span><span class="signature">(cols: list = None, **kwargs)</span>    </div>
+            <span class="name">CustomTx</span><span class="signature">(
+    self,
+    cols: list = [&#39;node&#39;, &#39;parent&#39;, &#39;rank&#39;, &#39;name&#39;],
+    sep: str = &#39;\t&#39;,
+    **kwargs
+)</span>    </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor of the class CustomTx</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        * **cols** ***[list, dict]***: List of fields to be parsed or a dictionary</span>
-<span class="sd">        * \*\*kwargs defined at `multitax.multitax.MultiTax`</span>
+<span class="sd">        * **cols** *[list, dict]*: List of fields to be parsed or a dictionary with {field: column index}. Options: &quot;node&quot;, &quot;parent&quot;, &quot;rank&quot;, &quot;name&quot;</span>
+<span class="sd">        * **sep** *[str]*: Separator of fields</span>
+<span class="sd">        * **\*\*kwargs** defined at `multitax.multitax.MultiTax`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cols</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sep</span> <span class="o">=</span> <span class="n">sep</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -208,8 +258,9 @@ multitax    </h1>
 <p>Parameters:</p>
 
 <ul>
-<li><strong>cols</strong> <strong><em>[list, dict]</em></strong>: List of fields to be parsed or a dictionary</li>
-<li>**kwargs defined at <code><a href="multitax/multitax.html#MultiTax">multitax.multitax.MultiTax</a></code></li>
+<li><strong>cols</strong> <em>[list, dict]</em>: List of fields to be parsed or a dictionary with {field: column index}. Options: "node", "parent", "rank", "name"</li>
+<li><strong>sep</strong> <em>[str]</em>: Separator of fields</li>
+<li><strong>**kwargs</strong> defined at <code><a href="multitax/multitax.html#MultiTax">multitax.multitax.MultiTax</a></code></li>
 </ul>
 </div>
 
@@ -426,13 +477,13 @@ multitax    </h1>
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy)</li>
-<li><strong>root_parent</strong> <em>[str]</em>: Define an alternative root parent</li>
-<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name</li>
-<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank</li>
-<li><strong>unknown_node</strong> <em>[str]</em>: Define a default return value for unknow/undefined nodes</li>
-<li><strong>unknown_name</strong> <em>[str]</em>: Define a default return value for unknow/undefined names</li>
-<li><strong>unknown_rank</strong> <em>[str]</em>: Define a default return value for unknow/undefined ranks</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy). Taxonomy will be filtered.</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier</li>
+<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name. Set to None to use original name.</li>
+<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank. Set to None to use original name.</li>
+<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes</li>
+<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names</li>
+<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks</li>
 <li><strong>build_node_children</strong> <em>[bool]</em>: Pre-build node,children dict (otherwise it will be created on first use)</li>
 <li><strong>build_name_nodes</strong> <em>[bool]</em>: Pre-build name,nodes dict (otherwise it will be created on first use)</li>
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
@@ -564,13 +615,13 @@ tax = GtdbTx()
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy)</li>
-<li><strong>root_parent</strong> <em>[str]</em>: Define an alternative root parent</li>
-<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name</li>
-<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank</li>
-<li><strong>unknown_node</strong> <em>[str]</em>: Define a default return value for unknow/undefined nodes</li>
-<li><strong>unknown_name</strong> <em>[str]</em>: Define a default return value for unknow/undefined names</li>
-<li><strong>unknown_rank</strong> <em>[str]</em>: Define a default return value for unknow/undefined ranks</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy). Taxonomy will be filtered.</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier</li>
+<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name. Set to None to use original name.</li>
+<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank. Set to None to use original name.</li>
+<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes</li>
+<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names</li>
+<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks</li>
 <li><strong>build_node_children</strong> <em>[bool]</em>: Pre-build node,children dict (otherwise it will be created on first use)</li>
 <li><strong>build_name_nodes</strong> <em>[bool]</em>: Pre-build name,nodes dict (otherwise it will be created on first use)</li>
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
@@ -703,11 +754,11 @@ tax = GtdbTx()
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
     <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">latest</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merged</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">n</span>
 
@@ -745,13 +796,13 @@ tax = GtdbTx()
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy)</li>
-<li><strong>root_parent</strong> <em>[str]</em>: Define an alternative root parent</li>
-<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name</li>
-<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank</li>
-<li><strong>unknown_node</strong> <em>[str]</em>: Define a default return value for unknow/undefined nodes</li>
-<li><strong>unknown_name</strong> <em>[str]</em>: Define a default return value for unknow/undefined names</li>
-<li><strong>unknown_rank</strong> <em>[str]</em>: Define a default return value for unknow/undefined ranks</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy). Taxonomy will be filtered.</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier</li>
+<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name. Set to None to use original name.</li>
+<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank. Set to None to use original name.</li>
+<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes</li>
+<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names</li>
+<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks</li>
 <li><strong>build_node_children</strong> <em>[bool]</em>: Pre-build node,children dict (otherwise it will be created on first use)</li>
 <li><strong>build_name_nodes</strong> <em>[bool]</em>: Pre-build name,nodes dict (otherwise it will be created on first use)</li>
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
@@ -780,7 +831,7 @@ tax = GtdbTx()
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 </pre></div>
 
         </details>
@@ -800,7 +851,7 @@ tax = GtdbTx()
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">latest</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merged</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">n</span>
 </pre></div>
@@ -838,7 +889,7 @@ Mainly used for accessing NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 <p>Returns:</p>
 
 <ul>
-<li><strong>[dict]</strong> with total counts "nodes", "ranks", "names", "leaves" and rank specific counts "ranked_nodes", "ranked_leaves" with total of counts for each rank</li>
+<li><em>[dict]</em> with total counts "nodes", "ranks", "names", "leaves" and rank specific counts "ranked_nodes", "ranked_leaves" with total of counts for each rank</li>
 </ul>
 
 <p>Example:</p>
@@ -975,11 +1026,11 @@ pprint(tax.stats())
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
     <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">latest</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forwards</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">n</span>
 
@@ -1017,13 +1068,13 @@ pprint(tax.stats())
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy)</li>
-<li><strong>root_parent</strong> <em>[str]</em>: Define an alternative root parent</li>
-<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name</li>
-<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank</li>
-<li><strong>unknown_node</strong> <em>[str]</em>: Define a default return value for unknow/undefined nodes</li>
-<li><strong>unknown_name</strong> <em>[str]</em>: Define a default return value for unknow/undefined names</li>
-<li><strong>unknown_rank</strong> <em>[str]</em>: Define a default return value for unknow/undefined ranks</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy). Taxonomy will be filtered.</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier</li>
+<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name. Set to None to use original name.</li>
+<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank. Set to None to use original name.</li>
+<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes</li>
+<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names</li>
+<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks</li>
 <li><strong>build_node_children</strong> <em>[bool]</em>: Pre-build node,children dict (otherwise it will be created on first use)</li>
 <li><strong>build_name_nodes</strong> <em>[bool]</em>: Pre-build name,nodes dict (otherwise it will be created on first use)</li>
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
@@ -1052,7 +1103,7 @@ tax = GtdbTx()
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 </pre></div>
 
         </details>
@@ -1072,7 +1123,7 @@ tax = GtdbTx()
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">latest</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forwards</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">n</span>
 </pre></div>
@@ -1110,7 +1161,7 @@ Mainly used for accessing NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 <p>Returns:</p>
 
 <ul>
-<li><strong>[dict]</strong> with total counts "nodes", "ranks", "names", "leaves" and rank specific counts "ranked_nodes", "ranked_leaves" with total of counts for each rank</li>
+<li><em>[dict]</em> with total counts "nodes", "ranks", "names", "leaves" and rank specific counts "ranked_nodes", "ranked_leaves" with total of counts for each rank</li>
 </ul>
 
 <p>Example:</p>
@@ -1249,13 +1300,13 @@ pprint(tax.stats())
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy)</li>
-<li><strong>root_parent</strong> <em>[str]</em>: Define an alternative root parent</li>
-<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name</li>
-<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank</li>
-<li><strong>unknown_node</strong> <em>[str]</em>: Define a default return value for unknow/undefined nodes</li>
-<li><strong>unknown_name</strong> <em>[str]</em>: Define a default return value for unknow/undefined names</li>
-<li><strong>unknown_rank</strong> <em>[str]</em>: Define a default return value for unknow/undefined ranks</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy). Taxonomy will be filtered.</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier</li>
+<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name. Set to None to use original name.</li>
+<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank. Set to None to use original name.</li>
+<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes</li>
+<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names</li>
+<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks</li>
 <li><strong>build_node_children</strong> <em>[bool]</em>: Pre-build node,children dict (otherwise it will be created on first use)</li>
 <li><strong>build_name_nodes</strong> <em>[bool]</em>: Pre-build name,nodes dict (otherwise it will be created on first use)</li>
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>

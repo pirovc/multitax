@@ -79,11 +79,11 @@ class NcbiTx(MultiTax):
         if node in self._merged:
             return self._merged[node]
         else:
-            return self.unknown_node
+            return self.undefined_node
 
     def latest(self, node):
         n = super().latest(node)
-        if n == self.unknown_node:
+        if n == self.undefined_node:
             n = self.merged(node)
         return n
 

@@ -130,11 +130,11 @@
                  <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">root_parent</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
-                 <span class="n">root_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;root&quot;</span><span class="p">,</span>
-                 <span class="n">root_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;root&quot;</span><span class="p">,</span>
-                 <span class="n">unknown_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">unknown_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">unknown_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -145,13 +145,13 @@
 <span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
 <span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse</span>
 <span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files</span>
-<span class="sd">        * **root_node** *[str]*: Define an alternative root node (has to exist in the taxonomy)</span>
-<span class="sd">        * **root_parent** *[str]*: Define an alternative root parent</span>
-<span class="sd">        * **root_name** *[str]*: Define an alternative root name</span>
-<span class="sd">        * **root_rank** *[str]*: Define an alternative root rank</span>
-<span class="sd">        * **unknown_node** *[str]*: Define a default return value for unknow/undefined nodes</span>
-<span class="sd">        * **unknown_name** *[str]*: Define a default return value for unknow/undefined names</span>
-<span class="sd">        * **unknown_rank** *[str]*: Define a default return value for unknow/undefined ranks</span>
+<span class="sd">        * **root_node** *[str]*: Define an alternative root node (has to exist in the taxonomy). Taxonomy will be filtered.</span>
+<span class="sd">        * **root_parent** *[str]*: Define the root parent node identifier</span>
+<span class="sd">        * **root_name** *[str]*: Define an alternative root name. Set to None to use original name.</span>
+<span class="sd">        * **root_rank** *[str]*: Define an alternative root rank. Set to None to use original name.</span>
+<span class="sd">        * **undefined_node** *[str]*: Define a default return value for undefined nodes</span>
+<span class="sd">        * **undefined_name** *[str]*: Define a default return value for undefined names</span>
+<span class="sd">        * **undefined_rank** *[str]*: Define a default return value for undefined ranks</span>
 <span class="sd">        * **build_node_children** *[bool]*: Pre-build node,children dict (otherwise it will be created on first use)</span>
 <span class="sd">        * **build_name_nodes** *[bool]*: Pre-build name,nodes dict (otherwise it will be created on first use)</span>
 <span class="sd">        * **build_rank_nodes** *[bool]*: Pre-build rank,nodes dict (otherwise it will be created on first use)</span>
@@ -179,31 +179,32 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_children</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># Open/Download/Write files</span>
+        <span class="n">fhs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">urls</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">:</span>
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">download_files</span><span class="p">(</span><span class="n">urls</span><span class="o">=</span><span class="n">urls</span> <span class="k">if</span> <span class="n">urls</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">,</span>
                                  <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">)</span>
-        <span class="c1"># Parse taxonomy</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
 
-        <span class="c1"># Save sources for stats (files or urls)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-
-        <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fhs</span><span class="p">:</span>
+            <span class="c1"># Parse taxonomy</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
+            <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
+            <span class="c1"># Save sources for stats (files or urls)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
         <span class="c1"># Set undefined values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span> <span class="o">=</span> <span class="n">unknown_node</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_name</span> <span class="o">=</span> <span class="n">unknown_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_rank</span> <span class="o">=</span> <span class="n">unknown_rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span> <span class="o">=</span> <span class="n">undefined_node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">undefined_name</span> <span class="o">=</span> <span class="n">undefined_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">undefined_rank</span> <span class="o">=</span> <span class="n">undefined_rank</span>
 
         <span class="c1"># Set root values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">root_parent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="n">root_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span> <span class="o">=</span> <span class="n">root_rank</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root</span><span class="p">(</span><span class="n">custom_root_node</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_values</span><span class="p">(</span><span class="n">custom_root_node</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
 
         <span class="c1"># build auxiliary structures</span>
         <span class="k">if</span> <span class="n">build_node_children</span><span class="p">:</span>
@@ -213,6 +214,8 @@
         <span class="k">if</span> <span class="n">build_rank_nodes</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="n">reverse_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
+
     <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        main function to be overloaded</span>
@@ -221,21 +224,28 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">_set_root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">custom_root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_set_root_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">custom_root_node</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set root node define by each class default (_default_root_node) or custom</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If custom root node is defined, keep only its descendants</span>
         <span class="k">if</span> <span class="n">custom_root_node</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="n">custom_root_node</span>
-            <span class="c1"># If custom root node is defined, keep only its descendants</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">custom_root_node</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
 
-        <span class="c1"># Define root nodes</span>
+        <span class="c1"># Define/overwrite root node on _nodes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span>
+
+        <span class="c1"># User-defined rank/name.</span>
+        <span class="c1"># If None, check if is in the tree or inser &quot;root&quot;</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
+
+        <span class="k">if</span> <span class="n">rank</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
 
     <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -294,7 +304,7 @@
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
     <span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -303,7 +313,7 @@
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_rank</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_rank</span>
 
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -312,7 +322,7 @@
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_name</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_name</span>
 
     <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -322,16 +332,25 @@
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">node</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
-    <span class="k">def</span> <span class="nf">leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Leaves are nodes not contained in _nodes.values() (&quot;parents&quot;)</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="k">elif</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recurse_leaves</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">_recurse_leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Recursive function returning leaf nodes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">leaves</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">children</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">node</span><span class="p">]</span>
+        <span class="n">leaves</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
             <span class="n">leaves</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">leaves</span>
@@ -345,29 +364,37 @@
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Define alternative root parent if provided</span>
-            <span class="n">root_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">(</span><span class="n">root_node</span><span class="p">)</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">root_node</span><span class="p">:</span>
+                <span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span>
 
-            <span class="n">lin</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">n</span> <span class="o">=</span> <span class="n">node</span>
             <span class="k">if</span> <span class="n">ranks</span><span class="p">:</span>
                 <span class="c1"># Fixed length lineage</span>
-                <span class="n">lin</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ranks</span><span class="p">)</span>
-                <span class="k">while</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">root_parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">]:</span>
+                <span class="n">lin</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ranks</span><span class="p">)</span>
+                <span class="c1"># Loop until end of the tree (in case chosen root is not on lineage)</span>
+                <span class="k">while</span> <span class="n">n</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
                     <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">:</span>
                         <span class="n">lin</span><span class="p">[</span><span class="n">ranks</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">r</span><span class="p">)]</span> <span class="o">=</span> <span class="n">n</span>
+                    <span class="c1"># If node is root, break (after adding)</span>
+                    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="n">root_node</span><span class="p">:</span>
+                        <span class="k">break</span>
                     <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Full lineage</span>
-                <span class="k">while</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">root_parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">]:</span>
+                <span class="n">lin</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="c1"># Loop until end of the tree (in case chosen root is not on lineage)</span>
+                <span class="k">while</span> <span class="n">n</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
                     <span class="n">lin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                    <span class="c1"># If node is root, break (after adding)</span>
+                    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="n">root_node</span><span class="p">:</span>
+                        <span class="k">break</span>
                     <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                <span class="c1"># Reverse order</span>
                 <span class="n">lin</span> <span class="o">=</span> <span class="n">lin</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-            <span class="c1"># lin[0] == self.root_parent: it could not find the defined/default root</span>
-            <span class="c1"># n == self.unknown_node:     tree is invalid (no connection to root)</span>
-            <span class="k">if</span> <span class="n">lin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">:</span>
+            <span class="c1"># last iteration node (n) != root_node: didn&#39;t find the root, invalid lineage</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="n">root_node</span><span class="p">:</span>
                 <span class="k">return</span> <span class="p">[]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">lin</span>
@@ -395,7 +422,7 @@
 <span class="sd">        Return parent node of the specified rank.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span><span class="n">rank</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">parent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">parent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
     <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -405,7 +432,7 @@
 
 <span class="sd">        Returns:</span>
 
-<span class="sd">        * **[dict]** with total counts &quot;nodes&quot;, &quot;ranks&quot;, &quot;names&quot;, &quot;leaves&quot; and rank specific counts &quot;ranked_nodes&quot;, &quot;ranked_leaves&quot; with total of counts for each rank</span>
+<span class="sd">        * *[dict]* with total counts &quot;nodes&quot;, &quot;ranks&quot;, &quot;names&quot;, &quot;leaves&quot; and rank specific counts &quot;ranked_nodes&quot;, &quot;ranked_leaves&quot; with total of counts for each rank</span>
 <span class="sd">        </span>
 <span class="sd">        Example:</span>
 
@@ -455,16 +482,16 @@
 
     <span class="k">def</span> <span class="nf">check_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check if loaded taxonomy is consistent. If not, it will return a list of orphan nodes.</span>
+<span class="sd">        Returns None if loaded taxonomy is consistent. Otherwise raise an AssertionError.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">orphan_nodes</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
-                <span class="n">orphan_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">orphan_nodes</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">orphan_nodes</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="s2">&quot;root_node not found on _nodes&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="s2">&quot;root_parent found on _nodes&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="s2">&quot;undefined_node found on _nodes&quot;</span>
+        <span class="c1"># Difference between values and keys should be only root_parent</span>
+        <span class="n">lost_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="ow">in</span> <span class="n">lost_nodes</span><span class="p">,</span> <span class="s2">&quot;root_parent not defined&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;parent nodes missing: &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -509,16 +536,21 @@
         <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">desc</span><span class="p">:</span>
+            <span class="c1"># If root is present, nothing to filter</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+                <span class="k">return</span>
             <span class="c1"># Keep descendants of the given nodes</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="c1"># For each leaf of the selected nodes</span>
-                <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
-                    <span class="c1"># Build lineage of each leaf up-to node itself</span>
-                    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">leaf</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="n">node</span><span class="p">):</span>
-                        <span class="c1"># Discard nodes from set to be kept</span>
-                        <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-                <span class="c1"># Link node to root</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span>
+                <span class="c1"># Check if node exists</span>
+                <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">filtered_nodes</span><span class="p">:</span>
+                    <span class="c1"># For each leaf of the selected nodes</span>
+                    <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                        <span class="c1"># Build lineage of each leaf up-to node itself</span>
+                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">leaf</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="n">node</span><span class="p">):</span>
+                            <span class="c1"># Discard nodes from set to be kept</span>
+                            <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                    <span class="c1"># Link node to root</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Keep ancestors of the given nodes (full lineage up-to root)</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -536,11 +568,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_children</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lineage_sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sep_multi</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write taxonomy to a file.</span>
-<span class="sd">        cols can be: &quot;node&quot;, &quot;latest&quot;, &quot;parent&quot;, &quot;rank&quot;, &quot;name&quot;, &quot;leaves&quot;, &quot;children&quot;, &quot;lineage&quot;, &quot;rank_lineage&quot;, &quot;name_lineage</span>
+<span class="sd">        cols can be: &quot;node&quot;, &quot;latest&quot;, &quot;parent&quot;, &quot;rank&quot;, &quot;name&quot;, &quot;leaves&quot;, &quot;children&quot;, &quot;lineage&quot;, &quot;rank_lineage&quot;, &quot;name_lineage&quot;</span>
 <span class="sd">        Default cols: &quot;node&quot;, &quot;parent&quot;, &quot;rank&quot;, &quot;name&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">gzip</span>
@@ -557,11 +590,11 @@
                        <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span>
                        <span class="s2">&quot;rank&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span>
                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                       <span class="s2">&quot;leaves&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">)),</span>
-                       <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">(</span><span class="n">node</span><span class="p">)),</span>
-                       <span class="s2">&quot;lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)),</span>
-                       <span class="s2">&quot;rank_lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank_lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)),</span>
-                       <span class="s2">&quot;name_lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">))}</span>
+                       <span class="s2">&quot;leaves&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">)),</span>
+                       <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">(</span><span class="n">node</span><span class="p">)),</span>
+                       <span class="s2">&quot;lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)),</span>
+                       <span class="s2">&quot;rank_lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank_lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)),</span>
+                       <span class="s2">&quot;name_lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">))}</span>
 
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">write_field</span><span class="p">:</span>
@@ -600,11 +633,11 @@
                  <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">root_parent</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
-                 <span class="n">root_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;root&quot;</span><span class="p">,</span>
-                 <span class="n">root_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;root&quot;</span><span class="p">,</span>
-                 <span class="n">unknown_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">unknown_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">unknown_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -615,13 +648,13 @@
 <span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
 <span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse</span>
 <span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files</span>
-<span class="sd">        * **root_node** *[str]*: Define an alternative root node (has to exist in the taxonomy)</span>
-<span class="sd">        * **root_parent** *[str]*: Define an alternative root parent</span>
-<span class="sd">        * **root_name** *[str]*: Define an alternative root name</span>
-<span class="sd">        * **root_rank** *[str]*: Define an alternative root rank</span>
-<span class="sd">        * **unknown_node** *[str]*: Define a default return value for unknow/undefined nodes</span>
-<span class="sd">        * **unknown_name** *[str]*: Define a default return value for unknow/undefined names</span>
-<span class="sd">        * **unknown_rank** *[str]*: Define a default return value for unknow/undefined ranks</span>
+<span class="sd">        * **root_node** *[str]*: Define an alternative root node (has to exist in the taxonomy). Taxonomy will be filtered.</span>
+<span class="sd">        * **root_parent** *[str]*: Define the root parent node identifier</span>
+<span class="sd">        * **root_name** *[str]*: Define an alternative root name. Set to None to use original name.</span>
+<span class="sd">        * **root_rank** *[str]*: Define an alternative root rank. Set to None to use original name.</span>
+<span class="sd">        * **undefined_node** *[str]*: Define a default return value for undefined nodes</span>
+<span class="sd">        * **undefined_name** *[str]*: Define a default return value for undefined names</span>
+<span class="sd">        * **undefined_rank** *[str]*: Define a default return value for undefined ranks</span>
 <span class="sd">        * **build_node_children** *[bool]*: Pre-build node,children dict (otherwise it will be created on first use)</span>
 <span class="sd">        * **build_name_nodes** *[bool]*: Pre-build name,nodes dict (otherwise it will be created on first use)</span>
 <span class="sd">        * **build_rank_nodes** *[bool]*: Pre-build rank,nodes dict (otherwise it will be created on first use)</span>
@@ -649,31 +682,32 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_children</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># Open/Download/Write files</span>
+        <span class="n">fhs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">urls</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">:</span>
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">download_files</span><span class="p">(</span><span class="n">urls</span><span class="o">=</span><span class="n">urls</span> <span class="k">if</span> <span class="n">urls</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">,</span>
                                  <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">)</span>
-        <span class="c1"># Parse taxonomy</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
 
-        <span class="c1"># Save sources for stats (files or urls)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-
-        <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fhs</span><span class="p">:</span>
+            <span class="c1"># Parse taxonomy</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
+            <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
+            <span class="c1"># Save sources for stats (files or urls)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
         <span class="c1"># Set undefined values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span> <span class="o">=</span> <span class="n">unknown_node</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_name</span> <span class="o">=</span> <span class="n">unknown_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_rank</span> <span class="o">=</span> <span class="n">unknown_rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span> <span class="o">=</span> <span class="n">undefined_node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">undefined_name</span> <span class="o">=</span> <span class="n">undefined_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">undefined_rank</span> <span class="o">=</span> <span class="n">undefined_rank</span>
 
         <span class="c1"># Set root values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">root_parent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="n">root_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span> <span class="o">=</span> <span class="n">root_rank</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root</span><span class="p">(</span><span class="n">custom_root_node</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_values</span><span class="p">(</span><span class="n">custom_root_node</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
 
         <span class="c1"># build auxiliary structures</span>
         <span class="k">if</span> <span class="n">build_node_children</span><span class="p">:</span>
@@ -683,6 +717,8 @@
         <span class="k">if</span> <span class="n">build_rank_nodes</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="n">reverse_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
+
     <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        main function to be overloaded</span>
@@ -691,21 +727,28 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">_set_root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">custom_root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_set_root_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">custom_root_node</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set root node define by each class default (_default_root_node) or custom</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If custom root node is defined, keep only its descendants</span>
         <span class="k">if</span> <span class="n">custom_root_node</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="n">custom_root_node</span>
-            <span class="c1"># If custom root node is defined, keep only its descendants</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">custom_root_node</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
 
-        <span class="c1"># Define root nodes</span>
+        <span class="c1"># Define/overwrite root node on _nodes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span>
+
+        <span class="c1"># User-defined rank/name.</span>
+        <span class="c1"># If None, check if is in the tree or inser &quot;root&quot;</span>
+        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
+
+        <span class="k">if</span> <span class="n">rank</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
 
     <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -764,7 +807,7 @@
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
     <span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -773,7 +816,7 @@
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_rank</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_rank</span>
 
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -782,7 +825,7 @@
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_name</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_name</span>
 
     <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -792,16 +835,25 @@
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">node</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
-    <span class="k">def</span> <span class="nf">leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Leaves are nodes not contained in _nodes.values() (&quot;parents&quot;)</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="k">elif</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recurse_leaves</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">_recurse_leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Recursive function returning leaf nodes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">leaves</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">children</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">node</span><span class="p">]</span>
+        <span class="n">leaves</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
             <span class="n">leaves</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">leaves</span>
@@ -815,29 +867,37 @@
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Define alternative root parent if provided</span>
-            <span class="n">root_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">(</span><span class="n">root_node</span><span class="p">)</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">root_node</span><span class="p">:</span>
+                <span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span>
 
-            <span class="n">lin</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">n</span> <span class="o">=</span> <span class="n">node</span>
             <span class="k">if</span> <span class="n">ranks</span><span class="p">:</span>
                 <span class="c1"># Fixed length lineage</span>
-                <span class="n">lin</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ranks</span><span class="p">)</span>
-                <span class="k">while</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">root_parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">]:</span>
+                <span class="n">lin</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ranks</span><span class="p">)</span>
+                <span class="c1"># Loop until end of the tree (in case chosen root is not on lineage)</span>
+                <span class="k">while</span> <span class="n">n</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
                     <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">:</span>
                         <span class="n">lin</span><span class="p">[</span><span class="n">ranks</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">r</span><span class="p">)]</span> <span class="o">=</span> <span class="n">n</span>
+                    <span class="c1"># If node is root, break (after adding)</span>
+                    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="n">root_node</span><span class="p">:</span>
+                        <span class="k">break</span>
                     <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Full lineage</span>
-                <span class="k">while</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">root_parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">]:</span>
+                <span class="n">lin</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="c1"># Loop until end of the tree (in case chosen root is not on lineage)</span>
+                <span class="k">while</span> <span class="n">n</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
                     <span class="n">lin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                    <span class="c1"># If node is root, break (after adding)</span>
+                    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="n">root_node</span><span class="p">:</span>
+                        <span class="k">break</span>
                     <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                <span class="c1"># Reverse order</span>
                 <span class="n">lin</span> <span class="o">=</span> <span class="n">lin</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-            <span class="c1"># lin[0] == self.root_parent: it could not find the defined/default root</span>
-            <span class="c1"># n == self.unknown_node:     tree is invalid (no connection to root)</span>
-            <span class="k">if</span> <span class="n">lin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">:</span>
+            <span class="c1"># last iteration node (n) != root_node: didn&#39;t find the root, invalid lineage</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="n">root_node</span><span class="p">:</span>
                 <span class="k">return</span> <span class="p">[]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">lin</span>
@@ -865,7 +925,7 @@
 <span class="sd">        Return parent node of the specified rank.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span><span class="n">rank</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">parent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">parent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
     <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -875,7 +935,7 @@
 
 <span class="sd">        Returns:</span>
 
-<span class="sd">        * **[dict]** with total counts &quot;nodes&quot;, &quot;ranks&quot;, &quot;names&quot;, &quot;leaves&quot; and rank specific counts &quot;ranked_nodes&quot;, &quot;ranked_leaves&quot; with total of counts for each rank</span>
+<span class="sd">        * *[dict]* with total counts &quot;nodes&quot;, &quot;ranks&quot;, &quot;names&quot;, &quot;leaves&quot; and rank specific counts &quot;ranked_nodes&quot;, &quot;ranked_leaves&quot; with total of counts for each rank</span>
 <span class="sd">        </span>
 <span class="sd">        Example:</span>
 
@@ -925,16 +985,16 @@
 
     <span class="k">def</span> <span class="nf">check_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check if loaded taxonomy is consistent. If not, it will return a list of orphan nodes.</span>
+<span class="sd">        Returns None if loaded taxonomy is consistent. Otherwise raise an AssertionError.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">orphan_nodes</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
-                <span class="n">orphan_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">orphan_nodes</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">orphan_nodes</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="s2">&quot;root_node not found on _nodes&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="s2">&quot;root_parent found on _nodes&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="s2">&quot;undefined_node found on _nodes&quot;</span>
+        <span class="c1"># Difference between values and keys should be only root_parent</span>
+        <span class="n">lost_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="ow">in</span> <span class="n">lost_nodes</span><span class="p">,</span> <span class="s2">&quot;root_parent not defined&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;parent nodes missing: &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -979,16 +1039,21 @@
         <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">desc</span><span class="p">:</span>
+            <span class="c1"># If root is present, nothing to filter</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+                <span class="k">return</span>
             <span class="c1"># Keep descendants of the given nodes</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="c1"># For each leaf of the selected nodes</span>
-                <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
-                    <span class="c1"># Build lineage of each leaf up-to node itself</span>
-                    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">leaf</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="n">node</span><span class="p">):</span>
-                        <span class="c1"># Discard nodes from set to be kept</span>
-                        <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-                <span class="c1"># Link node to root</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span>
+                <span class="c1"># Check if node exists</span>
+                <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">filtered_nodes</span><span class="p">:</span>
+                    <span class="c1"># For each leaf of the selected nodes</span>
+                    <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                        <span class="c1"># Build lineage of each leaf up-to node itself</span>
+                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">leaf</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="n">node</span><span class="p">):</span>
+                            <span class="c1"># Discard nodes from set to be kept</span>
+                            <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                    <span class="c1"># Link node to root</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Keep ancestors of the given nodes (full lineage up-to root)</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -1006,11 +1071,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_children</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lineage_sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sep_multi</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write taxonomy to a file.</span>
-<span class="sd">        cols can be: &quot;node&quot;, &quot;latest&quot;, &quot;parent&quot;, &quot;rank&quot;, &quot;name&quot;, &quot;leaves&quot;, &quot;children&quot;, &quot;lineage&quot;, &quot;rank_lineage&quot;, &quot;name_lineage</span>
+<span class="sd">        cols can be: &quot;node&quot;, &quot;latest&quot;, &quot;parent&quot;, &quot;rank&quot;, &quot;name&quot;, &quot;leaves&quot;, &quot;children&quot;, &quot;lineage&quot;, &quot;rank_lineage&quot;, &quot;name_lineage&quot;</span>
 <span class="sd">        Default cols: &quot;node&quot;, &quot;parent&quot;, &quot;rank&quot;, &quot;name&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">gzip</span>
@@ -1027,11 +1093,11 @@
                        <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span>
                        <span class="s2">&quot;rank&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span>
                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                       <span class="s2">&quot;leaves&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">)),</span>
-                       <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">(</span><span class="n">node</span><span class="p">)),</span>
-                       <span class="s2">&quot;lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)),</span>
-                       <span class="s2">&quot;rank_lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank_lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)),</span>
-                       <span class="s2">&quot;name_lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">))}</span>
+                       <span class="s2">&quot;leaves&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">)),</span>
+                       <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">(</span><span class="n">node</span><span class="p">)),</span>
+                       <span class="s2">&quot;lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)),</span>
+                       <span class="s2">&quot;rank_lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank_lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)),</span>
+                       <span class="s2">&quot;name_lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">))}</span>
 
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">write_field</span><span class="p">:</span>
@@ -1058,11 +1124,11 @@
     output_prefix: str = None,
     root_node: str = None,
     root_parent: str = &#39;0&#39;,
-    root_name: str = &#39;root&#39;,
-    root_rank: str = &#39;root&#39;,
-    unknown_node: str = None,
-    unknown_name: str = None,
-    unknown_rank: str = None,
+    root_name: str = None,
+    root_rank: str = None,
+    undefined_node: str = None,
+    undefined_name: str = None,
+    undefined_rank: str = None,
     build_name_nodes: bool = False,
     build_node_children: bool = False,
     build_rank_nodes: bool = False
@@ -1076,11 +1142,11 @@
                  <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">root_parent</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
-                 <span class="n">root_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;root&quot;</span><span class="p">,</span>
-                 <span class="n">root_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;root&quot;</span><span class="p">,</span>
-                 <span class="n">unknown_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">unknown_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">unknown_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -1091,13 +1157,13 @@
 <span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
 <span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse</span>
 <span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files</span>
-<span class="sd">        * **root_node** *[str]*: Define an alternative root node (has to exist in the taxonomy)</span>
-<span class="sd">        * **root_parent** *[str]*: Define an alternative root parent</span>
-<span class="sd">        * **root_name** *[str]*: Define an alternative root name</span>
-<span class="sd">        * **root_rank** *[str]*: Define an alternative root rank</span>
-<span class="sd">        * **unknown_node** *[str]*: Define a default return value for unknow/undefined nodes</span>
-<span class="sd">        * **unknown_name** *[str]*: Define a default return value for unknow/undefined names</span>
-<span class="sd">        * **unknown_rank** *[str]*: Define a default return value for unknow/undefined ranks</span>
+<span class="sd">        * **root_node** *[str]*: Define an alternative root node (has to exist in the taxonomy). Taxonomy will be filtered.</span>
+<span class="sd">        * **root_parent** *[str]*: Define the root parent node identifier</span>
+<span class="sd">        * **root_name** *[str]*: Define an alternative root name. Set to None to use original name.</span>
+<span class="sd">        * **root_rank** *[str]*: Define an alternative root rank. Set to None to use original name.</span>
+<span class="sd">        * **undefined_node** *[str]*: Define a default return value for undefined nodes</span>
+<span class="sd">        * **undefined_name** *[str]*: Define a default return value for undefined names</span>
+<span class="sd">        * **undefined_rank** *[str]*: Define a default return value for undefined ranks</span>
 <span class="sd">        * **build_node_children** *[bool]*: Pre-build node,children dict (otherwise it will be created on first use)</span>
 <span class="sd">        * **build_name_nodes** *[bool]*: Pre-build name,nodes dict (otherwise it will be created on first use)</span>
 <span class="sd">        * **build_rank_nodes** *[bool]*: Pre-build rank,nodes dict (otherwise it will be created on first use)</span>
@@ -1125,31 +1191,32 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_children</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># Open/Download/Write files</span>
+        <span class="n">fhs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">urls</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">:</span>
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">download_files</span><span class="p">(</span><span class="n">urls</span><span class="o">=</span><span class="n">urls</span> <span class="k">if</span> <span class="n">urls</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">,</span>
                                  <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">)</span>
-        <span class="c1"># Parse taxonomy</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
 
-        <span class="c1"># Save sources for stats (files or urls)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-
-        <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fhs</span><span class="p">:</span>
+            <span class="c1"># Parse taxonomy</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
+            <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
+            <span class="c1"># Save sources for stats (files or urls)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
         <span class="c1"># Set undefined values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span> <span class="o">=</span> <span class="n">unknown_node</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_name</span> <span class="o">=</span> <span class="n">unknown_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unknown_rank</span> <span class="o">=</span> <span class="n">unknown_rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span> <span class="o">=</span> <span class="n">undefined_node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">undefined_name</span> <span class="o">=</span> <span class="n">undefined_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">undefined_rank</span> <span class="o">=</span> <span class="n">undefined_rank</span>
 
         <span class="c1"># Set root values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">root_parent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="n">root_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span> <span class="o">=</span> <span class="n">root_rank</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root</span><span class="p">(</span><span class="n">custom_root_node</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_values</span><span class="p">(</span><span class="n">custom_root_node</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
 
         <span class="c1"># build auxiliary structures</span>
         <span class="k">if</span> <span class="n">build_node_children</span><span class="p">:</span>
@@ -1158,6 +1225,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="n">reverse_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">build_rank_nodes</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="n">reverse_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
 </pre></div>
 
         </details>
@@ -1170,13 +1239,13 @@
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy)</li>
-<li><strong>root_parent</strong> <em>[str]</em>: Define an alternative root parent</li>
-<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name</li>
-<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank</li>
-<li><strong>unknown_node</strong> <em>[str]</em>: Define a default return value for unknow/undefined nodes</li>
-<li><strong>unknown_name</strong> <em>[str]</em>: Define a default return value for unknow/undefined names</li>
-<li><strong>unknown_rank</strong> <em>[str]</em>: Define a default return value for unknow/undefined ranks</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy). Taxonomy will be filtered.</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier</li>
+<li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name. Set to None to use original name.</li>
+<li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank. Set to None to use original name.</li>
+<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes</li>
+<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names</li>
+<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks</li>
 <li><strong>build_node_children</strong> <em>[bool]</em>: Pre-build node,children dict (otherwise it will be created on first use)</li>
 <li><strong>build_name_nodes</strong> <em>[bool]</em>: Pre-build name,nodes dict (otherwise it will be created on first use)</li>
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
@@ -1339,7 +1408,7 @@ tax = GtdbTx()
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 </pre></div>
 
         </details>
@@ -1366,7 +1435,7 @@ tax = GtdbTx()
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_rank</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_rank</span>
 </pre></div>
 
         </details>
@@ -1393,7 +1462,7 @@ tax = GtdbTx()
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_name</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_name</span>
 </pre></div>
 
         </details>
@@ -1421,7 +1490,7 @@ tax = GtdbTx()
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">node</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 </pre></div>
 
         </details>
@@ -1437,29 +1506,24 @@ Mainly used for accessing NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 
         
             <span class="def">def</span>
-            <span class="name">leaves</span><span class="signature">(self, node)</span>:
+            <span class="name">leaves</span><span class="signature">(self, node: str = None)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Recursive function returning leaf nodes</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">leaves</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">children</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">node</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
-            <span class="n">leaves</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">leaves</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Leaves are nodes not contained in _nodes.values() (&quot;parents&quot;)</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="k">elif</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recurse_leaves</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Recursive function returning leaf nodes</p>
-</div>
-
+    
 
                             </div>
                             <div id="MultiTax.lineage" class="classattr">
@@ -1481,29 +1545,37 @@ Mainly used for accessing NCBI (merged.dmp) and OTT (forwards.tsv)</p>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Define alternative root parent if provided</span>
-            <span class="n">root_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">(</span><span class="n">root_node</span><span class="p">)</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">root_node</span><span class="p">:</span>
+                <span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span>
 
-            <span class="n">lin</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">n</span> <span class="o">=</span> <span class="n">node</span>
             <span class="k">if</span> <span class="n">ranks</span><span class="p">:</span>
                 <span class="c1"># Fixed length lineage</span>
-                <span class="n">lin</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ranks</span><span class="p">)</span>
-                <span class="k">while</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">root_parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">]:</span>
+                <span class="n">lin</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ranks</span><span class="p">)</span>
+                <span class="c1"># Loop until end of the tree (in case chosen root is not on lineage)</span>
+                <span class="k">while</span> <span class="n">n</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
                     <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">:</span>
                         <span class="n">lin</span><span class="p">[</span><span class="n">ranks</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">r</span><span class="p">)]</span> <span class="o">=</span> <span class="n">n</span>
+                    <span class="c1"># If node is root, break (after adding)</span>
+                    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="n">root_node</span><span class="p">:</span>
+                        <span class="k">break</span>
                     <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Full lineage</span>
-                <span class="k">while</span> <span class="n">n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">root_parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">]:</span>
+                <span class="n">lin</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="c1"># Loop until end of the tree (in case chosen root is not on lineage)</span>
+                <span class="k">while</span> <span class="n">n</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
                     <span class="n">lin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                    <span class="c1"># If node is root, break (after adding)</span>
+                    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="n">root_node</span><span class="p">:</span>
+                        <span class="k">break</span>
                     <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                <span class="c1"># Reverse order</span>
                 <span class="n">lin</span> <span class="o">=</span> <span class="n">lin</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-            <span class="c1"># lin[0] == self.root_parent: it could not find the defined/default root</span>
-            <span class="c1"># n == self.unknown_node:     tree is invalid (no connection to root)</span>
-            <span class="k">if</span> <span class="n">lin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown_node</span><span class="p">:</span>
+            <span class="c1"># last iteration node (n) != root_node: didn&#39;t find the root, invalid lineage</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="n">root_node</span><span class="p">:</span>
                 <span class="k">return</span> <span class="p">[]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">lin</span>
@@ -1586,7 +1658,7 @@ Central function iterating the tree structure</p>
 <span class="sd">        Return parent node of the specified rank.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span><span class="n">rank</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">parent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">parent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 </pre></div>
 
         </details>
@@ -1614,7 +1686,7 @@ Central function iterating the tree structure</p>
 
 <span class="sd">        Returns:</span>
 
-<span class="sd">        * **[dict]** with total counts &quot;nodes&quot;, &quot;ranks&quot;, &quot;names&quot;, &quot;leaves&quot; and rank specific counts &quot;ranked_nodes&quot;, &quot;ranked_leaves&quot; with total of counts for each rank</span>
+<span class="sd">        * *[dict]* with total counts &quot;nodes&quot;, &quot;ranks&quot;, &quot;names&quot;, &quot;leaves&quot; and rank specific counts &quot;ranked_nodes&quot;, &quot;ranked_leaves&quot; with total of counts for each rank</span>
 <span class="sd">        </span>
 <span class="sd">        Example:</span>
 
@@ -1658,7 +1730,7 @@ Central function iterating the tree structure</p>
 <p>Returns:</p>
 
 <ul>
-<li><strong>[dict]</strong> with total counts "nodes", "ranks", "names", "leaves" and rank specific counts "ranked_nodes", "ranked_leaves" with total of counts for each rank</li>
+<li><em>[dict]</em> with total counts "nodes", "ranks", "names", "leaves" and rank specific counts "ranked_nodes", "ranked_leaves" with total of counts for each rank</li>
 </ul>
 
 <p>Example:</p>
@@ -1748,21 +1820,21 @@ pprint(tax.stats())
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">check_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check if loaded taxonomy is consistent. If not, it will return a list of orphan nodes.</span>
+<span class="sd">        Returns None if loaded taxonomy is consistent. Otherwise raise an AssertionError.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">orphan_nodes</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
-                <span class="n">orphan_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">orphan_nodes</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">orphan_nodes</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="s2">&quot;root_node not found on _nodes&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="s2">&quot;root_parent found on _nodes&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="s2">&quot;undefined_node found on _nodes&quot;</span>
+        <span class="c1"># Difference between values and keys should be only root_parent</span>
+        <span class="n">lost_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="ow">in</span> <span class="n">lost_nodes</span><span class="p">,</span> <span class="s2">&quot;root_parent not defined&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;parent nodes missing: &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Check if loaded taxonomy is consistent. If not, it will return a list of orphan nodes.</p>
+            <div class="docstring"><p>Returns None if loaded taxonomy is consistent. Otherwise raise an AssertionError.</p>
 </div>
 
 
@@ -1820,16 +1892,21 @@ pprint(tax.stats())
         <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">desc</span><span class="p">:</span>
+            <span class="c1"># If root is present, nothing to filter</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+                <span class="k">return</span>
             <span class="c1"># Keep descendants of the given nodes</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="c1"># For each leaf of the selected nodes</span>
-                <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
-                    <span class="c1"># Build lineage of each leaf up-to node itself</span>
-                    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">leaf</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="n">node</span><span class="p">):</span>
-                        <span class="c1"># Discard nodes from set to be kept</span>
-                        <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-                <span class="c1"># Link node to root</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span>
+                <span class="c1"># Check if node exists</span>
+                <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">filtered_nodes</span><span class="p">:</span>
+                    <span class="c1"># For each leaf of the selected nodes</span>
+                    <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                        <span class="c1"># Build lineage of each leaf up-to node itself</span>
+                        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">leaf</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="n">node</span><span class="p">):</span>
+                            <span class="c1"># Discard nodes from set to be kept</span>
+                            <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+                    <span class="c1"># Link node to root</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Keep ancestors of the given nodes (full lineage up-to root)</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -1847,6 +1924,7 @@ pprint(tax.stats())
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_children</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
 </pre></div>
 
         </details>
@@ -1899,7 +1977,7 @@ tax.stats()
     output_file,
     cols: list = [&#39;node&#39;, &#39;parent&#39;, &#39;rank&#39;, &#39;name&#39;],
     sep: str = &#39;\t&#39;,
-    lineage_sep: str = &#39;|&#39;,
+    sep_multi: str = &#39;|&#39;,
     ranks: list = None,
     gz: bool = False
 )</span>:
@@ -1907,10 +1985,10 @@ tax.stats()
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lineage_sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sep_multi</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write taxonomy to a file.</span>
-<span class="sd">        cols can be: &quot;node&quot;, &quot;latest&quot;, &quot;parent&quot;, &quot;rank&quot;, &quot;name&quot;, &quot;leaves&quot;, &quot;children&quot;, &quot;lineage&quot;, &quot;rank_lineage&quot;, &quot;name_lineage</span>
+<span class="sd">        cols can be: &quot;node&quot;, &quot;latest&quot;, &quot;parent&quot;, &quot;rank&quot;, &quot;name&quot;, &quot;leaves&quot;, &quot;children&quot;, &quot;lineage&quot;, &quot;rank_lineage&quot;, &quot;name_lineage&quot;</span>
 <span class="sd">        Default cols: &quot;node&quot;, &quot;parent&quot;, &quot;rank&quot;, &quot;name&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">gzip</span>
@@ -1927,11 +2005,11 @@ tax.stats()
                        <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span>
                        <span class="s2">&quot;rank&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span>
                        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                       <span class="s2">&quot;leaves&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">)),</span>
-                       <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">(</span><span class="n">node</span><span class="p">)),</span>
-                       <span class="s2">&quot;lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)),</span>
-                       <span class="s2">&quot;rank_lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank_lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)),</span>
-                       <span class="s2">&quot;name_lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">lineage_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">))}</span>
+                       <span class="s2">&quot;leaves&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">)),</span>
+                       <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">(</span><span class="n">node</span><span class="p">)),</span>
+                       <span class="s2">&quot;lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)),</span>
+                       <span class="s2">&quot;rank_lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank_lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)),</span>
+                       <span class="s2">&quot;name_lineage&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">node</span><span class="p">:</span> <span class="n">sep_multi</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">))}</span>
 
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">write_field</span><span class="p">:</span>
@@ -1946,7 +2024,7 @@ tax.stats()
         </details>
 
             <div class="docstring"><p>Write taxonomy to a file.
-cols can be: "node", "latest", "parent", "rank", "name", "leaves", "children", "lineage", "rank_lineage", "name_lineage
+cols can be: "node", "latest", "parent", "rank", "name", "leaves", "children", "lineage", "rank_lineage", "name_lineage"
 Default cols: "node", "parent", "rank", "name"</p>
 </div>
 

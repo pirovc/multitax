@@ -1,18 +1,18 @@
 import unittest
 import os
+import sys
 
+sys.path.append("tests/multitax/")
 from utils import setup_dir, uncompress_gzip
 
-from multitax import GreengenesTx, GtdbTx, NcbiTx, OttTx, SilvaTx
+from multitax import GreengenesTx, GtdbTx, NcbiTx, OttTx, SilvaTx, CustomTx
 
 
 class TestCommon(unittest.TestCase):
 
-    base_dir = "tests/multitax/integration/"
-    tmp_dir = base_dir + "tmp_common/"
-
-    data_dir = base_dir + "data_minimal/"
-    #data_dir = base_dir + "data_complete/"
+    tmp_dir = "tests/multitax/integration/tmp_common/"
+    data_dir = "tests/multitax/data_minimal/"
+    #data_dir = "tests/multitax/data_complete/"
 
     taxonomies = {}
     taxonomies["gtdb"] = {"class": GtdbTx,
@@ -26,6 +26,8 @@ class TestCommon(unittest.TestCase):
                          "params": {"files": [data_dir + "ott.tgz"]}}
     taxonomies["greengenes"] = {"class": GreengenesTx,
                                 "params": {"files": [data_dir + "gg.txt.gz"]}}
+    taxonomies["custom"] = {"class": CustomTx,
+                                "params": {"files": [data_dir + "custom.tsv.gz"]}}
 
     @classmethod
     def setUpClass(self):
@@ -59,10 +61,10 @@ class TestCommon(unittest.TestCase):
 
     def test_gzip_uncompressed(self):
         """
-        Using uncompressed gzip files ("gtdb", "silva", "greengenes")
+        Using uncompressed gzip files ("gtdb", "silva", "greengenes", "custom")
         """
         for t in self.taxonomies:
-            if t in ["gtdb", "silva", "greengenes"]:
+            if t in ["gtdb", "silva", "greengenes", "custom"]:
                 uncompressed = []
                 for file in self.taxonomies[t]["params"]["files"]:
                     if file.endswith(".gz"):
