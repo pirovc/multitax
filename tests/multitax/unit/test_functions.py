@@ -34,44 +34,44 @@ class TestFunctions(unittest.TestCase):
         test children function
         """
         tax = CustomTx(files=self.test_file)
-        self.assertEqual(tax.children("1"), ["2.1", "2.2", "4.6"])
-        self.assertEqual(tax.children("2.1"), ["3.1", "3.2"])
-        self.assertEqual(tax.children("2.2"), ["3.4", "4.5"])
-        self.assertEqual(tax.children("4.4"), ["5.1", "5.2"])
-        self.assertEqual(tax.children("5.2"), [])
-        self.assertEqual(tax.children("XXX"), [])
+        self.assertCountEqual(tax.children("1"), ["2.1", "2.2", "4.6"])
+        self.assertCountEqual(tax.children("2.1"), ["3.1", "3.2"])
+        self.assertCountEqual(tax.children("2.2"), ["3.4", "4.5"])
+        self.assertCountEqual(tax.children("4.4"), ["5.1", "5.2"])
+        self.assertCountEqual(tax.children("5.2"), [])
+        self.assertCountEqual(tax.children("XXX"), [])
 
     def test_search_name(self):
         """
         test search_name function
         """
         tax = CustomTx(files=self.test_file)
-        self.assertEqual(tax.search_name("Node2"), ["2.1", "2.2"])
-        self.assertEqual(tax.search_name("Node1"), ["1"])
-        self.assertEqual(tax.search_name("NotThere"), [])
+        self.assertCountEqual(tax.search_name("Node2"), ["2.1", "2.2"])
+        self.assertCountEqual(tax.search_name("Node1"), ["1"])
+        self.assertCountEqual(tax.search_name("NotThere"), [])
 
         tax = CustomTx(files=self.test_file, root_name="AnotherRootName")
-        self.assertEqual(tax.search_name("Node1"), [])
-        self.assertEqual(tax.search_name("Another"), ["1"])
+        self.assertCountEqual(tax.search_name("Node1"), [])
+        self.assertCountEqual(tax.search_name("Another"), ["1"])
 
     def test_nodes_name(self):
         """
         test nodes_name function
         """
         tax = CustomTx(files=self.test_file)
-        self.assertEqual(tax.nodes_name("Node1"), ["1"])
-        self.assertEqual(tax.nodes_name("Node2.1"), ["2.1"])
-        self.assertEqual(tax.nodes_name("Node5.2"), ["5.2"])
-        self.assertEqual(tax.nodes_name("Node2."), [])
+        self.assertCountEqual(tax.nodes_name("Node1"), ["1"])
+        self.assertCountEqual(tax.nodes_name("Node2.1"), ["2.1"])
+        self.assertCountEqual(tax.nodes_name("Node5.2"), ["5.2"])
+        self.assertCountEqual(tax.nodes_name("Node2."), [])
 
     def test_nodes_rank(self):
         """
         test nodes_rank function
         """
         tax = CustomTx(files=self.test_file)
-        self.assertEqual(tax.nodes_rank("rank-1"), ["1"])
-        self.assertEqual(tax.nodes_rank("rank-4"), ["4.1", "4.2", "4.3", "4.4", "4.5", "4.6"])
-        self.assertEqual(tax.nodes_rank("rank-9999"), [])
+        self.assertCountEqual(tax.nodes_rank("rank-1"), ["1"])
+        self.assertCountEqual(tax.nodes_rank("rank-4"), ["4.1", "4.2", "4.3", "4.4", "4.5", "4.6"])
+        self.assertCountEqual(tax.nodes_rank("rank-9999"), [])
 
     def test_parent(self):
         """
@@ -127,12 +127,12 @@ class TestFunctions(unittest.TestCase):
         test leaves function
         """
         tax = CustomTx(files=self.test_file)
-        self.assertEqual(sorted(tax.leaves()), ["4.1", "4.2", "4.3", "4.5", "4.6", "5.1", "5.2"])
-        self.assertEqual(tax.leaves("1"), ["4.1", "4.2", "4.3", "5.1", "5.2", "4.5", "4.6"])
-        self.assertEqual(tax.leaves("2.2"), ["5.1", "5.2", "4.5"])
-        self.assertEqual(tax.leaves("4.4"), ["5.1", "5.2"])
-        self.assertEqual(tax.leaves("5.1"), ["5.1"])
-        self.assertEqual(tax.leaves("999.999"), [])
+        self.assertCountEqual(tax.leaves(), ["4.1", "4.2", "4.3", "4.5", "4.6", "5.1", "5.2"])
+        self.assertCountEqual(tax.leaves("1"), ["4.1", "4.2", "4.3", "5.1", "5.2", "4.5", "4.6"])
+        self.assertCountEqual(tax.leaves("2.2"), ["5.1", "5.2", "4.5"])
+        self.assertCountEqual(tax.leaves("4.4"), ["5.1", "5.2"])
+        self.assertCountEqual(tax.leaves("5.1"), ["5.1"])
+        self.assertCountEqual(tax.leaves("999.999"), [])
 
     def test_lineage(self):
         """
@@ -354,19 +354,19 @@ class TestFunctions(unittest.TestCase):
         tax.filter(["4.5", "XXXX"])
         self.assertEqual(tax.stats()["nodes"], 3)
         self.assertEqual(tax.lineage("4.5"), ["1", "2.2", "4.5"])
-        self.assertEqual(tax.leaves("1"), ["4.5"])
+        self.assertCountEqual(tax.leaves("1"), ["4.5"])
 
         tax = CustomTx(files=self.test_file)
         tax.filter(["4.1", "5.1", "5.2"])
         self.assertEqual(tax.stats()["nodes"], 9)
         self.assertEqual(tax.lineage("4.1"), ["1", "2.1", "3.1", "4.1"])
-        self.assertEqual(tax.leaves("1"), ["4.1", "5.1", "5.2"])
+        self.assertCountEqual(tax.leaves("1"), ["4.1", "5.1", "5.2"])
 
         tax = CustomTx(files=self.test_file)
         tax.filter("1")
         self.assertEqual(tax.stats()["nodes"], 1)
         self.assertEqual(tax.lineage("1"), ["1"])
-        self.assertEqual(tax.leaves("1"), ["1"])
+        self.assertCountEqual(tax.leaves("1"), ["1"])
 
         tax = CustomTx(files=self.test_file)
         tax.filter("XXXX")
@@ -377,20 +377,20 @@ class TestFunctions(unittest.TestCase):
         tax.filter("3.4", desc=True)
         self.assertEqual(tax.stats()["nodes"], 5)
         self.assertEqual(tax.lineage("3.4"), ["1", "3.4"])
-        self.assertEqual(tax.leaves("1"), ["5.1", "5.2"])
+        self.assertCountEqual(tax.leaves("1"), ["5.1", "5.2"])
 
         tax = CustomTx(files=self.test_file)
         tax.filter(["XXXXX", "3.4"], desc=True)
         self.assertEqual(tax.stats()["nodes"], 5)
         self.assertEqual(tax.lineage("3.4"), ["1", "3.4"])
-        self.assertEqual(tax.leaves("1"), ["5.1", "5.2"])
+        self.assertCountEqual(tax.leaves("1"), ["5.1", "5.2"])
 
         tax = CustomTx(files=self.test_file)
         tax.filter(["3.2", "4.4"], desc=True)
         self.assertEqual(tax.stats()["nodes"], 7)
         self.assertEqual(tax.lineage("5.2"), ["1", "4.4", "5.2"])
         self.assertEqual(tax.lineage("4.5"), [])
-        self.assertEqual(tax.leaves("1"), ["4.2", "4.3", "5.1", "5.2"])
+        self.assertCountEqual(tax.leaves("1"), ["4.2", "4.3", "5.1", "5.2"])
 
         tax = CustomTx(files=self.test_file)
         self.assertEqual(tax.stats()["nodes"], 14)
