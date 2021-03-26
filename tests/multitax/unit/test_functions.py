@@ -291,8 +291,7 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(len(stats["ranked_nodes"]), 5)
         self.assertEqual(sum(stats["ranked_nodes"].values()), stats["nodes"])
         self.assertEqual(sum(stats["ranked_leaves"].values()), stats["leaves"])
-        self.assertEqual(list(stats["ranked_leaves"].keys()), ["rank-4", "rank-5"])
-
+        self.assertCountEqual(list(stats["ranked_leaves"].keys()), ["rank-4", "rank-5"])
 
     def test_build_lineages(self):
         """
