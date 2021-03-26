@@ -116,8 +116,8 @@ tax.stats()
 tax.write("custom_tax.tsv", cols=["node", "rank", "name_lineage"])
 
 #g__Escherichia             genus    root|Bacteria|Proteobacteria|Gammaproteobacteria|Ent#erobacterales|Enterobacteriaceae|Escherichia
-#f__Enterobacteriaceae      family   #root|Bacteria|Proteobacteria|Gammaproteobacteria|Enterobacterales|Enterobacteriaceae
-#o__Enterobacterales        order    #root|Bacteria|Proteobacteria|Gammaproteobacteria|Enterobacterales
+#f__Enterobacteriaceae      family   root|Bacteria|Proteobacteria|Gammaproteobacteria|Enterobacterales|Enterobacteriaceae
+#o__Enterobacterales        order    root|Bacteria|Proteobacteria|Gammaproteobacteria|Enterobacterales
 #c__Gammaproteobacteria     class    root|Bacteria|Proteobacteria|Gammaproteobacteria
 #...
 ```
