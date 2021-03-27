@@ -84,7 +84,7 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 
-<span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters:</span>
 <span class="sd">    * **files** *[list]*: List of files to open (text, &quot;.gz&quot;, &quot;.tar.gz&quot;, &quot;.tgz&quot;)</span>
@@ -104,7 +104,7 @@
     <span class="k">return</span> <span class="n">fhs</span>
 
 
-<span class="k">def</span> <span class="nf">download_files</span><span class="p">(</span><span class="n">urls</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">download_files</span><span class="p">(</span><span class="n">urls</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Download and open files (memory/stream) or write to disk (multitax.utils.save_urls)</span>
 
@@ -137,7 +137,7 @@
         <span class="k">return</span> <span class="n">fhs</span>
 
 
-<span class="k">def</span> <span class="nf">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters:</span>
 <span class="sd">    * **fhs** *[dict]*: {file: file handler}</span>
@@ -148,7 +148,7 @@
         <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">save_urls</span><span class="p">(</span><span class="n">urls</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">save_urls</span><span class="p">(</span><span class="n">urls</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters:</span>
 <span class="sd">    * **urls** *[list]*: List of urls to download</span>
@@ -169,7 +169,7 @@
     <span class="k">return</span> <span class="n">files</span>
 
 
-<span class="k">def</span> <span class="nf">load_url_mem</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">load_url_mem</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters:</span>
 <span class="sd">    * **url** *[str]*: URL to load into memory</span>
@@ -190,25 +190,25 @@
     <span class="k">return</span> <span class="n">tmpfile</span>
 
 
-<span class="k">def</span> <span class="nf">check_file</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">check_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">file</span> <span class="o">+</span> <span class="s2">&quot; file do not exist&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">file</span> <span class="o">+</span> <span class="s2">&quot; file is empty&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">check_no_file</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">check_no_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">check_dir</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">check_dir</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="n">abs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">prefix</span><span class="p">))</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">abs_path</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">abs_path</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">reverse_dict</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">reverse_dict</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="n">rd</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rd</span><span class="p">:</span>
@@ -217,7 +217,7 @@
     <span class="k">return</span> <span class="n">rd</span>
 
 
-<span class="k">def</span> <span class="nf">join_check</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">sep</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">join_check</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">elements</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">elements</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
@@ -232,12 +232,12 @@
 
         
             <span class="def">def</span>
-            <span class="name">open_files</span><span class="signature">(files)</span>:
+            <span class="name">open_files</span><span class="signature">(files: list)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters:</span>
 <span class="sd">    * **files** *[list]*: List of files to open (text, &quot;.gz&quot;, &quot;.tar.gz&quot;, &quot;.tgz&quot;)</span>
@@ -279,12 +279,12 @@
 
         
             <span class="def">def</span>
-            <span class="name">download_files</span><span class="signature">(urls, output_prefix: str = None)</span>:
+            <span class="name">download_files</span><span class="signature">(urls: list, output_prefix: str = None)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">download_files</span><span class="p">(</span><span class="n">urls</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">download_files</span><span class="p">(</span><span class="n">urls</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Download and open files (memory/stream) or write to disk (multitax.utils.save_urls)</span>
 
@@ -342,12 +342,12 @@
 
         
             <span class="def">def</span>
-            <span class="name">close_files</span><span class="signature">(fhs)</span>:
+            <span class="name">close_files</span><span class="signature">(fhs: dict)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters:</span>
 <span class="sd">    * **fhs** *[dict]*: {file: file handler}</span>
@@ -376,12 +376,12 @@
 
         
             <span class="def">def</span>
-            <span class="name">save_urls</span><span class="signature">(urls, output_prefix)</span>:
+            <span class="name">save_urls</span><span class="signature">(urls: list, output_prefix: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">save_urls</span><span class="p">(</span><span class="n">urls</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">save_urls</span><span class="p">(</span><span class="n">urls</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters:</span>
 <span class="sd">    * **urls** *[list]*: List of urls to download</span>
@@ -425,12 +425,12 @@
 
         
             <span class="def">def</span>
-            <span class="name">load_url_mem</span><span class="signature">(url)</span>:
+            <span class="name">load_url_mem</span><span class="signature">(url: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_url_mem</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_url_mem</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters:</span>
 <span class="sd">    * **url** *[str]*: URL to load into memory</span>
@@ -473,12 +473,12 @@
 
         
             <span class="def">def</span>
-            <span class="name">check_file</span><span class="signature">(file)</span>:
+            <span class="name">check_file</span><span class="signature">(file: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_file</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">file</span> <span class="o">+</span> <span class="s2">&quot; file do not exist&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -495,12 +495,12 @@
 
         
             <span class="def">def</span>
-            <span class="name">check_no_file</span><span class="signature">(file)</span>:
+            <span class="name">check_no_file</span><span class="signature">(file: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_no_file</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_no_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 </pre></div>
@@ -515,12 +515,12 @@
 
         
             <span class="def">def</span>
-            <span class="name">check_dir</span><span class="signature">(prefix)</span>:
+            <span class="name">check_dir</span><span class="signature">(prefix: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_dir</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_dir</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="n">abs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">prefix</span><span class="p">))</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">abs_path</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">abs_path</span><span class="p">)</span>
@@ -536,12 +536,12 @@
 
         
             <span class="def">def</span>
-            <span class="name">reverse_dict</span><span class="signature">(d)</span>:
+            <span class="name">reverse_dict</span><span class="signature">(d: dict)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">reverse_dict</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">reverse_dict</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="n">rd</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rd</span><span class="p">:</span>
@@ -560,12 +560,12 @@
 
         
             <span class="def">def</span>
-            <span class="name">join_check</span><span class="signature">(elements, sep)</span>:
+            <span class="name">join_check</span><span class="signature">(elements, sep: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">join_check</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">sep</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">join_check</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">elements</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">elements</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>

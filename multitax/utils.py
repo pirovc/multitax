@@ -7,7 +7,7 @@ import io
 from collections import OrderedDict
 
 
-def open_files(files):
+def open_files(files: list):
     """
     Parameters:
     * **files** *[list]*: List of files to open (text, ".gz", ".tar.gz", ".tgz")
@@ -27,7 +27,7 @@ def open_files(files):
     return fhs
 
 
-def download_files(urls, output_prefix: str=None):
+def download_files(urls: list, output_prefix: str=None):
     """
     Download and open files (memory/stream) or write to disk (multitax.utils.save_urls)
 
@@ -60,7 +60,7 @@ def download_files(urls, output_prefix: str=None):
         return fhs
 
 
-def close_files(fhs):
+def close_files(fhs: dict):
     """
     Parameters:
     * **fhs** *[dict]*: {file: file handler}
@@ -71,7 +71,7 @@ def close_files(fhs):
         fh.close()
 
 
-def save_urls(urls, output_prefix):
+def save_urls(urls: list, output_prefix: str):
     """
     Parameters:
     * **urls** *[list]*: List of urls to download
@@ -92,7 +92,7 @@ def save_urls(urls, output_prefix):
     return files
 
 
-def load_url_mem(url):
+def load_url_mem(url: str):
     """
     Parameters:
     * **url** *[str]*: URL to load into memory
@@ -113,25 +113,25 @@ def load_url_mem(url):
     return tmpfile
 
 
-def check_file(file):
+def check_file(file: str):
     if not os.path.isfile(file):
         raise FileNotFoundError(file + " file do not exist")
     if os.path.getsize(file) == 0:
         raise FileNotFoundError(file + " file is empty")
 
 
-def check_no_file(file):
+def check_no_file(file: str):
     if os.path.isfile(file):
         raise FileExistsError(file)
 
 
-def check_dir(prefix):
+def check_dir(prefix: str):
     abs_path = os.path.dirname(os.path.abspath(prefix))
     if not os.path.exists(abs_path):
         raise NotADirectoryError(abs_path)
 
 
-def reverse_dict(d):
+def reverse_dict(d: dict):
     rd = {}
     for k, v in d.items():
         if v not in rd:
@@ -140,7 +140,7 @@ def reverse_dict(d):
     return rd
 
 
-def join_check(elements, sep):
+def join_check(elements, sep: str):
     if elements:
         return sep.join(map(str, elements))
     else:

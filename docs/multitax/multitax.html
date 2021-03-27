@@ -217,7 +217,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        main function to be overloaded</span>
 <span class="sd">        receives a dictionary with {&quot;url/file&quot;: file handler}</span>
@@ -225,7 +225,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">_set_root_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_set_root_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set root node of the tree.</span>
 <span class="sd">        The files are parsed based on the self._default_root_node for each class</span>
@@ -265,7 +265,7 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes node from _nodes, _ranks and _names</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -275,7 +275,7 @@
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns list of direct children nodes of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -287,7 +287,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Searches names containing a certain text (case sensitive) and return their respective nodes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -301,7 +301,7 @@
                 <span class="n">matching_nodes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">matching_nodes</span>
 
-    <span class="k">def</span> <span class="nf">nodes_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">nodes_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns list of nodes of a given exact name.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -313,7 +313,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">nodes_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">nodes_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns list of nodes of a given rank.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -325,7 +325,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns parent node of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -334,7 +334,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
-    <span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the rank of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -343,7 +343,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_rank</span>
 
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns name of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -352,7 +352,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_name</span>
 
-    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns latest/updated version of a given node.</span>
 <span class="sd">        If node is already the latests, returns itself.</span>
@@ -375,7 +375,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">_recurse_leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_recurse_leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Recursive function returning leaf nodes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -450,7 +450,7 @@
                                      <span class="n">root_node</span><span class="o">=</span><span class="n">root_node</span><span class="p">,</span>
                                      <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)))</span>
 
-    <span class="k">def</span> <span class="nf">parent_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">parent_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the parent node of a given rank in the specified rank.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -594,7 +594,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+              <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
               <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span>
               <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
               <span class="n">sep_multi</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span>
@@ -760,7 +761,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        main function to be overloaded</span>
 <span class="sd">        receives a dictionary with {&quot;url/file&quot;: file handler}</span>
@@ -768,7 +769,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">_set_root_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_set_root_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set root node of the tree.</span>
 <span class="sd">        The files are parsed based on the self._default_root_node for each class</span>
@@ -808,7 +809,7 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Removes node from _nodes, _ranks and _names</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -818,7 +819,7 @@
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns list of direct children nodes of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -830,7 +831,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Searches names containing a certain text (case sensitive) and return their respective nodes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -844,7 +845,7 @@
                 <span class="n">matching_nodes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">matching_nodes</span>
 
-    <span class="k">def</span> <span class="nf">nodes_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">nodes_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns list of nodes of a given exact name.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -856,7 +857,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">nodes_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">nodes_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns list of nodes of a given rank.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -868,7 +869,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns parent node of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -877,7 +878,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
-    <span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the rank of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -886,7 +887,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_rank</span>
 
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns name of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -895,7 +896,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_name</span>
 
-    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns latest/updated version of a given node.</span>
 <span class="sd">        If node is already the latests, returns itself.</span>
@@ -918,7 +919,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">_recurse_leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_recurse_leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Recursive function returning leaf nodes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -993,7 +994,7 @@
                                      <span class="n">root_node</span><span class="o">=</span><span class="n">root_node</span><span class="p">,</span>
                                      <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)))</span>
 
-    <span class="k">def</span> <span class="nf">parent_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">parent_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the parent node of a given rank in the specified rank.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1137,7 +1138,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+              <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
               <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span>
               <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
               <span class="n">sep_multi</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span>
@@ -1358,12 +1360,12 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
         
             <span class="def">def</span>
-            <span class="name">children</span><span class="signature">(self, node)</span>:
+            <span class="name">children</span><span class="signature">(self, node: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns list of direct children nodes of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1388,12 +1390,12 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
         
             <span class="def">def</span>
-            <span class="name">search_name</span><span class="signature">(self, text)</span>:
+            <span class="name">search_name</span><span class="signature">(self, text: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Searches names containing a certain text (case sensitive) and return their respective nodes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1420,12 +1422,12 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
         
             <span class="def">def</span>
-            <span class="name">nodes_name</span><span class="signature">(self, name)</span>:
+            <span class="name">nodes_name</span><span class="signature">(self, name: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">nodes_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">nodes_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns list of nodes of a given exact name.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1450,12 +1452,12 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
         
             <span class="def">def</span>
-            <span class="name">nodes_rank</span><span class="signature">(self, rank)</span>:
+            <span class="name">nodes_rank</span><span class="signature">(self, rank: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">nodes_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">nodes_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns list of nodes of a given rank.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1480,12 +1482,12 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
         
             <span class="def">def</span>
-            <span class="name">parent</span><span class="signature">(self, node)</span>:
+            <span class="name">parent</span><span class="signature">(self, node: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns parent node of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1507,12 +1509,12 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
         
             <span class="def">def</span>
-            <span class="name">rank</span><span class="signature">(self, node)</span>:
+            <span class="name">rank</span><span class="signature">(self, node: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the rank of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1534,12 +1536,12 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
         
             <span class="def">def</span>
-            <span class="name">name</span><span class="signature">(self, node)</span>:
+            <span class="name">name</span><span class="signature">(self, node: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns name of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1561,12 +1563,12 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
         
             <span class="def">def</span>
-            <span class="name">latest</span><span class="signature">(self, node)</span>:
+            <span class="name">latest</span><span class="signature">(self, node: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns latest/updated version of a given node.</span>
 <span class="sd">        If node is already the latests, returns itself.</span>
@@ -1741,12 +1743,12 @@ If root_node is provided, use it instead of default root of tree.</p>
 
         
             <span class="def">def</span>
-            <span class="name">parent_rank</span><span class="signature">(self, node, rank)</span>:
+            <span class="name">parent_rank</span><span class="signature">(self, node: str, rank: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">parent_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">parent_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the parent node of a given rank in the specified rank.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -2044,7 +2046,7 @@ tax.filter('g__Enterovibrio', desc=True)
             <span class="def">def</span>
             <span class="name">write</span><span class="signature">(
     self,
-    output_file,
+    output_file: str,
     cols: list = [&#39;node&#39;, &#39;parent&#39;, &#39;rank&#39;, &#39;name&#39;],
     sep: str = &#39;\t&#39;,
     sep_multi: str = &#39;|&#39;,
@@ -2055,7 +2057,8 @@ tax.filter('g__Enterovibrio', desc=True)
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+              <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
               <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span>
               <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
               <span class="n">sep_multi</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span>

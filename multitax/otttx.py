@@ -68,7 +68,7 @@ class OttTx(MultiTax):
             forwards[old_taxid] = new_taxid
         return forwards
 
-    def forwards(self, node):
+    def forwards(self, node: str):
         """
         Returns relative entry from the forwards.tsv file of a given node.
         """
@@ -77,7 +77,7 @@ class OttTx(MultiTax):
         else:
             return self.undefined_node
 
-    def latest(self, node):
+    def latest(self, node: str):
         n = super().latest(node)
         if n == self.undefined_node:
             n = self.forwards(node)

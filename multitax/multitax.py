@@ -101,7 +101,7 @@ class MultiTax(object):
 
         self.check_consistency()
 
-    def _parse(self, fhs):
+    def _parse(self, fhs: dict):
         """
         main function to be overloaded
         receives a dictionary with {"url/file": file handler}
@@ -109,7 +109,7 @@ class MultiTax(object):
         """
         return {}, {}, {}
 
-    def _set_root_node(self, root, parent, name, rank):
+    def _set_root_node(self, root: str, parent: str, name: str, rank: str):
         """
         Set root node of the tree.
         The files are parsed based on the self._default_root_node for each class
@@ -149,7 +149,7 @@ class MultiTax(object):
         elif self.root_node not in self._ranks:
             self._ranks[self.root_node] = "root"
 
-    def _remove(self, node):
+    def _remove(self, node: str):
         """
         Removes node from _nodes, _ranks and _names
         """
@@ -159,7 +159,7 @@ class MultiTax(object):
         if node in self._ranks:
             del self._ranks[node]
 
-    def children(self, node):
+    def children(self, node: str):
         """
         Returns list of direct children nodes of a given node.
         """
@@ -171,7 +171,7 @@ class MultiTax(object):
         else:
             return []
 
-    def search_name(self, text):
+    def search_name(self, text: str):
         """
         Searches names containing a certain text (case sensitive) and return their respective nodes.
         """
@@ -185,7 +185,7 @@ class MultiTax(object):
                 matching_nodes.extend(self._name_nodes[name])
         return matching_nodes
 
-    def nodes_name(self, name):
+    def nodes_name(self, name: str):
         """
         Returns list of nodes of a given exact name.
         """
@@ -197,7 +197,7 @@ class MultiTax(object):
         else:
             return []
 
-    def nodes_rank(self, rank):
+    def nodes_rank(self, rank: str):
         """
         Returns list of nodes of a given rank.
         """
@@ -209,7 +209,7 @@ class MultiTax(object):
         else:
             return []
 
-    def parent(self, node):
+    def parent(self, node: str):
         """
         Returns parent node of a given node.
         """
@@ -218,7 +218,7 @@ class MultiTax(object):
         else:
             return self.undefined_node
 
-    def rank(self, node):
+    def rank(self, node: str):
         """
         Returns the rank of a given node.
         """
@@ -227,7 +227,7 @@ class MultiTax(object):
         else:
             return self.undefined_rank
 
-    def name(self, node):
+    def name(self, node: str):
         """
         Returns name of a given node.
         """
@@ -236,7 +236,7 @@ class MultiTax(object):
         else:
             return self.undefined_name
 
-    def latest(self, node):
+    def latest(self, node: str):
         """
         Returns latest/updated version of a given node.
         If node is already the latests, returns itself.
@@ -259,7 +259,7 @@ class MultiTax(object):
         else:
             return []
 
-    def _recurse_leaves(self, node):
+    def _recurse_leaves(self, node: str):
         """
         Recursive function returning leaf nodes
         """
@@ -334,7 +334,7 @@ class MultiTax(object):
                                      root_node=root_node,
                                      ranks=ranks)))
 
-    def parent_rank(self, node, rank):
+    def parent_rank(self, node: str, rank: str):
         """
         Returns the parent node of a given rank in the specified rank.
         """
@@ -478,7 +478,8 @@ class MultiTax(object):
 
         self.check_consistency()
 
-    def write(self, output_file,
+    def write(self,
+              output_file: str,
               cols: list=["node", "parent", "rank", "name"],
               sep: str="\t",
               sep_multi: str="|",

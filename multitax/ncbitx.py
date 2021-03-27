@@ -75,7 +75,7 @@ class NcbiTx(MultiTax):
             merged[old_taxid] = new_taxid
         return merged
 
-    def merged(self, node):
+    def merged(self, node: str):
         """
         Returns relative entry from the merged.dmp file of a given node.
         """
@@ -84,7 +84,7 @@ class NcbiTx(MultiTax):
         else:
             return self.undefined_node
 
-    def latest(self, node):
+    def latest(self, node: str):
         n = super().latest(node)
         if n == self.undefined_node:
             n = self.merged(node)

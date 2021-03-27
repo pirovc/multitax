@@ -770,7 +770,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
             <span class="n">merged</span><span class="p">[</span><span class="n">old_taxid</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_taxid</span>
         <span class="k">return</span> <span class="n">merged</span>
 
-    <span class="k">def</span> <span class="nf">merged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">merged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns relative entry from the merged.dmp file of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -779,7 +779,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
-    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">latest</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merged</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
@@ -848,12 +848,12 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
         
             <span class="def">def</span>
-            <span class="name">merged</span><span class="signature">(self, node)</span>:
+            <span class="name">merged</span><span class="signature">(self, node: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">merged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">merged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns relative entry from the merged.dmp file of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -875,12 +875,12 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
         
             <span class="def">def</span>
-            <span class="name">latest</span><span class="signature">(self, node)</span>:
+            <span class="name">latest</span><span class="signature">(self, node: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">latest</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merged</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
@@ -1046,7 +1046,7 @@ pprint(tax.stats())
             <span class="n">forwards</span><span class="p">[</span><span class="n">old_taxid</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_taxid</span>
         <span class="k">return</span> <span class="n">forwards</span>
 
-    <span class="k">def</span> <span class="nf">forwards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">forwards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns relative entry from the forwards.tsv file of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1055,7 +1055,7 @@ pprint(tax.stats())
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
-    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">latest</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forwards</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
@@ -1124,12 +1124,12 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
         
             <span class="def">def</span>
-            <span class="name">forwards</span><span class="signature">(self, node)</span>:
+            <span class="name">forwards</span><span class="signature">(self, node: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">forwards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">forwards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns relative entry from the forwards.tsv file of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1151,12 +1151,12 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
         
             <span class="def">def</span>
-            <span class="name">latest</span><span class="signature">(self, node)</span>:
+            <span class="name">latest</span><span class="signature">(self, node: str)</span>:
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">latest</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forwards</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
