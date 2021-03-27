@@ -145,7 +145,7 @@
 <span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
 <span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse</span>
 <span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files</span>
-<span class="sd">        * **root_node** *[str]*: Define an alternative root node (has to exist in the taxonomy). Taxonomy will be filtered.</span>
+<span class="sd">        * **root_node** *[str]*: Define an alternative root node</span>
 <span class="sd">        * **root_parent** *[str]*: Define the root parent node identifier</span>
 <span class="sd">        * **root_name** *[str]*: Define an alternative root name. Set to None to use original name.</span>
 <span class="sd">        * **root_rank** *[str]*: Define an alternative root rank. Set to None to use original name.</span>
@@ -202,9 +202,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">undefined_rank</span> <span class="o">=</span> <span class="n">undefined_rank</span>
 
         <span class="c1"># Set root values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">root_parent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_values</span><span class="p">(</span><span class="n">custom_root_node</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_node</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">root_parent</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
 
         <span class="c1"># build auxiliary structures</span>
         <span class="k">if</span> <span class="n">build_node_children</span><span class="p">:</span>
@@ -224,16 +222,33 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">_set_root_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">custom_root_node</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_set_root_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set root node define by each class default (_default_root_node) or custom</span>
+<span class="sd">        Set root node of the tree.</span>
+<span class="sd">        The files are parsed based on the self._default_root_node for each class</span>
+<span class="sd">        A user-defined root node can be:</span>
+<span class="sd">        1) internal: will filter the tree acodingly and delete the default root_node</span>
+<span class="sd">        2) external: will add node and link to the default</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If custom root node is defined, keep only its descendants</span>
-        <span class="k">if</span> <span class="n">custom_root_node</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">custom_root_node</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="c1"># Define/overwrite root node on _nodes</span>
+        <span class="c1"># Set parent/root with defaults</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span>
+
+        <span class="c1"># Default root node is the top by definition</span>
+        <span class="k">if</span> <span class="n">root</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">root</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
+                <span class="c1"># Not default but exists on tree, filter only descendants</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="c1"># Remove entry for _default_root_node</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Not on tree, link default node with new root</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">root</span>
+            <span class="c1"># Change root to user defined</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="n">root</span>
+            <span class="c1"># Set/Update new root node parent link</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span>
 
         <span class="c1"># User-defined rank/name.</span>
         <span class="c1"># If None, check if is in the tree or inser &quot;root&quot;</span>
@@ -530,15 +545,16 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">nodes</span><span class="p">]</span>
 
+        <span class="c1"># Cannot filter root node        </span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
         <span class="c1"># Keep track of nodes to be filtered out</span>
         <span class="n">filtered_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
         <span class="c1"># Always keep root</span>
         <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">desc</span><span class="p">:</span>
-            <span class="c1"># If root is present, nothing to filter</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="k">return</span>
             <span class="c1"># Keep descendants of the given nodes</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
                 <span class="c1"># Check if node exists</span>
@@ -558,17 +574,27 @@
                     <span class="c1"># Discard nodes from set to be kept</span>
                     <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
-        <span class="c1"># Filter nodes</span>
+        <span class="c1"># Delete filtered nodes</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">filtered_nodes</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_remove</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
         <span class="c1"># Reset data structures</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_children</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove node from _nodes, _ranks and _names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sep_multi</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -648,7 +674,7 @@
 <span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
 <span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse</span>
 <span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files</span>
-<span class="sd">        * **root_node** *[str]*: Define an alternative root node (has to exist in the taxonomy). Taxonomy will be filtered.</span>
+<span class="sd">        * **root_node** *[str]*: Define an alternative root node</span>
 <span class="sd">        * **root_parent** *[str]*: Define the root parent node identifier</span>
 <span class="sd">        * **root_name** *[str]*: Define an alternative root name. Set to None to use original name.</span>
 <span class="sd">        * **root_rank** *[str]*: Define an alternative root rank. Set to None to use original name.</span>
@@ -705,9 +731,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">undefined_rank</span> <span class="o">=</span> <span class="n">undefined_rank</span>
 
         <span class="c1"># Set root values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">root_parent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_values</span><span class="p">(</span><span class="n">custom_root_node</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_node</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">root_parent</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
 
         <span class="c1"># build auxiliary structures</span>
         <span class="k">if</span> <span class="n">build_node_children</span><span class="p">:</span>
@@ -727,16 +751,33 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{},</span> <span class="p">{},</span> <span class="p">{}</span>
 
-    <span class="k">def</span> <span class="nf">_set_root_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">custom_root_node</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_set_root_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set root node define by each class default (_default_root_node) or custom</span>
+<span class="sd">        Set root node of the tree.</span>
+<span class="sd">        The files are parsed based on the self._default_root_node for each class</span>
+<span class="sd">        A user-defined root node can be:</span>
+<span class="sd">        1) internal: will filter the tree acodingly and delete the default root_node</span>
+<span class="sd">        2) external: will add node and link to the default</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If custom root node is defined, keep only its descendants</span>
-        <span class="k">if</span> <span class="n">custom_root_node</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">custom_root_node</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="c1"># Define/overwrite root node on _nodes</span>
+        <span class="c1"># Set parent/root with defaults</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span>
+
+        <span class="c1"># Default root node is the top by definition</span>
+        <span class="k">if</span> <span class="n">root</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">root</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
+                <span class="c1"># Not default but exists on tree, filter only descendants</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="c1"># Remove entry for _default_root_node</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Not on tree, link default node with new root</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">root</span>
+            <span class="c1"># Change root to user defined</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="n">root</span>
+            <span class="c1"># Set/Update new root node parent link</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span>
 
         <span class="c1"># User-defined rank/name.</span>
         <span class="c1"># If None, check if is in the tree or inser &quot;root&quot;</span>
@@ -1033,15 +1074,16 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">nodes</span><span class="p">]</span>
 
+        <span class="c1"># Cannot filter root node        </span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
         <span class="c1"># Keep track of nodes to be filtered out</span>
         <span class="n">filtered_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
         <span class="c1"># Always keep root</span>
         <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">desc</span><span class="p">:</span>
-            <span class="c1"># If root is present, nothing to filter</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="k">return</span>
             <span class="c1"># Keep descendants of the given nodes</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
                 <span class="c1"># Check if node exists</span>
@@ -1061,17 +1103,27 @@
                     <span class="c1"># Discard nodes from set to be kept</span>
                     <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
-        <span class="c1"># Filter nodes</span>
+        <span class="c1"># Delete filtered nodes</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">filtered_nodes</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_remove</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
         <span class="c1"># Reset data structures</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_children</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Remove node from _nodes, _ranks and _names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sep_multi</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1157,7 +1209,7 @@
 <span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
 <span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse</span>
 <span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files</span>
-<span class="sd">        * **root_node** *[str]*: Define an alternative root node (has to exist in the taxonomy). Taxonomy will be filtered.</span>
+<span class="sd">        * **root_node** *[str]*: Define an alternative root node</span>
 <span class="sd">        * **root_parent** *[str]*: Define the root parent node identifier</span>
 <span class="sd">        * **root_name** *[str]*: Define an alternative root name. Set to None to use original name.</span>
 <span class="sd">        * **root_rank** *[str]*: Define an alternative root rank. Set to None to use original name.</span>
@@ -1214,9 +1266,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">undefined_rank</span> <span class="o">=</span> <span class="n">undefined_rank</span>
 
         <span class="c1"># Set root values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">root_parent</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_values</span><span class="p">(</span><span class="n">custom_root_node</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_node</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">root_parent</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
 
         <span class="c1"># build auxiliary structures</span>
         <span class="k">if</span> <span class="n">build_node_children</span><span class="p">:</span>
@@ -1239,7 +1289,7 @@
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node (has to exist in the taxonomy). Taxonomy will be filtered.</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node</li>
 <li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier</li>
 <li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name. Set to None to use original name.</li>
 <li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank. Set to None to use original name.</li>
@@ -1886,15 +1936,16 @@ pprint(tax.stats())
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">nodes</span><span class="p">]</span>
 
+        <span class="c1"># Cannot filter root node        </span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
         <span class="c1"># Keep track of nodes to be filtered out</span>
         <span class="n">filtered_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
         <span class="c1"># Always keep root</span>
         <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">desc</span><span class="p">:</span>
-            <span class="c1"># If root is present, nothing to filter</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="k">return</span>
             <span class="c1"># Keep descendants of the given nodes</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
                 <span class="c1"># Check if node exists</span>
@@ -1914,16 +1965,16 @@ pprint(tax.stats())
                     <span class="c1"># Discard nodes from set to be kept</span>
                     <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
-        <span class="c1"># Filter nodes</span>
+        <span class="c1"># Delete filtered nodes</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">filtered_nodes</span><span class="p">:</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_remove</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
         <span class="c1"># Reset data structures</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_node_children</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rank_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
 </pre></div>
 

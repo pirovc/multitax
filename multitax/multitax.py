@@ -29,7 +29,7 @@ class MultiTax(object):
         * **files** *[str, list]*: One or more local files to parse
         * **urls** *[str, list]*: One or more urls to download and parse
         * **output_prefix** *[str]*: Directory to write downloaded files
-        * **root_node** *[str]*: Define an alternative root node (has to exist in the taxonomy). Taxonomy will be filtered.
+        * **root_node** *[str]*: Define an alternative root node
         * **root_parent** *[str]*: Define the root parent node identifier
         * **root_name** *[str]*: Define an alternative root name. Set to None to use original name.
         * **root_rank** *[str]*: Define an alternative root rank. Set to None to use original name.
@@ -86,9 +86,7 @@ class MultiTax(object):
         self.undefined_rank = undefined_rank
 
         # Set root values
-        self.root_parent = root_parent
-        self.root_node = root_node if root_node else self._default_root_node
-        self._set_root_values(custom_root_node=root_node if root_node else None, name=root_name, rank=root_rank)
+        self._set_root_node(root=root_node if root_node else self._default_root_node, parent=root_parent, name=root_name, rank=root_rank)
 
         # build auxiliary structures
         if build_node_children:
@@ -108,16 +106,33 @@ class MultiTax(object):
         """
         return {}, {}, {}
 
-    def _set_root_values(self, custom_root_node, name, rank):
+    def _set_root_node(self, root, parent, name, rank):
         """
-        Set root node define by each class default (_default_root_node) or custom
+        Set root node of the tree.
+        The files are parsed based on the self._default_root_node for each class
+        A user-defined root node can be:
+        1) internal: will filter the tree acodingly and delete the default root_node
+        2) external: will add node and link to the default
         """
-        # If custom root node is defined, keep only its descendants
-        if custom_root_node:
-            self.filter(custom_root_node, desc=True)
-
-        # Define/overwrite root node on _nodes
+        # Set parent/root with defaults
+        self.root_parent = parent
+        self.root_node = self._default_root_node
         self._nodes[self.root_node] = self.root_parent
+
+        # Default root node is the top by definition
+        if root != self._default_root_node:
+            if root in self._nodes:
+                # Not default but exists on tree, filter only descendants
+                self.filter(root, desc=True)
+                # Remove entry for _default_root_node
+                self._remove(self._default_root_node)
+            else:
+                # Not on tree, link default node with new root
+                self._nodes[self._default_root_node] = root
+            # Change root to user defined
+            self.root_node = root
+            # Set/Update new root node parent link
+            self._nodes[self.root_node] = self.root_parent
 
         # User-defined rank/name.
         # If None, check if is in the tree or inser "root"
@@ -414,15 +429,16 @@ class MultiTax(object):
         if isinstance(nodes, str):
             nodes = [nodes]
 
+        # Cannot filter root node        
+        if self.root_node in nodes:
+            return None
+
         # Keep track of nodes to be filtered out
         filtered_nodes = set(self._nodes)
         # Always keep root
         filtered_nodes.discard(self.root_node)
 
         if desc:
-            # If root is present, nothing to filter
-            if self.root_node in nodes:
-                return
             # Keep descendants of the given nodes
             for node in nodes:
                 # Check if node exists
@@ -442,17 +458,27 @@ class MultiTax(object):
                     # Discard nodes from set to be kept
                     filtered_nodes.discard(n)
 
-        # Filter nodes
+        # Delete filtered nodes
         for node in filtered_nodes:
-            del self._nodes[node]
-            del self._names[node]
-            del self._ranks[node]
+            self._remove(node)
+
         # Reset data structures
         self._lineages = {}
         self._node_children = {}
         self._name_nodes = {}
         self._rank_nodes = {}
+
         self.check_consistency()
+
+    def _remove(self, node):
+        """
+        Remove node from _nodes, _ranks and _names
+        """
+        del self._nodes[node]
+        if node in self._names:
+            del self._names[node]
+        if node in self._ranks:
+            del self._ranks[node]
 
     def write(self, output_file, cols: list=["node", "parent", "rank", "name"], sep: str="\t", sep_multi: str="|", ranks: list=None, gz: bool=False):
         """

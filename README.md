@@ -44,6 +44,9 @@ tax = GtdbTx(files=["bac120_taxonomy.tsv.gz", "ar122_taxonomy.tsv.gz"])
 # Download, write and parse files
 tax = GtdbTx(output_prefix="my/path/") 
 
+# Download and filter only specific branch
+tax = GtdbTx(root_node="p__Proteobacteria") 
+
 # List parent node
 tax.parent("g__Escherichia")
 # f__Enterobacteriaceae

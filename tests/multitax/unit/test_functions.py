@@ -7,8 +7,9 @@ from utils import setup_dir
 from multitax import CustomTx
 from multitax.utils import check_file
 
+
 class TestFunctions(unittest.TestCase):
-    # test data
+    # test data (14 nodes)
     #
     # rank-1 (root)            1 ___________
     #                         / \           \
@@ -362,12 +363,6 @@ class TestFunctions(unittest.TestCase):
         self.assertCountEqual(tax.leaves("1"), ["4.1", "5.1", "5.2"])
 
         tax = CustomTx(files=self.test_file)
-        tax.filter("1")
-        self.assertEqual(tax.stats()["nodes"], 1)
-        self.assertEqual(tax.lineage("1"), ["1"])
-        self.assertCountEqual(tax.leaves("1"), ["1"])
-
-        tax = CustomTx(files=self.test_file)
         tax.filter("XXXX")
         self.assertEqual(tax.stats()["nodes"], 1)
 
@@ -391,11 +386,14 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(tax.lineage("4.5"), [])
         self.assertCountEqual(tax.leaves("1"), ["4.2", "4.3", "5.1", "5.2"])
 
+        # No filter for root
         tax = CustomTx(files=self.test_file)
         self.assertEqual(tax.stats()["nodes"], 14)
-        tax.filter("1", desc=True)
+        tax.filter(tax.root_node)
         self.assertEqual(tax.stats()["nodes"], 14)
-        
+        tax.filter(tax.root_node, desc=True)
+        self.assertEqual(tax.stats()["nodes"], 14)
+
         tax = CustomTx(files=self.test_file)
         self.assertEqual(tax.stats()["nodes"], 14)
         tax.filter("XXXXX", desc=True)
@@ -433,5 +431,3 @@ class TestFunctions(unittest.TestCase):
         pass #ott
     def test_merged(self):
         pass #ncbi
-    def test_constructor(self):
-        pass #multitax, customtx

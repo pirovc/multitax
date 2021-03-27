@@ -82,7 +82,7 @@ def save_urls(urls, output_prefix):
     """
     files = []
     for url in urls:
-        outfile = output_prefix + "/" + os.path.basename(url)
+        outfile = output_prefix + os.path.basename(url)
         check_no_file(outfile)
         urlstream = urllib.request.urlopen(url)
         with open(outfile, 'b+w') as f:
@@ -125,9 +125,10 @@ def check_no_file(file):
         raise FileExistsError(file)
 
 
-def check_dir(directory):
-    if not os.path.exists(directory):
-        raise NotADirectoryError(directory)
+def check_dir(prefix):
+    abs_path = os.path.dirname(os.path.abspath(prefix))
+    if not os.path.exists(abs_path):
+        raise NotADirectoryError(abs_path)
 
 
 def reverse_dict(d):
