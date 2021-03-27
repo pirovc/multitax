@@ -5,7 +5,7 @@ class DummyTx(MultiTax):
 
     def __init__(self, **kwargs):
         """
-        Constructor of the class CustomTx
+        DummyTx() - Dummy empty taxonomy
 
         Parameters:
 

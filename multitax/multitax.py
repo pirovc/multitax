@@ -1,10 +1,10 @@
-from .utils import open_files, download_files, close_files, check_file, check_no_file, check_dir, reverse_dict
+from .utils import *
 from collections import Counter
 
 
 class MultiTax(object):
 
-    version = "0.1.0"
+    version = "1.0.0"
 
     _default_urls = []
     _default_root_node = "1"
@@ -40,12 +40,14 @@ class MultiTax(object):
         * **build_node_children** *[bool]*: Pre-build node,children dict (otherwise it will be created on first use)
         * **build_name_nodes** *[bool]*: Pre-build name,nodes dict (otherwise it will be created on first use)
         * **build_rank_nodes** *[bool]*: Pre-build rank,nodes dict (otherwise it will be created on first use)
+        
+        Example:
 
-        Examples:
-
-            # Downloads default GTDB taxonomy
-            tax = GtdbTx()
-
+            tax_ncbi = NcbiTx()
+            tax_gtdb = GtdbTx(files=["file1.gz", "file2.txt"])
+            tax_silva = SilvaTx(urls=["https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_lsu_138.1.txt.gz"])
+            tax_ott = OttTx(root_node="844192")
+            tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
         """
         if files:
             if isinstance(files, str):
@@ -147,9 +149,19 @@ class MultiTax(object):
         elif self.root_node not in self._ranks:
             self._ranks[self.root_node] = "root"
 
+    def _remove(self, node):
+        """
+        Removes node from _nodes, _ranks and _names
+        """
+        del self._nodes[node]
+        if node in self._names:
+            del self._names[node]
+        if node in self._ranks:
+            del self._ranks[node]
+
     def children(self, node):
         """
-        Return list of children of a given node
+        Returns list of direct children nodes of a given node.
         """
         # Setup on first use
         if not self._node_children:
@@ -161,7 +173,7 @@ class MultiTax(object):
 
     def search_name(self, text):
         """
-        Return list of nodes which containing a certain text in their names
+        Searches names containing a certain text (case sensitive) and return their respective nodes.
         """
         # Setup on first use
         if not self._name_nodes:
@@ -175,7 +187,7 @@ class MultiTax(object):
 
     def nodes_name(self, name):
         """
-        Return list of nodes of a given name
+        Returns list of nodes of a given exact name.
         """
         # Setup on first use
         if not self._name_nodes:
@@ -187,7 +199,7 @@ class MultiTax(object):
 
     def nodes_rank(self, rank):
         """
-        Return list of nodes of a given rank
+        Returns list of nodes of a given rank.
         """
         # Setup on first use
         if not self._rank_nodes:
@@ -199,7 +211,7 @@ class MultiTax(object):
 
     def parent(self, node):
         """
-        Return parent node of a given node
+        Returns parent node of a given node.
         """
         if node in self._nodes:
             return self._nodes[node]
@@ -208,7 +220,7 @@ class MultiTax(object):
 
     def rank(self, node):
         """
-        Return rank related to the node
+        Returns the rank of a given node.
         """
         if node in self._ranks:
             return self._ranks[node]
@@ -217,7 +229,7 @@ class MultiTax(object):
 
     def name(self, node):
         """
-        Return name related to the node
+        Returns name of a given node.
         """
         if node in self._names:
             return self._names[node]
@@ -226,8 +238,9 @@ class MultiTax(object):
 
     def latest(self, node):
         """
-        Get latest version of node in the taxonomy. If node is already the latests, returns itself.
-        Mainly used for accessing NCBI (merged.dmp) and OTT (forwards.tsv)
+        Returns latest/updated version of a given node.
+        If node is already the latests, returns itself.
+        Mainly used for NCBI (merged.dmp) and OTT (forwards.tsv)
         """
         if node in self._nodes:
             return node
@@ -235,6 +248,9 @@ class MultiTax(object):
             return self.undefined_node
 
     def leaves(self, node: str=None):
+        """
+        Returns a list of leaf nodes of a given node.
+        """
         if node is None or node == self.root_node:
             # Leaves are nodes not contained in _nodes.values() ("parents")
             return list(set(self._nodes).difference(self._nodes.values()))
@@ -257,8 +273,9 @@ class MultiTax(object):
 
     def lineage(self, node: str, root_node: str=None, ranks: list=None):
         """
-        Iterate over taxonomic tree and return node lineage
-        Central function iterating the tree structure
+        Returns a o list with the lineage of a given node.
+        If ranks is provide, returns only nodes annotated with such ranks.
+        If root_node is provided, use it instead of default root of tree.
         """
         # If lineages were pre-built and no special subset is required
         if node in self._lineages:
@@ -301,7 +318,7 @@ class MultiTax(object):
 
     def rank_lineage(self, node: str, root_node: str=None, ranks: list=None):
         """
-        Return lineage of ranks.
+        Returns a list with the rank lineage of a given node.
         """
         return list(map(self.rank,
                         self.lineage(node=node,
@@ -310,7 +327,7 @@ class MultiTax(object):
 
     def name_lineage(self, node: str, root_node: str=None, ranks: list=None):
         """
-        Return lineage of names.
+        Returns a list with the name lineage of a given node.
         """
         return list(map(self.name,
                         self.lineage(node=node,
@@ -319,20 +336,14 @@ class MultiTax(object):
 
     def parent_rank(self, node, rank):
         """
-        Return parent node of the specified rank.
+        Returns the parent node of a given rank in the specified rank.
         """
         parent = self.lineage(node=node, ranks=[rank])
         return parent[0] if parent else self.undefined_node
 
     def stats(self):
         """
-        General stats of the taxonomic tree
-
-        Paramenters: None
-
-        Returns:
-
-        * *[dict]* with total counts "nodes", "ranks", "names", "leaves" and rank specific counts "ranked_nodes", "ranked_leaves" with total of counts for each rank
+        Returns a dict with general numbers of the taxonomic tree
 
         Example:
 
@@ -368,7 +379,9 @@ class MultiTax(object):
 
     def build_lineages(self, root_node: str=None, ranks: list=None):
         """
-        Store lineages in memory for faster access
+        Stores lineages in memory for faster access
+
+        Returns: None
         """
         self.clear_lineages()
         for node in self._nodes:
@@ -377,12 +390,16 @@ class MultiTax(object):
     def clear_lineages(self):
         """
         Clear pre-built lineages.
+
+        Returns: None
         """
         self._lineages = {}
 
     def check_consistency(self):
         """
-        Returns None if loaded taxonomy is consistent. Otherwise raise an AssertionError.
+        Checks consistency of the tree
+
+        Returns: raise an AssertionError otherwise None
         """
         assert self.root_node in self._nodes, "root_node not found on _nodes"
         assert self.root_parent not in self._nodes, "root_parent found on _nodes"
@@ -395,13 +412,10 @@ class MultiTax(object):
 
     def filter(self, nodes: list, desc: bool=False):
         """
-        Filter taxonomy to selected nodes.
+        Filters taxonomy given a list of nodes.
         By default keep all the ancestors of the given nodes.
         If desc=True, keep all descendants instead.
-        It will delete pre-build lineages.
-
-        Parameters:
-        * ...
+        Deletes pre-built lineages.
 
         Returns: None
 
@@ -412,20 +426,13 @@ class MultiTax(object):
 
             tax.lineage('s__Enterovibrio marina')
             # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Vibrionaceae', 'g__Enterovibrio', 's__Enterovibrio marina']
-
             # Keep only ancestors of 'g__Enterovibrio'
             tax.filter('g__Enterovibrio')
-            tax.stats()
-            # {'nodes': 7, 'ranks': 7, 'names': 7, 'unique_ranks': 7, ('nodes', 'class'): 1, ('nodes', 'root'): 1, ('nodes', 'phylum'): 1, ('nodes', 'domain'): 1, ('nodes', 'genus'): 1, ('nodes', 'order'): 1, ('nodes', 'family'): 1}
 
             # Reload taxonomy
             tax = GtdbTx()
-
             # Keep only descendants of 'g__Enterovibrio'
             tax.filter('g__Enterovibrio', desc=True)
-            tax.stats()
-            #{'nodes': 17, 'ranks': 17, 'names': 17, 'unique_ranks': 3, ('nodes', 'root'): 1, ('nodes', 'species'): 15, ('nodes', 'genus'): 1}
-
         """
         if isinstance(nodes, str):
             nodes = [nodes]
@@ -471,21 +478,23 @@ class MultiTax(object):
 
         self.check_consistency()
 
-    def _remove(self, node):
+    def write(self, output_file,
+              cols: list=["node", "parent", "rank", "name"],
+              sep: str="\t",
+              sep_multi: str="|",
+              ranks: list=None,
+              gz: bool=False):
         """
-        Remove node from _nodes, _ranks and _names
-        """
-        del self._nodes[node]
-        if node in self._names:
-            del self._names[node]
-        if node in self._ranks:
-            del self._ranks[node]
+        Writes loaded taxonomy to a file.
 
-    def write(self, output_file, cols: list=["node", "parent", "rank", "name"], sep: str="\t", sep_multi: str="|", ranks: list=None, gz: bool=False):
-        """
-        Write taxonomy to a file.
-        cols can be: "node", "latest", "parent", "rank", "name", "leaves", "children", "lineage", "rank_lineage", "name_lineage"
-        Default cols: "node", "parent", "rank", "name"
+        Parameters:
+        * **cols** *[list]*: Options: "node", "latest", "parent", "rank", "name", "leaves", "children", "lineage", "rank_lineage", "name_lineage"
+        * **sep** *[str]*: Separator of fields
+        * **sep_multi** *[str]*: Separator of multi-valued fields
+        * **ranks** *[list]*: Ranks to report
+        * **gz** *[bool]*: Gzip output
+
+        Returns: None
         """
         import gzip
         if gz:
@@ -501,17 +510,22 @@ class MultiTax(object):
                        "parent": self.parent,
                        "rank": self.rank,
                        "name": self.name,
-                       "leaves": lambda node: sep_multi.join(self.leaves(node)),
-                       "children": lambda node: sep_multi.join(self.children(node)),
-                       "lineage": lambda node: sep_multi.join(self.lineage(node, ranks=ranks)),
-                       "rank_lineage": lambda node: sep_multi.join(self.rank_lineage(node, ranks=ranks)),
-                       "name_lineage": lambda node: sep_multi.join(self.name_lineage(node, ranks=ranks))}
+                       "leaves": lambda node: join_check(self.leaves(node), sep_multi),
+                       "children": lambda node: join_check(self.children(node), sep_multi),
+                       "lineage": lambda node: join_check(self.lineage(node, ranks=ranks), sep_multi),
+                       "rank_lineage": lambda node: join_check(self.rank_lineage(node, ranks=ranks), sep_multi),
+                       "name_lineage": lambda node: join_check(self.name_lineage(node, ranks=ranks), sep_multi)}
 
         for c in cols:
             if c not in write_field:
                 raise ValueError(c + " is not a a valid field: " + ",".join(write_field))
 
-        for node in self._nodes:
-            print(*[write_field[c](node) for c in cols], sep=sep, end="\n", file=outf)
+        if ranks:
+            for rank in ranks:
+                for node in self.nodes_rank(rank):
+                    print(*[write_field[c](node) for c in cols], sep=sep, end="\n", file=outf)
+        else:
+            for node in self._nodes:
+                print(*[write_field[c](node) for c in cols], sep=sep, end="\n", file=outf)
 
         outf.close()

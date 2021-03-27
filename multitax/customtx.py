@@ -8,12 +8,17 @@ class CustomTx(MultiTax):
 
     def __init__(self, cols: list=["node", "parent", "rank", "name"], sep: str="\t", **kwargs):
         """
-        Constructor of the class CustomTx
+        CustomTx()
 
         Parameters:
         * **cols** *[list, dict]*: List of fields to be parsed or a dictionary with {field: column index}. Options: "node", "parent", "rank", "name"
         * **sep** *[str]*: Separator of fields
         * **\*\*kwargs** defined at `multitax.multitax.MultiTax`
+
+        Example:
+
+        tax_custom1 = CustomTx(files="my_custom_tax.tsv", cols=["node","parent","rank"])
+        tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, "name": 5, "rank": 3})
         """
 
         self._cols = self._parse_cols(cols)
@@ -25,7 +30,6 @@ class CustomTx(MultiTax):
         return 'CustomTx({})'.format(', '.join(args))
 
     def _parse(self, fhs):
-
         nodes = {}
         ranks = {}
         names = {}

@@ -168,12 +168,17 @@ multitax    </h1>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor of the class CustomTx</span>
+<span class="sd">        CustomTx()</span>
 
 <span class="sd">        Parameters:</span>
 <span class="sd">        * **cols** *[list, dict]*: List of fields to be parsed or a dictionary with {field: column index}. Options: &quot;node&quot;, &quot;parent&quot;, &quot;rank&quot;, &quot;name&quot;</span>
 <span class="sd">        * **sep** *[str]*: Separator of fields</span>
 <span class="sd">        * **\*\*kwargs** defined at `multitax.multitax.MultiTax`</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">        tax_custom1 = CustomTx(files=&quot;my_custom_tax.tsv&quot;, cols=[&quot;node&quot;,&quot;parent&quot;,&quot;rank&quot;])</span>
+<span class="sd">        tax_custom2 = CustomTx(files=&quot;my_custom_tax.tsv&quot;, cols={&quot;node&quot;: 0, &quot;parent&quot;: 1, &quot;name&quot;: 5, &quot;rank&quot;: 3})</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cols</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
@@ -185,7 +190,6 @@ multitax    </h1>
         <span class="k">return</span> <span class="s1">&#39;CustomTx(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">):</span>
-
         <span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">ranks</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">names</span> <span class="o">=</span> <span class="p">{}</span>
@@ -238,12 +242,17 @@ multitax    </h1>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor of the class CustomTx</span>
+<span class="sd">        CustomTx()</span>
 
 <span class="sd">        Parameters:</span>
 <span class="sd">        * **cols** *[list, dict]*: List of fields to be parsed or a dictionary with {field: column index}. Options: &quot;node&quot;, &quot;parent&quot;, &quot;rank&quot;, &quot;name&quot;</span>
 <span class="sd">        * **sep** *[str]*: Separator of fields</span>
 <span class="sd">        * **\*\*kwargs** defined at `multitax.multitax.MultiTax`</span>
+
+<span class="sd">        Example:</span>
+
+<span class="sd">        tax_custom1 = CustomTx(files=&quot;my_custom_tax.tsv&quot;, cols=[&quot;node&quot;,&quot;parent&quot;,&quot;rank&quot;])</span>
+<span class="sd">        tax_custom2 = CustomTx(files=&quot;my_custom_tax.tsv&quot;, cols={&quot;node&quot;: 0, &quot;parent&quot;: 1, &quot;name&quot;: 5, &quot;rank&quot;: 3})</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cols</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
@@ -253,7 +262,7 @@ multitax    </h1>
 
         </details>
 
-            <div class="docstring"><p>Constructor of the class CustomTx</p>
+            <div class="docstring"><p>CustomTx()</p>
 
 <p>Parameters:</p>
 
@@ -262,6 +271,11 @@ multitax    </h1>
 <li><strong>sep</strong> <em>[str]</em>: Separator of fields</li>
 <li><strong>**kwargs</strong> defined at <code><a href="multitax/multitax.html#MultiTax">multitax.multitax.MultiTax</a></code></li>
 </ul>
+
+<p>Example:</p>
+
+<p>tax_custom1 = CustomTx(files="my_custom_tax.tsv", cols=["node","parent","rank"])
+tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, "name": 5, "rank": 3})</p>
 </div>
 
 
@@ -310,7 +324,7 @@ multitax    </h1>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor of the class CustomTx</span>
+<span class="sd">        DummyTx() - Dummy empty taxonomy</span>
 
 <span class="sd">        Parameters:</span>
 
@@ -337,7 +351,7 @@ multitax    </h1>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor of the class CustomTx</span>
+<span class="sd">        DummyTx() - Dummy empty taxonomy</span>
 
 <span class="sd">        Parameters:</span>
 
@@ -348,7 +362,7 @@ multitax    </h1>
 
         </details>
 
-            <div class="docstring"><p>Constructor of the class CustomTx</p>
+            <div class="docstring"><p>DummyTx() - Dummy empty taxonomy</p>
 
 <p>Parameters:</p>
 
@@ -489,10 +503,13 @@ multitax    </h1>
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
 </ul>
 
-<p>Examples:</p>
+<p>Example:</p>
 
-<pre><code># Downloads default GTDB taxonomy
-tax = GtdbTx()
+<pre><code>tax_ncbi = NcbiTx()
+tax_gtdb = GtdbTx(files=["file1.gz", "file2.txt"])
+tax_silva = SilvaTx(urls=["https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_lsu_138.1.txt.gz"])
+tax_ott = OttTx(root_node="844192")
+tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 </code></pre>
 </div>
 
@@ -627,10 +644,13 @@ tax = GtdbTx()
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
 </ul>
 
-<p>Examples:</p>
+<p>Example:</p>
 
-<pre><code># Downloads default GTDB taxonomy
-tax = GtdbTx()
+<pre><code>tax_ncbi = NcbiTx()
+tax_gtdb = GtdbTx(files=["file1.gz", "file2.txt"])
+tax_silva = SilvaTx(urls=["https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_lsu_138.1.txt.gz"])
+tax_ott = OttTx(root_node="844192")
+tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 </code></pre>
 </div>
 
@@ -751,6 +771,9 @@ tax = GtdbTx()
         <span class="k">return</span> <span class="n">merged</span>
 
     <span class="k">def</span> <span class="nf">merged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns relative entry from the merged.dmp file of a given node.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -808,10 +831,13 @@ tax = GtdbTx()
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
 </ul>
 
-<p>Examples:</p>
+<p>Example:</p>
 
-<pre><code># Downloads default GTDB taxonomy
-tax = GtdbTx()
+<pre><code>tax_ncbi = NcbiTx()
+tax_gtdb = GtdbTx(files=["file1.gz", "file2.txt"])
+tax_silva = SilvaTx(urls=["https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_lsu_138.1.txt.gz"])
+tax_ott = OttTx(root_node="844192")
+tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 </code></pre>
 </div>
 
@@ -828,6 +854,9 @@ tax = GtdbTx()
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">merged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns relative entry from the merged.dmp file of a given node.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -836,7 +865,9 @@ tax = GtdbTx()
 
         </details>
 
-    
+            <div class="docstring"><p>Returns relative entry from the merged.dmp file of a given node.</p>
+</div>
+
 
                             </div>
                             <div id="NcbiTx.latest" class="classattr">
@@ -858,8 +889,9 @@ tax = GtdbTx()
 
         </details>
 
-            <div class="docstring"><p>Get latest version of node in the taxonomy. If node is already the latests, returns itself.
-Mainly used for accessing NCBI (merged.dmp) and OTT (forwards.tsv)</p>
+            <div class="docstring"><p>Returns latest/updated version of a given node.
+If node is already the latests, returns itself.
+Mainly used for NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 </div>
 
 
@@ -882,15 +914,7 @@ Mainly used for accessing NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 
         </details>
 
-            <div class="docstring"><p>General stats of the taxonomic tree</p>
-
-<p>Paramenters: None</p>
-
-<p>Returns:</p>
-
-<ul>
-<li><em>[dict]</em> with total counts "nodes", "ranks", "names", "leaves" and rank specific counts "ranked_nodes", "ranked_leaves" with total of counts for each rank</li>
-</ul>
+            <div class="docstring"><p>Returns a dict with general numbers of the taxonomic tree</p>
 
 <p>Example:</p>
 
@@ -1023,6 +1047,9 @@ pprint(tax.stats())
         <span class="k">return</span> <span class="n">forwards</span>
 
     <span class="k">def</span> <span class="nf">forwards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns relative entry from the forwards.tsv file of a given node.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1080,10 +1107,13 @@ pprint(tax.stats())
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
 </ul>
 
-<p>Examples:</p>
+<p>Example:</p>
 
-<pre><code># Downloads default GTDB taxonomy
-tax = GtdbTx()
+<pre><code>tax_ncbi = NcbiTx()
+tax_gtdb = GtdbTx(files=["file1.gz", "file2.txt"])
+tax_silva = SilvaTx(urls=["https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_lsu_138.1.txt.gz"])
+tax_ott = OttTx(root_node="844192")
+tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 </code></pre>
 </div>
 
@@ -1100,6 +1130,9 @@ tax = GtdbTx()
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">forwards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns relative entry from the forwards.tsv file of a given node.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1108,7 +1141,9 @@ tax = GtdbTx()
 
         </details>
 
-    
+            <div class="docstring"><p>Returns relative entry from the forwards.tsv file of a given node.</p>
+</div>
+
 
                             </div>
                             <div id="OttTx.latest" class="classattr">
@@ -1130,8 +1165,9 @@ tax = GtdbTx()
 
         </details>
 
-            <div class="docstring"><p>Get latest version of node in the taxonomy. If node is already the latests, returns itself.
-Mainly used for accessing NCBI (merged.dmp) and OTT (forwards.tsv)</p>
+            <div class="docstring"><p>Returns latest/updated version of a given node.
+If node is already the latests, returns itself.
+Mainly used for NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 </div>
 
 
@@ -1154,15 +1190,7 @@ Mainly used for accessing NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 
         </details>
 
-            <div class="docstring"><p>General stats of the taxonomic tree</p>
-
-<p>Paramenters: None</p>
-
-<p>Returns:</p>
-
-<ul>
-<li><em>[dict]</em> with total counts "nodes", "ranks", "names", "leaves" and rank specific counts "ranked_nodes", "ranked_leaves" with total of counts for each rank</li>
-</ul>
+            <div class="docstring"><p>Returns a dict with general numbers of the taxonomic tree</p>
 
 <p>Example:</p>
 
@@ -1312,10 +1340,13 @@ pprint(tax.stats())
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
 </ul>
 
-<p>Examples:</p>
+<p>Example:</p>
 
-<pre><code># Downloads default GTDB taxonomy
-tax = GtdbTx()
+<pre><code>tax_ncbi = NcbiTx()
+tax_gtdb = GtdbTx(files=["file1.gz", "file2.txt"])
+tax_silva = SilvaTx(urls=["https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_lsu_138.1.txt.gz"])
+tax_ott = OttTx(root_node="844192")
+tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 </code></pre>
 </div>
 

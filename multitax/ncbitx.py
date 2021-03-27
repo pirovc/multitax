@@ -76,6 +76,9 @@ class NcbiTx(MultiTax):
         return merged
 
     def merged(self, node):
+        """
+        Returns relative entry from the merged.dmp file of a given node.
+        """
         if node in self._merged:
             return self._merged[node]
         else:

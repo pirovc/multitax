@@ -69,6 +69,9 @@ class OttTx(MultiTax):
         return forwards
 
     def forwards(self, node):
+        """
+        Returns relative entry from the forwards.tsv file of a given node.
+        """
         if node in self._forwards:
             return self._forwards[node]
         else:

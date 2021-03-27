@@ -54,6 +54,9 @@
             <li>
                     <a class="function" href="#reverse_dict">reverse_dict</a>
             </li>
+            <li>
+                    <a class="function" href="#join_check">join_check</a>
+            </li>
     </ul>
 
 
@@ -212,6 +215,13 @@
             <span class="n">rd</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">rd</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">rd</span>
+
+
+<span class="k">def</span> <span class="nf">join_check</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">sep</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">elements</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">elements</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 </pre></div>
 
         </details>
@@ -538,6 +548,28 @@
             <span class="n">rd</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">rd</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">rd</span>
+</pre></div>
+
+        </details>
+
+    
+
+                </section>
+                <section id="join_check">
+                            <div class="attr function"><a class="headerlink" href="#join_check">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">join_check</span><span class="signature">(elements, sep)</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">join_check</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">sep</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">elements</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">elements</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 </pre></div>
 
         </details>

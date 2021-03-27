@@ -138,3 +138,10 @@ def reverse_dict(d):
             rd[v] = []
         rd[v].append(k)
     return rd
+
+
+def join_check(elements, sep):
+    if elements:
+        return sep.join(map(str, elements))
+    else:
+        return ""

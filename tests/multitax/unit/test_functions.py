@@ -409,6 +409,13 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(check_file(outfile), None)
 
         tax = CustomTx(files=self.test_file)
+        outfile = self.tmp_dir + "ranks.tsv"
+        tax.write(outfile,
+                  ranks=["rank-2", "rank-4"],
+                  cols=["node", "rank", "lineage", "rank_lineage", "name_lineage"])
+        self.assertEqual(check_file(outfile), None)
+
+        tax = CustomTx(files=self.test_file)
         outfile = self.tmp_dir + "all_cols.tsv"
         tax.write(outfile,
                   cols=["node", "latest", "parent", "rank", "name", "leaves", "children", "lineage", "rank_lineage", "name_lineage"])

@@ -7,7 +7,7 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
  - Common interface to use different taxonomies
  - Fast, intuitive, generalized and easy to use
  - Enable integration and compatibility with multiple taxonomies without any effort
- - Translation between taxonomies (not yet implemented)
+ - Translation and conversion between taxonomies (not yet implemented)
 
 ## Installation
 
@@ -19,14 +19,16 @@ https://pirovc.github.io/multitax/
 
 ## Basic Example with GTDB
 
-    from multitax import GtdbTx
-    
-    # Download taxonomy
-    tax = GtdbTx()
+```python
+from multitax import GtdbTx
 
-    # Get lineage for the Escherichia genus  
-    tax.lineage("g__Escherichia")
-    # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
+# Download taxonomy
+tax = GtdbTx()
+
+# Get lineage for the Escherichia genus  
+tax.lineage("g__Escherichia")
+# ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
+```
 
 ## Further Examples
 
@@ -171,13 +173,14 @@ L("s__Escherichia dysenteriae", "s__Pseudomonas aeruginosa")
 ## General information
 
  - Taxonomies are parsed into nodes. Each node is annotated with a name and a rank.
+ - Some taxonomies have a taxonomic id (NCBI, Silva) and other use the rank + name as identifier. In multitax all identifiers are treated as strings.
  - A single root node is defined by default. This node can be changed `root_node` when loading the taxonomy (as well as annotations `root_parent`, `root_name`, `root_rank`).
  - Standard values for unknown/undefined nodes can be configured with `undefined_node`,`undefined_name` and `undefined_rank`. Those are default values returned when nodes/names/ranks are not found.
  - Taxonomy files are automatically download or can be loaded from disk (`files` parameter). Alternative `urls` can be provided. When downloaded, files are handled in memory. It is possible to save the downloaded file to disk with `output_prefix`.
  
 ## Translation between taxonomies
 
-Not yet implemented. The goal here is to map different taxonomies if the linkage data is available. That's what I think it will be possible.
+Not yet implemented. The goal here is to map different taxonomies if the linkage data is available. That's what I think will be possible.
 
  |from/to |NCBI   |GTDB   |SILVA   |OTT   |GG  |
  |--------|-------|-------|--------|------|----|
@@ -189,8 +192,9 @@ Not yet implemented. The goal here is to map different taxonomies if the linkage
 
 ## Further ideas
 
-- Add/remove nodes
-- Write on specific taxonomy format
+- Advanced name search
+- Add/remove/update nodes
+- Write on specific taxonomy format - conversion between taxonomies
 
 ## Similar projects
 
