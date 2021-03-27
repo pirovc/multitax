@@ -1,9 +1,4 @@
 import unittest
-import sys
-
-sys.path.append("tests/multitax/")
-from utils import setup_dir
-
 from multitax import CustomTx
 from multitax.multitax import MultiTax
 

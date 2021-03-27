@@ -1,9 +1,10 @@
 import unittest
 import os
 import sys
+import random
 
 sys.path.append("tests/multitax/")
-from utils import setup_dir, uncompress_gzip
+from utils import setup_dir, uncompress_gzip, uncompress_tar_gzip
 
 from multitax import GreengenesTx, GtdbTx, NcbiTx, OttTx, SilvaTx, CustomTx
 
@@ -27,7 +28,7 @@ class TestCommon(unittest.TestCase):
     taxonomies["greengenes"] = {"class": GreengenesTx,
                                 "params": {"files": [data_dir + "gg.txt.gz"]}}
     taxonomies["custom"] = {"class": CustomTx,
-                                "params": {"files": [data_dir + "custom.tsv.gz"]}}
+                            "params": {"files": [data_dir + "custom.tsv.gz"]}}
 
     @classmethod
     def setUpClass(self):
@@ -40,14 +41,6 @@ class TestCommon(unittest.TestCase):
         for t in self.taxonomies:
             tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
             self.assertGreater(tax.stats()["nodes"], 0, t + " failed")
-
-    def test_consistency(self):
-        """
-        Check consistency of test files
-        """
-        for t in self.taxonomies:
-            tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
-            self.assertFalse(tax.check_consistency(), t + " taxonomy is not consistent")
 
     def test_urls(self):
         """
@@ -77,3 +70,49 @@ class TestCommon(unittest.TestCase):
                     tax_compressed = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
                     tax_uncompressed = self.taxonomies[t]["class"](files=uncompressed)
                     self.assertEqual(tax_compressed.stats(), tax_uncompressed.stats(), t + " failed with uncompressed files")
+
+    def test_tar_gzip_uncompressed(self):
+        """
+        Using uncompressed tar gzip files ("ott", "ncbi")
+        """
+        # Ott
+        tax_compressed = self.taxonomies["ott"]["class"](**self.taxonomies["ott"]["params"])
+        uncompressed_files = uncompress_tar_gzip(f=self.taxonomies["ott"]["params"]["files"][0], outd=self.tmp_dir)
+        self.assertIn("taxonomy.tsv", uncompressed_files)
+        self.assertIn("forwards.tsv", uncompressed_files)
+        tax_uncompressed = self.taxonomies["ott"]["class"](files=[self.tmp_dir + "taxonomy.tsv",
+                                                                  self.tmp_dir + "forwards.tsv"])
+        # Results of compressed and uncompressed should match
+        self.assertEqual(tax_uncompressed.stats(), tax_compressed.stats())
+
+        # Ncbi
+        tax_compressed = self.taxonomies["ncbi"]["class"](**self.taxonomies["ncbi"]["params"])
+        uncompressed_files = uncompress_tar_gzip(f=self.taxonomies["ncbi"]["params"]["files"][0], outd=self.tmp_dir)
+        self.assertIn("nodes.dmp", uncompressed_files)
+        self.assertIn("names.dmp", uncompressed_files)
+        self.assertIn("merged.dmp", uncompressed_files)
+        tax_uncompressed = self.taxonomies["ncbi"]["class"](files=[self.tmp_dir + "nodes.dmp",
+                                                                   self.tmp_dir + "names.dmp",
+                                                                   self.tmp_dir + "merged.dmp"])
+        # Results of compressed and uncompressed should match
+        self.assertEqual(tax_uncompressed.stats(), tax_compressed.stats())
+
+    def test_inconsistent(self):
+        """
+        Test parsing inconsistent taxonomies
+        """
+        for t in self.taxonomies:
+            # Delete root
+            tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
+            tax._remove(tax.root_node)
+            self.assertRaises(AssertionError, tax.check_consistency)
+
+            # Delete random node (parent from random leaf)
+            tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
+            tax._remove(tax.parent(random.choice(tax.leaves())))
+            self.assertRaises(AssertionError, tax.check_consistency)
+
+            # Delete random leaf (do not generate inconsistency)
+            tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
+            tax._remove(random.choice(tax.leaves()))
+            self.assertEqual(tax.check_consistency(), None)

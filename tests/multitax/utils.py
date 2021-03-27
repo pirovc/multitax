@@ -14,13 +14,13 @@ def uncompress_gzip(f, outf):
         shutil.copyfileobj(f_in, f_out)
 
 
-def uncompress_tar_gzip(f, outdir):
-    # Extract all files ignoring internal directories to outdir
+def uncompress_tar_gzip(f, outd):
+    # Extract all files ignoring internal directories to outd
     files = []
     with tarfile.open(f) as tar_in:
         for member in tar_in.getmembers():
             if member.isreg():
                 member.name = os.path.basename(member.name)
                 files.append(member.name)
-                tar_in.extract(member, outdir)
+                tar_in.extract(member, outd)
     return files

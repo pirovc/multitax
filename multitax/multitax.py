@@ -1,6 +1,7 @@
 from .utils import open_files, download_files, close_files, check_file, check_no_file, check_dir, reverse_dict
 from collections import Counter
 
+
 class MultiTax(object):
 
     version = "0.1.0"
@@ -39,7 +40,7 @@ class MultiTax(object):
         * **build_node_children** *[bool]*: Pre-build node,children dict (otherwise it will be created on first use)
         * **build_name_nodes** *[bool]*: Pre-build name,nodes dict (otherwise it will be created on first use)
         * **build_rank_nodes** *[bool]*: Pre-build rank,nodes dict (otherwise it will be created on first use)
-     
+
         Examples:
 
             # Downloads default GTDB taxonomy
@@ -234,7 +235,7 @@ class MultiTax(object):
             return self.undefined_node
 
     def leaves(self, node: str=None):
-        if node is None:
+        if node is None or node == self.root_node:
             # Leaves are nodes not contained in _nodes.values() ("parents")
             return list(set(self._nodes).difference(self._nodes.values()))
         elif node in self._nodes:
@@ -332,7 +333,7 @@ class MultiTax(object):
         Returns:
 
         * *[dict]* with total counts "nodes", "ranks", "names", "leaves" and rank specific counts "ranked_nodes", "ranked_leaves" with total of counts for each rank
-        
+
         Example:
 
             from pprint import pprint
@@ -429,7 +430,7 @@ class MultiTax(object):
         if isinstance(nodes, str):
             nodes = [nodes]
 
-        # Cannot filter root node        
+        # Cannot filter root node
         if self.root_node in nodes:
             return None
 
