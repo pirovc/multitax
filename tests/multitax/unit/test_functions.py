@@ -4,7 +4,7 @@ import sys
 sys.path.append("tests/multitax/")
 from utils import setup_dir
 
-from multitax import CustomTx
+from multitax import CustomTx, OttTx, NcbiTx
 from multitax.utils import check_file
 
 
@@ -427,7 +427,41 @@ class TestFunctions(unittest.TestCase):
                   sep_multi="_")
         self.assertEqual(check_file(outfile), None)
 
-    def test_forwards(self):
-        pass #ott
-    def test_merged(self):
-        pass #ncbi
+    def test_ott_forwards(self):
+        """
+        Test forwards functionality (ott only)
+        """
+        # forwards.tsv
+        # id    replacement
+        # 5044012 4603004
+        # 391495  391494
+
+        tax = OttTx(files="tests/multitax/data_minimal/ott.tgz")
+        self.assertEqual(len(tax._forwards), 2)
+
+        self.assertEqual(tax.parent("5044012"), tax.undefined_node)
+        self.assertEqual(tax.latest("5044012"), "4603004")
+        self.assertNotEqual(tax.parent(tax.latest("5044012")), tax.undefined_node)
+
+        self.assertEqual(tax.parent("391495"), tax.undefined_node)
+        self.assertEqual(tax.latest("391495"), "391494")
+        self.assertNotEqual(tax.parent(tax.latest("391495")), tax.undefined_node)
+
+    def test_ncbi_merged(self):
+        """
+        Test merged functionality (ncbi only)
+        """
+        # merged.dmp
+        # 1235230 |   459525  |
+        # 1235908 |   363999  |
+
+        tax = NcbiTx(files="tests/multitax/data_minimal/ncbi.tar.gz")
+        self.assertEqual(len(tax._merged), 2)
+
+        self.assertEqual(tax.parent("1235230"), tax.undefined_node)
+        self.assertEqual(tax.latest("1235230"), "459525")
+        self.assertNotEqual(tax.parent(tax.latest("1235230")), tax.undefined_node)
+
+        self.assertEqual(tax.parent("1235908"), tax.undefined_node)
+        self.assertEqual(tax.latest("1235908"), "363999")
+        self.assertNotEqual(tax.parent(tax.latest("1235908")), tax.undefined_node)
