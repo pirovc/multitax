@@ -1,6 +1,6 @@
-# MultiTax
+# MultiTax [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/multitax/README.html) [![Build Status](https://travis-ci.org/pirovc/multitax.svg?branch=main)](https://travis-ci.org/pirovc/multitax) [![codecov](https://codecov.io/gh/pirovc/multitax/branch/main/graph/badge.svg)](https://codecov.io/gh/pirovc/multitax)
 
-Pyhton library that provides a common interface to obtain, parse and interact with biological taxonomies (GTDB, NCBI, Silva, Greengenes, Open Tree taxonomy) + "Custom" formatted taxonomies.
+Python library that provides a common interface to obtain, parse and interact with biological taxonomies (GTDB, NCBI, Silva, Greengenes, Open Tree taxonomy) + "Custom" formatted taxonomies.
 
 ## Goals
  
@@ -10,8 +10,20 @@ Pyhton library that provides a common interface to obtain, parse and interact wi
  - Translation and conversion between taxonomies (not yet implemented)
 
 ## Installation
+	
+### pip / conda
 
-    python setup.py install --record files.txt
+	pip install multitax
+
+	conda install multitax
+
+### local
+
+```bash
+git clone https://github.com/pirovc/multitax.git
+cd multitax
+python setup.py install --record files.txt
+```
 
 ## Documentation
     
@@ -73,7 +85,7 @@ tax.name_lineage("g__Escherichia")
 tax.rank_lineage("g__Escherichia")
 # ['root', 'domain', 'phylum', 'class', 'order', 'family', 'genus']
 
-# Get specific lineage
+# Get lineage with specific ranks and root
 tax.lineage("g__Escherichia", root_node="p__Proteobacteria", ranks=["phylum", "class", "family", "genus"])
 # ['p__Proteobacteria', 'c__Gammaproteobacteria', 'f__Enterobacteriaceae', 'g__Escherichia']
 
@@ -132,25 +144,25 @@ tax.write("custom_tax.tsv", cols=["node", "rank", "name_lineage"])
 ```python
 # NCBI
 from multitax import NcbiTx
-tax = NcbiTx(files="taxdump.tar.gz")
+tax = NcbiTx()
 tax.lineage("561")    
 # ['1', '131567', '2', '1224', '1236', '91347', '543', '561']
 
 # Silva
 from multitax import SilvaTx
-tax = SilvaTx(files="tax_slv_ssu_138.1.txt.gz")
+tax = SilvaTx()
 tax.lineage("46463")    
 # ['1', '3', '2375', '3303', '46449', '46454', '46463']
 
 # Open Tree taxonomy
 from multitax import OttTx
-tax = OttTx(files="ott3.2.tgz")
+tax = OttTx()
 tax.lineage("474503")
 # ['805080', '93302', '844192', '248067', '822744', '768012', '424023', '474503']
 
 # GreenGenes
 from multitax import GreengenesTx
-tax = GreengenesTx(files="gg_13_5_taxonomy.txt.gz")
+tax = GreengenesTx()
 tax.lineage("f__Enterobacteriaceae")
 # ['1', 'k__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacteriales', 'f__Enterobacteriaceae']
 ```
@@ -163,9 +175,13 @@ Using pylca: https://github.com/pirovc/pylca
 from pylca.pylca import LCA
 from multitax import GtdbTx
 
+# Download and parse GTDB Taxonomy
 tax = GtdbTx()
+
+# Build LCA structure
 L = LCA(tax._nodes)
 
+# Get LCA
 L("s__Escherichia dysenteriae", "s__Pseudomonas aeruginosa")
 # 'c__Gammaproteobacteria'
 ```
@@ -173,8 +189,8 @@ L("s__Escherichia dysenteriae", "s__Pseudomonas aeruginosa")
 ## General information
 
  - Taxonomies are parsed into nodes. Each node is annotated with a name and a rank.
- - Some taxonomies have a taxonomic id (NCBI, Silva) and other use the rank + name as identifier. In multitax all identifiers are treated as strings.
- - A single root node is defined by default. This node can be changed `root_node` when loading the taxonomy (as well as annotations `root_parent`, `root_name`, `root_rank`).
+ - Some taxonomies have a numeric taxonomic identifier (NCBI, Silva) and other use the rank + name as an identifier. In MultiTax all identifiers are treated as strings.
+ - A single root node is defined by default for each taxonomy (or `1` when not defined). This can be changed with `root_node` when loading the taxonomy (as well as annotations `root_parent`, `root_name`, `root_rank`). If the `root_node` already exists, the tree will be filtered.
  - Standard values for unknown/undefined nodes can be configured with `undefined_node`,`undefined_name` and `undefined_rank`. Those are default values returned when nodes/names/ranks are not found.
  - Taxonomy files are automatically download or can be loaded from disk (`files` parameter). Alternative `urls` can be provided. When downloaded, files are handled in memory. It is possible to save the downloaded file to disk with `output_prefix`.
  
@@ -194,7 +210,7 @@ Not yet implemented. The goal here is to map different taxonomies if the linkage
 
 - Advanced name search
 - Add/remove/update nodes
-- Write on specific taxonomy format - conversion between taxonomies
+- Conversion between taxonomies (write on specific files/format)
 
 ## Similar projects
 
