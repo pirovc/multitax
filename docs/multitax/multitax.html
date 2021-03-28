@@ -153,9 +153,9 @@
 <span class="sd">        * **undefined_node** *[str]*: Define a default return value for undefined nodes</span>
 <span class="sd">        * **undefined_name** *[str]*: Define a default return value for undefined names</span>
 <span class="sd">        * **undefined_rank** *[str]*: Define a default return value for undefined ranks</span>
-<span class="sd">        * **build_node_children** *[bool]*: Pre-build node,children dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **build_name_nodes** *[bool]*: Pre-build name,nodes dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **build_rank_nodes** *[bool]*: Pre-build rank,nodes dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use)</span>
 <span class="sd">        </span>
 <span class="sd">        Example:</span>
 
@@ -393,7 +393,7 @@
 <span class="sd">        If ranks is provide, returns only nodes annotated with such ranks.</span>
 <span class="sd">        If root_node is provided, use it instead of default root of tree.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If lineages were pre-built and no special subset is required</span>
+        <span class="c1"># If lineages were built and no special subset is required</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -505,7 +505,7 @@
 
     <span class="k">def</span> <span class="nf">clear_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Clear pre-built lineages.</span>
+<span class="sd">        Clear built lineages.</span>
 
 <span class="sd">        Returns: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -531,7 +531,7 @@
 <span class="sd">        Filters taxonomy given a list of nodes.</span>
 <span class="sd">        By default keep all the ancestors of the given nodes.</span>
 <span class="sd">        If desc=True, keep all descendants instead.</span>
-<span class="sd">        Deletes pre-built lineages.</span>
+<span class="sd">        Deletes built lineages.</span>
 
 <span class="sd">        Returns: None</span>
 
@@ -697,9 +697,9 @@
 <span class="sd">        * **undefined_node** *[str]*: Define a default return value for undefined nodes</span>
 <span class="sd">        * **undefined_name** *[str]*: Define a default return value for undefined names</span>
 <span class="sd">        * **undefined_rank** *[str]*: Define a default return value for undefined ranks</span>
-<span class="sd">        * **build_node_children** *[bool]*: Pre-build node,children dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **build_name_nodes** *[bool]*: Pre-build name,nodes dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **build_rank_nodes** *[bool]*: Pre-build rank,nodes dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use)</span>
 <span class="sd">        </span>
 <span class="sd">        Example:</span>
 
@@ -937,7 +937,7 @@
 <span class="sd">        If ranks is provide, returns only nodes annotated with such ranks.</span>
 <span class="sd">        If root_node is provided, use it instead of default root of tree.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If lineages were pre-built and no special subset is required</span>
+        <span class="c1"># If lineages were built and no special subset is required</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1049,7 +1049,7 @@
 
     <span class="k">def</span> <span class="nf">clear_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Clear pre-built lineages.</span>
+<span class="sd">        Clear built lineages.</span>
 
 <span class="sd">        Returns: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1075,7 +1075,7 @@
 <span class="sd">        Filters taxonomy given a list of nodes.</span>
 <span class="sd">        By default keep all the ancestors of the given nodes.</span>
 <span class="sd">        If desc=True, keep all descendants instead.</span>
-<span class="sd">        Deletes pre-built lineages.</span>
+<span class="sd">        Deletes built lineages.</span>
 
 <span class="sd">        Returns: None</span>
 
@@ -1247,9 +1247,9 @@
 <span class="sd">        * **undefined_node** *[str]*: Define a default return value for undefined nodes</span>
 <span class="sd">        * **undefined_name** *[str]*: Define a default return value for undefined names</span>
 <span class="sd">        * **undefined_rank** *[str]*: Define a default return value for undefined ranks</span>
-<span class="sd">        * **build_node_children** *[bool]*: Pre-build node,children dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **build_name_nodes** *[bool]*: Pre-build name,nodes dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **build_rank_nodes** *[bool]*: Pre-build rank,nodes dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use)</span>
 <span class="sd">        </span>
 <span class="sd">        Example:</span>
 
@@ -1329,9 +1329,9 @@
 <li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes</li>
 <li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names</li>
 <li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks</li>
-<li><strong>build_node_children</strong> <em>[bool]</em>: Pre-build node,children dict (otherwise it will be created on first use)</li>
-<li><strong>build_name_nodes</strong> <em>[bool]</em>: Pre-build name,nodes dict (otherwise it will be created on first use)</li>
-<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Pre-build rank,nodes dict (otherwise it will be created on first use)</li>
+<li><strong>build_node_children</strong> <em>[bool]</em>: Build node,children dict (otherwise it will be created on first use)</li>
+<li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use)</li>
+<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use)</li>
 </ul>
 
 <p>Example:</p>
@@ -1635,7 +1635,7 @@ Mainly used for NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 <span class="sd">        If ranks is provide, returns only nodes annotated with such ranks.</span>
 <span class="sd">        If root_node is provided, use it instead of default root of tree.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If lineages were pre-built and no special subset is required</span>
+        <span class="c1"># If lineages were built and no special subset is required</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1881,7 +1881,7 @@ pprint(tax.stats())
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">clear_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Clear pre-built lineages.</span>
+<span class="sd">        Clear built lineages.</span>
 
 <span class="sd">        Returns: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1890,7 +1890,7 @@ pprint(tax.stats())
 
         </details>
 
-            <div class="docstring"><p>Clear pre-built lineages.</p>
+            <div class="docstring"><p>Clear built lineages.</p>
 
 <p>Returns: None</p>
 </div>
@@ -1947,7 +1947,7 @@ pprint(tax.stats())
 <span class="sd">        Filters taxonomy given a list of nodes.</span>
 <span class="sd">        By default keep all the ancestors of the given nodes.</span>
 <span class="sd">        If desc=True, keep all descendants instead.</span>
-<span class="sd">        Deletes pre-built lineages.</span>
+<span class="sd">        Deletes built lineages.</span>
 
 <span class="sd">        Returns: None</span>
 
@@ -2016,7 +2016,7 @@ pprint(tax.stats())
             <div class="docstring"><p>Filters taxonomy given a list of nodes.
 By default keep all the ancestors of the given nodes.
 If desc=True, keep all descendants instead.
-Deletes pre-built lineages.</p>
+Deletes built lineages.</p>
 
 <p>Returns: None</p>
 

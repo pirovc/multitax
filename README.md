@@ -17,7 +17,7 @@ Python library that provides a common interface to obtain, parse and interact wi
 
 ### conda
 
-	conda install multitax
+	conda install -c bioconda multitax
 
 ### local
 
@@ -91,7 +91,7 @@ tax.rank_lineage("g__Escherichia")
 tax.lineage("g__Escherichia", root_node="p__Proteobacteria", ranks=["phylum", "class", "family", "genus"])
 # ['p__Proteobacteria', 'c__Gammaproteobacteria', 'f__Enterobacteriaceae', 'g__Escherichia']
 
-# Pre-build lineages in memory for faster access
+# Build lineages in memory for faster access
 tax.build_lineages()
 
 # Get leaf nodes

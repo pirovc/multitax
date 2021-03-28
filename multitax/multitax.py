@@ -37,9 +37,9 @@ class MultiTax(object):
         * **undefined_node** *[str]*: Define a default return value for undefined nodes
         * **undefined_name** *[str]*: Define a default return value for undefined names
         * **undefined_rank** *[str]*: Define a default return value for undefined ranks
-        * **build_node_children** *[bool]*: Pre-build node,children dict (otherwise it will be created on first use)
-        * **build_name_nodes** *[bool]*: Pre-build name,nodes dict (otherwise it will be created on first use)
-        * **build_rank_nodes** *[bool]*: Pre-build rank,nodes dict (otherwise it will be created on first use)
+        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use)
+        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use)
+        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use)
         
         Example:
 
@@ -277,7 +277,7 @@ class MultiTax(object):
         If ranks is provide, returns only nodes annotated with such ranks.
         If root_node is provided, use it instead of default root of tree.
         """
-        # If lineages were pre-built and no special subset is required
+        # If lineages were built and no special subset is required
         if node in self._lineages:
             return self._lineages[node]
         else:
@@ -389,7 +389,7 @@ class MultiTax(object):
 
     def clear_lineages(self):
         """
-        Clear pre-built lineages.
+        Clear built lineages.
 
         Returns: None
         """
@@ -415,7 +415,7 @@ class MultiTax(object):
         Filters taxonomy given a list of nodes.
         By default keep all the ancestors of the given nodes.
         If desc=True, keep all descendants instead.
-        Deletes pre-built lineages.
+        Deletes built lineages.
 
         Returns: None
 
