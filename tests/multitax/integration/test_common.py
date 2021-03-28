@@ -52,6 +52,16 @@ class TestCommon(unittest.TestCase):
             tax = self.taxonomies[t]["class"](urls=urls)
             self.assertGreater(tax.stats()["nodes"], 0, t + " failed with urls")
 
+    def test_urls_output_prefix(self):
+        """
+        Using urls and saving files on disk
+        """
+        for t in self.taxonomies:
+            # simulate url with "file://" and absolute path
+            urls = ["file://" + os.path.abspath(file) for file in self.taxonomies[t]["params"]["files"]]
+            tax = self.taxonomies[t]["class"](urls=urls, output_prefix=self.tmp_dir)
+            self.assertGreater(tax.stats()["nodes"], 0, t + " failed with urls and output_prefix")
+
     def test_gzip_uncompressed(self):
         """
         Using uncompressed gzip files ("gtdb", "silva", "greengenes", "custom")
