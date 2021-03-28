@@ -1,13 +1,15 @@
 # MultiTax  [![Build Status](https://travis-ci.org/pirovc/multitax.svg?branch=main)](https://travis-ci.org/pirovc/multitax) [![codecov](https://codecov.io/gh/pirovc/multitax/branch/main/graph/badge.svg)](https://codecov.io/gh/pirovc/multitax) [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/multitax/README.html)
 
-Python library that provides a common interface to obtain, parse and interact with biological taxonomies (GTDB, NCBI, Silva, Greengenes, Open Tree taxonomy) + "Custom" formatted taxonomies.
+Python package to obtain, parse and explore biological taxonomies
 
-## Goals
- 
- - Common interface to use different taxonomies
- - Fast, intuitive, generalized and easy to use
- - Enable integration and compatibility with multiple taxonomies without any effort
- - Translation and conversion between taxonomies (not yet implemented)
+## Description
+
+MultiTax is a Python package that provides a common and generalized set of functions to download, parse, filter and explore multiple biological taxonomies (**GTDB, NCBI, Silva, Greengenes, Open Tree taxonomy**) and custom formatted taxonomies. Main goals are:
+
+ - Be fast, intuitive, generalized and easy to use
+ - Explore different taxonomies with same set of commands
+ - Enable integration and compatibility with multiple taxonomies
+ - *Translate and convert taxonomies (not yet implemented)*
 
 ## Installation
 	
@@ -36,7 +38,7 @@ https://pirovc.github.io/multitax/
 ```python
 from multitax import GtdbTx
 
-# Download taxonomy
+# Download and parse taxonomy
 tax = GtdbTx()
 
 # Get lineage for the Escherichia genus  

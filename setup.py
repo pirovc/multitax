@@ -12,7 +12,7 @@ setup(
     author="Vitor C. Piro",
     author_email="pirovc@posteo.net",
 
-    description="Python library that provides a common interface for biological taxonomies",
+    description="Python package to obtain, parse and explore biological taxonomies",
     long_description=long_description,
     long_description_content_type="text/markdown",
 
