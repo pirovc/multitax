@@ -19,8 +19,8 @@ install:
 script:
   - python -m unittest discover -s tests/multitax/unit/ -v
   - python -m unittest discover -s tests/multitax/integration/ -v
-  - coverage run --append -m unittest discover -s tests/ganon/unit/ -v;
-  - coverage run --append -m unittest discover -s tests/ganon/integration/ -v;
+  - coverage run --append -m unittest discover -s tests/multitax/unit/ -v;
+  - coverage run --append -m unittest discover -s tests/multitax/integration/ -v;
 
 notifications:
   email: false
