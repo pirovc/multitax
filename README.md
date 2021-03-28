@@ -1,4 +1,4 @@
-# MultiTax  [![Build Status](https://travis-ci.org/pirovc/multitax.svg?branch=main)](https://travis-ci.org/pirovc/multitax) [![codecov](https://codecov.io/gh/pirovc/multitax/branch/main/graph/badge.svg)](https://codecov.io/gh/pirovc/multitax)
+# MultiTax  [![Build Status](https://travis-ci.org/pirovc/multitax.svg?branch=main)](https://travis-ci.org/pirovc/multitax) [![codecov](https://codecov.io/gh/pirovc/multitax/branch/main/graph/badge.svg)](https://codecov.io/gh/pirovc/multitax) [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/multitax/README.html)
 
 Python library that provides a common interface to obtain, parse and interact with biological taxonomies (GTDB, NCBI, Silva, Greengenes, Open Tree taxonomy) + "Custom" formatted taxonomies.
 
@@ -11,11 +11,11 @@ Python library that provides a common interface to obtain, parse and interact wi
 
 ## Installation
 	
-### pip / conda 
-[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/multitax/README.html)
-[![PyPI version](https://badge.fury.io/py/multitax.png)](https://badge.fury.io/py/multitax)
+### pip
 
 	pip install multitax
+
+### conda
 
 	conda install multitax
 

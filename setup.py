@@ -1,11 +1,10 @@
 from setuptools import setup
 
-
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="multitax-pirovc",
+    name="multitax",
     version="1.0.0",
     url="https://www.github.com/pirovc/multitax",
     license='MIT',
