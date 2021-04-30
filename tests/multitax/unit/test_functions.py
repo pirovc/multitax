@@ -46,24 +46,35 @@ class TestFunctions(unittest.TestCase):
         """
         test search_name function
         """
+        
+        # Exact matches
         tax = CustomTx(files=self.test_file)
-        self.assertCountEqual(tax.search_name("Node2"), ["2.1", "2.2"])
         self.assertCountEqual(tax.search_name("Node1"), ["1"])
-        self.assertCountEqual(tax.search_name("NotThere"), [])
+        self.assertCountEqual(tax.search_name("Node2.1"), ["2.1"])
+        self.assertCountEqual(tax.search_name("Node5.2"), ["5.2"])
+        self.assertCountEqual(tax.search_name("Node2."), [])
 
-        tax = CustomTx(files=self.test_file, root_name="AnotherRootName")
-        self.assertCountEqual(tax.search_name("Node1"), [])
-        self.assertCountEqual(tax.search_name("Another"), ["1"])
-
-    def test_nodes_name(self):
-        """
-        test nodes_name function
-        """
+        # not exact matches
         tax = CustomTx(files=self.test_file)
-        self.assertCountEqual(tax.nodes_name("Node1"), ["1"])
-        self.assertCountEqual(tax.nodes_name("Node2.1"), ["2.1"])
-        self.assertCountEqual(tax.nodes_name("Node5.2"), ["5.2"])
-        self.assertCountEqual(tax.nodes_name("Node2."), [])
+        self.assertCountEqual(tax.search_name("Node2", exact=False), ["2.1", "2.2"])
+        self.assertCountEqual(tax.search_name("Node2", exact=True), [])
+        self.assertCountEqual(tax.search_name("Node1", exact=False), ["1"])
+        self.assertCountEqual(tax.search_name("NotThere", exact=False), [])
+
+        # Changing root name
+        tax = CustomTx(files=self.test_file, root_name="AnotherRootName")
+        self.assertCountEqual(tax.search_name("Node1", exact=False), [])
+        self.assertCountEqual(tax.search_name("AnotherRootName", exact=True), ["1"])
+        self.assertCountEqual(tax.search_name("Another", exact=False), ["1"])
+
+        # With specific rank
+        tax = CustomTx(files=self.test_file)
+        self.assertCountEqual(tax.search_name("Node2.1", exact=True, rank="rank-2"), ["2.1"])
+        self.assertCountEqual(tax.search_name("Node4.4", exact=True, rank="rank-4"), ["4.4"])
+        self.assertCountEqual(tax.search_name("Node", exact=False, rank="rank-5"), ["5.1", "5.2"])
+        self.assertCountEqual(tax.search_name("Node2.1", exact=True, rank="rank-3"), [])
+        self.assertCountEqual(tax.search_name("Node4.4", exact=True, rank="rank-1"), [])
+        self.assertCountEqual(tax.search_name("Node5", exact=False, rank="rank-XXX"), [])
 
     def test_nodes_rank(self):
         """

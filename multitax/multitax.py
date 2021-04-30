@@ -171,27 +171,46 @@ class MultiTax(object):
         else:
             return []
 
-    def search_name(self, text: str):
+    def search_name(self, text: str, rank: str=None, exact: bool=True):
         """
-        Searches names containing a certain text (case sensitive) and return their respective nodes.
+        Search node by exact or partial name
+
+        Parameters:
+        * **text** *[str]*: Text to search.
+        * **rank** *[str]*: Filter results by rank.
+        * **exact** *[bool]*: Perform exact name search, otherwise partial matches containing the text. Both are case senstive.
+
+        Returns: list of matching nodes
         """
         # Setup on first use
         if not self._name_nodes:
             self._name_nodes = reverse_dict(self._names)
 
+        if exact:
+            ret = self._exact_name(text)
+        else:
+            ret = self._partial_name(text)
+
+        # Only return nodes of chosen rank
+        if rank:
+            return [ret[i] for i, r in enumerate(map(self.rank, ret)) if r == rank]
+        else:
+            return ret
+
+    def _partial_name(self, text: str):
+        """
+        Searches names containing a certain text (case sensitive) and return their respective nodes.
+        """
         matching_nodes = []
         for name in self._name_nodes:
             if text in name:
                 matching_nodes.extend(self._name_nodes[name])
         return matching_nodes
 
-    def nodes_name(self, name: str):
+    def _exact_name(self, name: str):
         """
-        Returns list of nodes of a given exact name.
+        Returns list of nodes of a given exact name (case sensitive).
         """
-        # Setup on first use
-        if not self._name_nodes:
-            self._name_nodes = reverse_dict(self._names)
         if name in self._name_nodes:
             return self._name_nodes[name]
         else:
