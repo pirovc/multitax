@@ -135,7 +135,8 @@
                  <span class="n">undefined_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                 <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Main constructor of MultiTax and sub-classes</span>
 
@@ -153,6 +154,7 @@
 <span class="sd">        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use)</span>
 <span class="sd">        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use)</span>
 <span class="sd">        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **extended_names** *[bool]*: Parse extended names if available for better lookup.</span>
 <span class="sd">        </span>
 <span class="sd">        Example:</span>
 
@@ -191,7 +193,7 @@
 
         <span class="k">if</span> <span class="n">fhs</span><span class="p">:</span>
             <span class="c1"># Parse taxonomy</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">,</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">extended_names</span><span class="p">)</span>
             <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
             <span class="c1"># Save sources for stats (files or urls)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -300,32 +302,32 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="n">reverse_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">exact</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exact_name</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exact_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partial_name</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partial_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">)</span>
 
         <span class="c1"># Only return nodes of chosen rank</span>
         <span class="k">if</span> <span class="n">rank</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="n">ret</span><span class="p">))</span> <span class="k">if</span> <span class="n">r</span> <span class="o">==</span> <span class="n">rank</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">filter_function</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="n">rank</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ret</span>
 
-    <span class="k">def</span> <span class="nf">_partial_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_partial_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Searches names containing a certain text (case sensitive) and return their respective nodes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">matching_nodes</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">:</span>
+        <span class="n">matching_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
-                <span class="n">matching_nodes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">matching_nodes</span>
+                <span class="n">matching_nodes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">names</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">matching_nodes</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_exact_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_exact_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns list of nodes of a given exact name (case sensitive).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">names</span><span class="p">[</span><span class="n">text</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
@@ -698,7 +700,8 @@
                  <span class="n">undefined_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                 <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Main constructor of MultiTax and sub-classes</span>
 
@@ -716,6 +719,7 @@
 <span class="sd">        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use)</span>
 <span class="sd">        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use)</span>
 <span class="sd">        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **extended_names** *[bool]*: Parse extended names if available for better lookup.</span>
 <span class="sd">        </span>
 <span class="sd">        Example:</span>
 
@@ -754,7 +758,7 @@
 
         <span class="k">if</span> <span class="n">fhs</span><span class="p">:</span>
             <span class="c1"># Parse taxonomy</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">,</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">extended_names</span><span class="p">)</span>
             <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
             <span class="c1"># Save sources for stats (files or urls)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -863,32 +867,32 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="n">reverse_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">exact</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exact_name</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exact_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partial_name</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partial_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">)</span>
 
         <span class="c1"># Only return nodes of chosen rank</span>
         <span class="k">if</span> <span class="n">rank</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="n">ret</span><span class="p">))</span> <span class="k">if</span> <span class="n">r</span> <span class="o">==</span> <span class="n">rank</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">filter_function</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="n">rank</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ret</span>
 
-    <span class="k">def</span> <span class="nf">_partial_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_partial_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Searches names containing a certain text (case sensitive) and return their respective nodes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">matching_nodes</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">:</span>
+        <span class="n">matching_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
-                <span class="n">matching_nodes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">matching_nodes</span>
+                <span class="n">matching_nodes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">names</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">matching_nodes</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_exact_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_exact_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">names</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns list of nodes of a given exact name (case sensitive).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">names</span><span class="p">[</span><span class="n">text</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
@@ -1248,7 +1252,8 @@
     undefined_rank: str = None,
     build_name_nodes: bool = False,
     build_node_children: bool = False,
-    build_rank_nodes: bool = False
+    build_rank_nodes: bool = False,
+    extended_names: bool = True
 )</span>
     </div>
 
@@ -1267,7 +1272,8 @@
                  <span class="n">undefined_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                 <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Main constructor of MultiTax and sub-classes</span>
 
@@ -1285,6 +1291,7 @@
 <span class="sd">        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use)</span>
 <span class="sd">        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use)</span>
 <span class="sd">        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use)</span>
+<span class="sd">        * **extended_names** *[bool]*: Parse extended names if available for better lookup.</span>
 <span class="sd">        </span>
 <span class="sd">        Example:</span>
 
@@ -1323,7 +1330,7 @@
 
         <span class="k">if</span> <span class="n">fhs</span><span class="p">:</span>
             <span class="c1"># Parse taxonomy</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">,</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">extended_names</span><span class="p">)</span>
             <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
             <span class="c1"># Save sources for stats (files or urls)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -1367,6 +1374,7 @@
 <li><strong>build_node_children</strong> <em>[bool]</em>: Build node,children dict (otherwise it will be created on first use)</li>
 <li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use)</li>
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use)</li>
+<li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available for better lookup.</li>
 </ul>
 
 <p>Example:</p>
@@ -1446,13 +1454,13 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
             <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span> <span class="o">=</span> <span class="n">reverse_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">exact</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exact_name</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exact_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partial_name</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partial_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_nodes</span><span class="p">)</span>
 
         <span class="c1"># Only return nodes of chosen rank</span>
         <span class="k">if</span> <span class="n">rank</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="n">ret</span><span class="p">))</span> <span class="k">if</span> <span class="n">r</span> <span class="o">==</span> <span class="n">rank</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">filter_function</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="n">rank</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ret</span>
 </pre></div>

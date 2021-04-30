@@ -22,7 +22,8 @@ class MultiTax(object):
                  undefined_rank: str=None,
                  build_name_nodes: bool=False,
                  build_node_children: bool=False,
-                 build_rank_nodes: bool=False):
+                 build_rank_nodes: bool=False,
+                 extended_names: bool=True):
         """
         Main constructor of MultiTax and sub-classes
 
@@ -40,6 +41,7 @@ class MultiTax(object):
         * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use)
         * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use)
         * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use)
+        * **extended_names** *[bool]*: Parse extended names if available for better lookup.
         
         Example:
 
@@ -78,7 +80,7 @@ class MultiTax(object):
 
         if fhs:
             # Parse taxonomy
-            self._nodes, self._ranks, self._names = self._parse(fhs)
+            self._nodes, self._ranks, self._names = self._parse(fhs, extended_names=extended_names)
             close_files(fhs)
             # Save sources for stats (files or urls)
             self.sources = list(fhs.keys())
@@ -187,32 +189,32 @@ class MultiTax(object):
             self._name_nodes = reverse_dict(self._names)
 
         if exact:
-            ret = self._exact_name(text)
+            ret = self._exact_name(text, self._name_nodes)
         else:
-            ret = self._partial_name(text)
+            ret = self._partial_name(text, self._name_nodes)
 
         # Only return nodes of chosen rank
         if rank:
-            return [ret[i] for i, r in enumerate(map(self.rank, ret)) if r == rank]
+            return filter_function(ret, self.rank, rank)
         else:
             return ret
 
-    def _partial_name(self, text: str):
+    def _partial_name(self, text: str, names: dict):
         """
         Searches names containing a certain text (case sensitive) and return their respective nodes.
         """
-        matching_nodes = []
-        for name in self._name_nodes:
+        matching_nodes = set()
+        for name in names:
             if text in name:
-                matching_nodes.extend(self._name_nodes[name])
-        return matching_nodes
+                matching_nodes.update(names[name])
+        return list(matching_nodes)
 
-    def _exact_name(self, name: str):
+    def _exact_name(self, text: str, names: dict):
         """
         Returns list of nodes of a given exact name (case sensitive).
         """
-        if name in self._name_nodes:
-            return self._name_nodes[name]
+        if text in names:
+            return names[text]
         else:
             return []
 

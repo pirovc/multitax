@@ -1,30 +1,31 @@
 from .multitax import MultiTax
+from .utils import filter_function
 
 
 class NcbiTx(MultiTax):
     _default_urls = ["ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"]
 
     def __init__(self, **kwargs):
-        # [merged.dmp]
         self._merged = {}
+        self._extended_names = {}
         super().__init__(**kwargs)
 
     def __repr__(self):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
         return 'NcbiTx({})'.format(', '.join(args))
 
-    def _parse(self, fhs):
+    def _parse(self, fhs, **kwargs):
         fhs_list = list(fhs.values())
         # One element tar.gz -> taxdump.tar.gz
         if len(fhs_list) == 1 and list(fhs)[0].endswith(".tar.gz"):
-            nodes, ranks, names, self._merged = self._parse_taxdump(fhs_list[0])
+            nodes, ranks, names, self._merged = self._parse_taxdump(fhs_list[0], extended_names=kwargs["extended_names"])
         else:
             # nodes.dmp
             nodes, ranks = self._parse_nodes(fhs_list[0])
 
             # [names.dmp]
             if len(fhs) >= 2:
-                names = self._parse_names(fhs_list[1])
+                names = self._parse_names(fhs_list[1], extended_names=kwargs["extended_names"])
             else:
                 names = {}
 
@@ -33,11 +34,11 @@ class NcbiTx(MultiTax):
                 self._merged = self._parse_merged(fhs_list[2])
         return nodes, ranks, names
 
-    def _parse_taxdump(self, fh_taxdump):
+    def _parse_taxdump(self, fh_taxdump, extended_names):
         with fh_taxdump.extractfile('nodes.dmp') as fh_nodes:
             nodes, ranks = self._parse_nodes(fh_nodes)
         with fh_taxdump.extractfile('names.dmp') as fh_names:
-            names = self._parse_names(fh_names)
+            names = self._parse_names(fh_names, extended_names=extended_names)
         with fh_taxdump.extractfile('merged.dmp') as fh_merged:
             merged = self._parse_merged(fh_merged)
         return nodes, ranks, names, merged
@@ -54,7 +55,7 @@ class NcbiTx(MultiTax):
             nodes[taxid] = parent_taxid
         return nodes, ranks
 
-    def _parse_names(self, fh):
+    def _parse_names(self, fh, extended_names):
         names = {}
         for line in fh:
             try:
@@ -63,6 +64,11 @@ class NcbiTx(MultiTax):
                 node, name, _, name_class = line.decode().split('\t|\t')
             if name_class.replace('\t|\n', '') == "scientific name":
                 names[node] = name
+            elif extended_names:
+                if name not in self._extended_names:
+                    self._extended_names[name] = []
+                self._extended_names[name].append(node)
+
         return names
 
     def _parse_merged(self, fh):
@@ -94,3 +100,36 @@ class NcbiTx(MultiTax):
         s = super().stats()
         s["merged"] = len(self._merged)
         return s
+
+    def search_name(self, text: str, rank: str=None, exact: bool=True, force_extended: bool=False):
+        """
+        Search node by exact or partial name.
+
+        Default order (can be skipped with **force_extended**): 
+
+        1) Search names defined as "scientific name" on nodes.dmp
+        
+        2) If nothing was found, search text in all other categories (if parsed with NcbiTx(extended_names=True))
+
+        Parameters:
+        * **text** *[str]*: Text to search.
+        * **rank** *[str]*: Filter results by rank.
+        * **exact** *[bool]*: Perform exact name search, otherwise partial matches containing the text. Both are case senstive.
+        * **force_extended** *[bool]*: Search for text in all categories at once.
+
+        Returns: list of matching nodes
+        """
+        n = super().search_name(text, rank=rank, exact=exact)
+        if n and not force_extended:
+            return n
+        else:
+            if exact:
+                ret = self._exact_name(text, self._extended_names)
+            else:
+                ret = self._partial_name(text, self._extended_names)
+
+            # Only return nodes of chosen rank
+            if rank:
+                ret = filter_function(ret, self.rank, rank)
+
+            return list(set(n + ret))

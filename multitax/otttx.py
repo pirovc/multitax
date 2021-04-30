@@ -14,7 +14,7 @@ class OttTx(MultiTax):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
         return 'OttTx({})'.format(', '.join(args))
 
-    def _parse(self, fhs):
+    def _parse(self, fhs, **kwargs):
         fhs_list = list(fhs.values())
         if len(fhs_list) == 1 and list(fhs)[0].endswith(".tgz"):
             nodes, ranks, names, self._forwards = self._parse_ott(fhs_list[0])
