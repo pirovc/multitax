@@ -180,7 +180,7 @@ class MultiTax(object):
         Parameters:
         * **text** *[str]*: Text to search.
         * **rank** *[str]*: Filter results by rank.
-        * **exact** *[bool]*: Perform exact name search, otherwise partial matches containing the text. Both are case senstive.
+        * **exact** *[bool]*: Exact or partial name search (both case sensitive).
 
         Returns: list of matching nodes
         """

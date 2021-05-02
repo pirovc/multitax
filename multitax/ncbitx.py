@@ -117,7 +117,7 @@ class NcbiTx(MultiTax):
         Parameters:
         * **text** *[str]*: Text to search.
         * **rank** *[str]*: Filter results by rank.
-        * **exact** *[bool]*: Perform exact name search, otherwise partial matches containing the text. Both are case senstive.
+        * **exact** *[bool]*: Exact or partial name search (both case sensitive).
         * **force_extended** *[bool]*: Search for text in all categories at once.
 
         Returns: list of matching nodes
