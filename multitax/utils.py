@@ -145,3 +145,7 @@ def join_check(elements, sep: str):
         return sep.join(map(str, elements))
     else:
         return ""
+
+
+def filter_function(elements, function, value):
+    return [elements[i] for i, v in enumerate(map(function, elements)) if v == value]

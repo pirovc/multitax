@@ -46,24 +46,35 @@ class TestFunctions(unittest.TestCase):
         """
         test search_name function
         """
+        
+        # Exact matches
         tax = CustomTx(files=self.test_file)
-        self.assertCountEqual(tax.search_name("Node2"), ["2.1", "2.2"])
         self.assertCountEqual(tax.search_name("Node1"), ["1"])
-        self.assertCountEqual(tax.search_name("NotThere"), [])
+        self.assertCountEqual(tax.search_name("Node2.1"), ["2.1"])
+        self.assertCountEqual(tax.search_name("Node5.2"), ["5.2"])
+        self.assertCountEqual(tax.search_name("Node2."), [])
 
-        tax = CustomTx(files=self.test_file, root_name="AnotherRootName")
-        self.assertCountEqual(tax.search_name("Node1"), [])
-        self.assertCountEqual(tax.search_name("Another"), ["1"])
-
-    def test_nodes_name(self):
-        """
-        test nodes_name function
-        """
+        # not exact matches
         tax = CustomTx(files=self.test_file)
-        self.assertCountEqual(tax.nodes_name("Node1"), ["1"])
-        self.assertCountEqual(tax.nodes_name("Node2.1"), ["2.1"])
-        self.assertCountEqual(tax.nodes_name("Node5.2"), ["5.2"])
-        self.assertCountEqual(tax.nodes_name("Node2."), [])
+        self.assertCountEqual(tax.search_name("Node2", exact=False), ["2.1", "2.2"])
+        self.assertCountEqual(tax.search_name("Node2", exact=True), [])
+        self.assertCountEqual(tax.search_name("Node1", exact=False), ["1"])
+        self.assertCountEqual(tax.search_name("NotThere", exact=False), [])
+
+        # Changing root name
+        tax = CustomTx(files=self.test_file, root_name="AnotherRootName")
+        self.assertCountEqual(tax.search_name("Node1", exact=False), [])
+        self.assertCountEqual(tax.search_name("AnotherRootName", exact=True), ["1"])
+        self.assertCountEqual(tax.search_name("Another", exact=False), ["1"])
+
+        # With specific rank
+        tax = CustomTx(files=self.test_file)
+        self.assertCountEqual(tax.search_name("Node2.1", exact=True, rank="rank-2"), ["2.1"])
+        self.assertCountEqual(tax.search_name("Node4.4", exact=True, rank="rank-4"), ["4.4"])
+        self.assertCountEqual(tax.search_name("Node", exact=False, rank="rank-5"), ["5.1", "5.2"])
+        self.assertCountEqual(tax.search_name("Node2.1", exact=True, rank="rank-3"), [])
+        self.assertCountEqual(tax.search_name("Node4.4", exact=True, rank="rank-1"), [])
+        self.assertCountEqual(tax.search_name("Node5", exact=False, rank="rank-XXX"), [])
 
     def test_nodes_rank(self):
         """
@@ -472,3 +483,76 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(tax.parent("1235908"), tax.undefined_node)
         self.assertEqual(tax.latest("1235908"), "363999")
         self.assertNotEqual(tax.parent(tax.latest("1235908")), tax.undefined_node)
+
+    def test_ncbi_extended_names(self):
+        """
+        Test extended names functionality (ncbi)
+        """
+        # on names.dmp
+        # 363999  |   Xylariaceae sp. 5129    |       |   includes    |
+        # 363999  |   Xylariaceae sp. 5151    |       |   includes    |
+        # 363999  |   Xylariaceae sp. 5228    |       |   includes    |
+        # 37990   |   mitosporic Xylariaceae  |       |   includes    |
+        # 37990   |   Xylariaceae |       |   scientific name |
+
+        tax = NcbiTx(files="tests/multitax/data_minimal/ncbi.tar.gz", extended_names=False)
+        tax_ex = NcbiTx(files="tests/multitax/data_minimal/ncbi.tar.gz", extended_names=True)
+
+        # Exact match on scientific name
+        self.assertCountEqual(tax.search_name("Xylariaceae"), ["37990"])
+        self.assertCountEqual(tax_ex.search_name("Xylariaceae"), ["37990"])
+        # All scientific names
+        self.assertCountEqual(tax.search_name("Xylariaceae", exact=False), ["37990"])
+        self.assertCountEqual(tax_ex.search_name("Xylariaceae", exact=False), ["37990"])
+        # Exact match on scientific name forcing extended
+        self.assertCountEqual(tax.search_name("Xylariaceae"), ["37990"])
+        self.assertCountEqual(tax_ex.search_name("Xylariaceae", force_extended=True), ["37990"])
+        # All names
+        self.assertCountEqual(tax.search_name("Xylariaceae", exact=False), ["37990"])
+        self.assertCountEqual(tax_ex.search_name("Xylariaceae", exact=False, force_extended=True), ["37990", "363999"])
+        # Exact name available only on extended
+        self.assertCountEqual(tax.search_name("mitosporic Xylariaceae", exact=True), [])
+        self.assertCountEqual(tax_ex.search_name("mitosporic Xylariaceae", exact=True), ["37990"])
+        # Partial name available only on extended
+        self.assertCountEqual(tax.search_name("Xylariaceae sp.", exact=False), [])
+        self.assertCountEqual(tax_ex.search_name("Xylariaceae sp.", exact=False), ["363999"])
+
+    def test_ott_extended_names(self):
+        """
+        Test extended names functionality (ott)
+        """
+        # on taxonomy.tsv
+        # 4622    |   470454  |   Haemophilus sp. CCUG 32367  |   species |   silva:EU909664,ncbi:554010  |       |   sibling_higher  |
+        # 4621    |   470454  |   Haemophilus sp. CCUG 35214  |   species |   silva:EU909665,ncbi:554011  |       |   sibling_higher  |
+        # 158636  |   470454  |   Haemophilus sp. CCUG 30218  |   species |   silva:EU909662,ncbi:554007  |       |   sibling_higher  |
+        # 391494  |   470454  |   Haemophilus sp. CCUG 31732  |   species |   silva:EU909663,ncbi:554009  |       |   sibling_higher  |
+        # 525972  |   470454  |   Haemophilus pittmaniae HK 85    |   no rank - terminal  |   silva:AFUV01000004,ncbi:1035188 |
+        # 788108  |   470454  |   Haemophilus sputorum    |   species |   silva:JF506644,ncbi:1078480,gbif:7522132    |
+        # 470454  |   1098176 |   Haemophilus |   genus   |   silva:A16379/#6,ncbi:724,worms:571392,gbif:3219815,irmng:1307220    |       |       |
+        # on synonyms.tsv
+        # Hemophilus  |   470454  |   synonym |   Hemophilus (synonym for Haemophilus)    |   gbif:3219815,irmng:1307220  |
+        # Haemophilus sp. HK 85   |   525972  |   equivalent name |   Haemophilus sp. HK 85 (synonym for Haemophilus pittmaniae HK 85)    |   ncbi:1035188    |
+        # Haemophilus sp. CCUG 26672  |   788108  |   includes    |   Haemophilus sp. CCUG 26672 (synonym for Haemophilus sputorum)   |   ncbi:1078480    |
+        # Haemophilus sp. CCUG 47809  |   788108  |   includes    |   Haemophilus sp. CCUG 47809 (synonym for Haemophilus sputorum)   |   ncbi:1078480    |
+
+        tax = OttTx(files="tests/multitax/data_minimal/ott.tgz", extended_names=False)
+        tax_ex = OttTx(files="tests/multitax/data_minimal/ott.tgz", extended_names=True)
+
+        # Exact match on scientific name
+        self.assertCountEqual(tax.search_name("Haemophilus"), ["470454"])
+        self.assertCountEqual(tax_ex.search_name("Haemophilus"), ["470454"])
+        # All scientific names
+        self.assertCountEqual(tax.search_name("Haemophilus sp.", exact=False), ["391494", "158636", "4621", "4622"])
+        self.assertCountEqual(tax_ex.search_name("Haemophilus sp.", exact=False), ["391494", "158636", "4621", "4622"])
+        # Exact match on scientific name forcing extended
+        self.assertCountEqual(tax.search_name("Haemophilus"), ["470454"])
+        self.assertCountEqual(tax_ex.search_name("Haemophilus", force_extended=True), ["470454"])
+        # All names
+        self.assertCountEqual(tax.search_name("Haemophilus sp. CCUG", exact=False), ["391494", "158636", "4621", "4622"])
+        self.assertCountEqual(tax_ex.search_name("Haemophilus sp. CCUG", exact=False, force_extended=True), ["391494", "158636", "4621", "4622", "788108"])
+        # Exact name available only on extended
+        self.assertCountEqual(tax.search_name("Haemophilus sp. HK 85", exact=True), [])
+        self.assertCountEqual(tax_ex.search_name("Haemophilus sp. HK 85", exact=True), ["525972"])
+        # Partial name available only on extended
+        self.assertCountEqual(tax.search_name("CCUG 26672", exact=False), [])
+        self.assertCountEqual(tax_ex.search_name("CCUG 26672", exact=False), ["788108"])

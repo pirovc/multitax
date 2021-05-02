@@ -19,7 +19,7 @@ class GtdbTx(MultiTax):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
         return 'GtdbTx({})'.format(', '.join(args))
 
-    def _parse(self, fhs):
+    def _parse(self, fhs, **kwargs):
         nodes = {}
         ranks = {}
         names = {}

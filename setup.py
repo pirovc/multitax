@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="multitax",
-    version="1.0.0",
+    version="1.1.0",
     url="https://www.github.com/pirovc/multitax",
     license='MIT',
 
