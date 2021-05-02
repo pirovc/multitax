@@ -22,25 +22,27 @@ class MultiTax(object):
                  undefined_rank: str=None,
                  build_name_nodes: bool=False,
                  build_node_children: bool=False,
-                 build_rank_nodes: bool=False):
+                 build_rank_nodes: bool=False,
+                 extended_names: bool=False):
         """
         Main constructor of MultiTax and sub-classes
 
         Parameters:
-        * **files** *[str, list]*: One or more local files to parse
-        * **urls** *[str, list]*: One or more urls to download and parse
-        * **output_prefix** *[str]*: Directory to write downloaded files
-        * **root_node** *[str]*: Define an alternative root node
-        * **root_parent** *[str]*: Define the root parent node identifier
+        * **files** *[str, list]*: One or more local files to parse.
+        * **urls** *[str, list]*: One or more urls to download and parse.
+        * **output_prefix** *[str]*: Directory to write downloaded files.
+        * **root_node** *[str]*: Define an alternative root node.
+        * **root_parent** *[str]*: Define the root parent node identifier.
         * **root_name** *[str]*: Define an alternative root name. Set to None to use original name.
         * **root_rank** *[str]*: Define an alternative root rank. Set to None to use original name.
-        * **undefined_node** *[str]*: Define a default return value for undefined nodes
-        * **undefined_name** *[str]*: Define a default return value for undefined names
-        * **undefined_rank** *[str]*: Define a default return value for undefined ranks
-        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use)
-        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use)
-        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use)
-        
+        * **undefined_node** *[str]*: Define a default return value for undefined nodes.
+        * **undefined_name** *[str]*: Define a default return value for undefined names.
+        * **undefined_rank** *[str]*: Define a default return value for undefined ranks.
+        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use).
+        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use).
+        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use).
+        * **extended_names** *[bool]*: Parse extended names if available.
+
         Example:
 
             tax_ncbi = NcbiTx()
@@ -78,7 +80,7 @@ class MultiTax(object):
 
         if fhs:
             # Parse taxonomy
-            self._nodes, self._ranks, self._names = self._parse(fhs)
+            self._nodes, self._ranks, self._names = self._parse(fhs, extended_names=extended_names)
             close_files(fhs)
             # Save sources for stats (files or urls)
             self.sources = list(fhs.keys())
@@ -171,29 +173,48 @@ class MultiTax(object):
         else:
             return []
 
-    def search_name(self, text: str):
+    def search_name(self, text: str, rank: str=None, exact: bool=True):
+        """
+        Search node by exact or partial name
+
+        Parameters:
+        * **text** *[str]*: Text to search.
+        * **rank** *[str]*: Filter results by rank.
+        * **exact** *[bool]*: Exact or partial name search (both case sensitive).
+
+        Returns: list of matching nodes
+        """
+        # Setup on first use
+        if not self._name_nodes:
+            self._name_nodes = reverse_dict(self._names)
+
+        if exact:
+            ret = self._exact_name(text, self._name_nodes)
+        else:
+            ret = self._partial_name(text, self._name_nodes)
+
+        # Only return nodes of chosen rank
+        if rank:
+            return filter_function(ret, self.rank, rank)
+        else:
+            return ret
+
+    def _partial_name(self, text: str, names: dict):
         """
         Searches names containing a certain text (case sensitive) and return their respective nodes.
         """
-        # Setup on first use
-        if not self._name_nodes:
-            self._name_nodes = reverse_dict(self._names)
-
-        matching_nodes = []
-        for name in self._name_nodes:
+        matching_nodes = set()
+        for name in names:
             if text in name:
-                matching_nodes.extend(self._name_nodes[name])
-        return matching_nodes
+                matching_nodes.update(names[name])
+        return list(matching_nodes)
 
-    def nodes_name(self, name: str):
+    def _exact_name(self, text: str, names: dict):
         """
-        Returns list of nodes of a given exact name.
+        Returns list of nodes of a given exact name (case sensitive).
         """
-        # Setup on first use
-        if not self._name_nodes:
-            self._name_nodes = reverse_dict(self._names)
-        if name in self._name_nodes:
-            return self._name_nodes[name]
+        if text in names:
+            return names[text]
         else:
             return []
 
