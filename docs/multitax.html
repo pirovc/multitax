@@ -101,6 +101,9 @@
                         <li>
                                 <a class="function" href="#OttTx.stats">stats</a>
                         </li>
+                        <li>
+                                <a class="function" href="#OttTx.search_name">search_name</a>
+                        </li>
                 </ul>
 
             </li>
@@ -797,7 +800,10 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
     <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
-        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;merged&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;merged&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">s</span>
 
     <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">force_extended</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -953,7 +959,10 @@ Mainly used for NCBI (merged.dmp) and OTT (forwards.tsv)</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
-        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;merged&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;merged&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_merged</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">s</span>
 </pre></div>
 
@@ -1101,8 +1110,8 @@ pprint(tax.stats())
     <span class="n">_default_root_node</span> <span class="o">=</span> <span class="s2">&quot;805080&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="c1"># [forwards.tsv]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1112,28 +1121,36 @@ pprint(tax.stats())
     <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">fhs_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fhs_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tgz&quot;</span><span class="p">):</span>
-            <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_ott</span><span class="p">(</span><span class="n">fhs_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_ott</span><span class="p">(</span><span class="n">fhs_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># nodes.dmp</span>
             <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_taxonomy</span><span class="p">(</span><span class="n">fhs_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="c1"># [forwards.tsv]</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_forwards</span><span class="p">(</span><span class="n">fhs_list</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_synonyms</span><span class="p">(</span><span class="n">fhs_list</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span>
 
-    <span class="k">def</span> <span class="nf">_parse_ott</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh_taxdump</span><span class="p">):</span>
-        <span class="c1"># Files inside folder</span>
+    <span class="k">def</span> <span class="nf">_parse_ott</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh_taxdump</span><span class="p">,</span> <span class="n">extended_names</span><span class="p">):</span>
+        <span class="c1"># Get files inside folder by name</span>
         <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">fh_taxdump</span><span class="o">.</span><span class="n">getnames</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;taxonomy.tsv&quot;</span><span class="p">):</span>
                 <span class="n">tax</span> <span class="o">=</span> <span class="n">e</span>
             <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;forwards.tsv&quot;</span><span class="p">):</span>
                 <span class="n">fwr</span> <span class="o">=</span> <span class="n">e</span>
+            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;synonyms.tsv&quot;</span><span class="p">):</span>
+                <span class="n">syn</span> <span class="o">=</span> <span class="n">e</span>
+
         <span class="k">with</span> <span class="n">fh_taxdump</span><span class="o">.</span><span class="n">extractfile</span><span class="p">(</span><span class="n">tax</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh_nodes</span><span class="p">:</span>
             <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_taxonomy</span><span class="p">(</span><span class="n">fh_nodes</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">fh_taxdump</span><span class="o">.</span><span class="n">extractfile</span><span class="p">(</span><span class="n">fwr</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh_names</span><span class="p">:</span>
-            <span class="n">forwards</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_forwards</span><span class="p">(</span><span class="n">fh_names</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">forwards</span>
+        <span class="k">with</span> <span class="n">fh_taxdump</span><span class="o">.</span><span class="n">extractfile</span><span class="p">(</span><span class="n">fwr</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh_forwards</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_forwards</span><span class="p">(</span><span class="n">fh_forwards</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">extended_names</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">fh_taxdump</span><span class="o">.</span><span class="n">extractfile</span><span class="p">(</span><span class="n">syn</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh_synonyms</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_synonyms</span><span class="p">(</span><span class="n">fh_synonyms</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span>
 
     <span class="k">def</span> <span class="nf">_parse_taxonomy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
         <span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1163,6 +1180,21 @@ pprint(tax.stats())
             <span class="n">forwards</span><span class="p">[</span><span class="n">old_taxid</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_taxid</span>
         <span class="k">return</span> <span class="n">forwards</span>
 
+    <span class="k">def</span> <span class="nf">_parse_synonyms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="n">synonyms</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># skip first line header</span>
+        <span class="nb">next</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">taxid</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">|</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">taxid</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">|</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">synonyms</span><span class="p">:</span>
+                <span class="n">synonyms</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">synonyms</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">taxid</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">synonyms</span>
+
     <span class="k">def</span> <span class="nf">forwards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns relative entry from the forwards.tsv file of a given node.</span>
@@ -1180,8 +1212,44 @@ pprint(tax.stats())
 
     <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
-        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;merged&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;forwards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">s</span>
+
+    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">force_extended</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search node by exact or partial name.</span>
+
+<span class="sd">        Default order (can be skipped with **force_extended=True**):</span>
+
+<span class="sd">        1) Search default names defined on &quot;taxonomy.tsv&quot;</span>
+
+<span class="sd">        2) If nothing was found, search in all other names defined on &quot;synonyms.tsv&quot; (must be activated with OttTx(**extended_names=True**))</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        * **text** *[str]*: Text to search.</span>
+<span class="sd">        * **rank** *[str]*: Filter results by rank.</span>
+<span class="sd">        * **exact** *[bool]*: Perform exact name search, otherwise partial matches containing the text. Both are case senstive.</span>
+<span class="sd">        * **force_extended** *[bool]*: Search for text in all categories at once.</span>
+
+<span class="sd">        Returns: list of matching nodes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">search_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="n">exact</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force_extended</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">n</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">exact</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exact_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partial_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
+
+            <span class="c1"># Only return nodes of chosen rank</span>
+            <span class="k">if</span> <span class="n">rank</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">filter_function</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="n">rank</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">ret</span><span class="p">))</span>
 </pre></div>
 
         </details>
@@ -1198,8 +1266,8 @@ pprint(tax.stats())
                 <details>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="c1"># [forwards.tsv]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -1303,7 +1371,10 @@ Mainly used for NCBI (merged.dmp) and OTT (forwards.tsv)</p>
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
-        <span class="n">s</span><span class="p">[</span><span class="s2">&quot;merged&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;forwards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">s</span>
 </pre></div>
 
@@ -1336,13 +1407,86 @@ pprint(tax.stats())
 
 
                             </div>
+                            <div id="OttTx.search_name" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#OttTx.search_name">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">search_name</span><span class="signature">(
+    self,
+    text: str,
+    rank: str = None,
+    exact: bool = True,
+    force_extended: bool = False
+)</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">force_extended</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search node by exact or partial name.</span>
+
+<span class="sd">        Default order (can be skipped with **force_extended=True**):</span>
+
+<span class="sd">        1) Search default names defined on &quot;taxonomy.tsv&quot;</span>
+
+<span class="sd">        2) If nothing was found, search in all other names defined on &quot;synonyms.tsv&quot; (must be activated with OttTx(**extended_names=True**))</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        * **text** *[str]*: Text to search.</span>
+<span class="sd">        * **rank** *[str]*: Filter results by rank.</span>
+<span class="sd">        * **exact** *[bool]*: Perform exact name search, otherwise partial matches containing the text. Both are case senstive.</span>
+<span class="sd">        * **force_extended** *[bool]*: Search for text in all categories at once.</span>
+
+<span class="sd">        Returns: list of matching nodes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">search_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="n">exact</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force_extended</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">n</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">exact</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exact_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partial_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
+
+            <span class="c1"># Only return nodes of chosen rank</span>
+            <span class="k">if</span> <span class="n">rank</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">filter_function</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="n">rank</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">ret</span><span class="p">))</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Search node by exact or partial name.</p>
+
+<p>Default order (can be skipped with <strong>force_extended=True</strong>):</p>
+
+<p>1) Search default names defined on "taxonomy.tsv"</p>
+
+<p>2) If nothing was found, search in all other names defined on "synonyms.tsv" (must be activated with OttTx(<strong>extended_names=True</strong>))</p>
+
+<p>Parameters:</p>
+
+<ul>
+<li><strong>text</strong> <em>[str]</em>: Text to search.</li>
+<li><strong>rank</strong> <em>[str]</em>: Filter results by rank.</li>
+<li><strong>exact</strong> <em>[bool]</em>: Perform exact name search, otherwise partial matches containing the text. Both are case senstive.</li>
+<li><strong>force_extended</strong> <em>[bool]</em>: Search for text in all categories at once.</li>
+</ul>
+
+<p>Returns: list of matching nodes</p>
+</div>
+
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="multitax/multitax.html#MultiTax">multitax.multitax.MultiTax</a></dt>
                                 <dd id="OttTx.version" class="variable"><a href="multitax/multitax.html#MultiTax.version">version</a></dd>
                 <dd id="OttTx.children" class="function"><a href="multitax/multitax.html#MultiTax.children">children</a></dd>
-                <dd id="OttTx.search_name" class="function"><a href="multitax/multitax.html#MultiTax.search_name">search_name</a></dd>
                 <dd id="OttTx.nodes_rank" class="function"><a href="multitax/multitax.html#MultiTax.nodes_rank">nodes_rank</a></dd>
                 <dd id="OttTx.parent" class="function"><a href="multitax/multitax.html#MultiTax.parent">parent</a></dd>
                 <dd id="OttTx.rank" class="function"><a href="multitax/multitax.html#MultiTax.rank">rank</a></dd>
