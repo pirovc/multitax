@@ -17,8 +17,8 @@ class CustomTx(MultiTax):
 
         Example:
 
-        tax_custom1 = CustomTx(files="my_custom_tax.tsv", cols=["node","parent","rank"])
-        tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, "name": 5, "rank": 3})
+            tax_custom1 = CustomTx(files="my_custom_tax.tsv", cols=["node","parent","rank"])
+            tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, "name": 5, "rank": 3})
         """
 
         self._cols = self._parse_cols(cols)

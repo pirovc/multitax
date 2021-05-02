@@ -136,26 +136,26 @@
                  <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Main constructor of MultiTax and sub-classes</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
-<span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse</span>
-<span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files</span>
-<span class="sd">        * **root_node** *[str]*: Define an alternative root node</span>
-<span class="sd">        * **root_parent** *[str]*: Define the root parent node identifier</span>
+<span class="sd">        * **files** *[str, list]*: One or more local files to parse.</span>
+<span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse.</span>
+<span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files.</span>
+<span class="sd">        * **root_node** *[str]*: Define an alternative root node.</span>
+<span class="sd">        * **root_parent** *[str]*: Define the root parent node identifier.</span>
 <span class="sd">        * **root_name** *[str]*: Define an alternative root name. Set to None to use original name.</span>
 <span class="sd">        * **root_rank** *[str]*: Define an alternative root rank. Set to None to use original name.</span>
-<span class="sd">        * **undefined_node** *[str]*: Define a default return value for undefined nodes</span>
-<span class="sd">        * **undefined_name** *[str]*: Define a default return value for undefined names</span>
-<span class="sd">        * **undefined_rank** *[str]*: Define a default return value for undefined ranks</span>
-<span class="sd">        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **extended_names** *[bool]*: Parse extended names if available for better lookup.</span>
-<span class="sd">        </span>
+<span class="sd">        * **undefined_node** *[str]*: Define a default return value for undefined nodes.</span>
+<span class="sd">        * **undefined_name** *[str]*: Define a default return value for undefined names.</span>
+<span class="sd">        * **undefined_rank** *[str]*: Define a default return value for undefined ranks.</span>
+<span class="sd">        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use).</span>
+<span class="sd">        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use).</span>
+<span class="sd">        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use).</span>
+<span class="sd">        * **extended_names** *[bool]*: Parse extended names if available.</span>
+
 <span class="sd">        Example:</span>
 
 <span class="sd">            tax_ncbi = NcbiTx()</span>
@@ -701,26 +701,26 @@
                  <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Main constructor of MultiTax and sub-classes</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
-<span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse</span>
-<span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files</span>
-<span class="sd">        * **root_node** *[str]*: Define an alternative root node</span>
-<span class="sd">        * **root_parent** *[str]*: Define the root parent node identifier</span>
+<span class="sd">        * **files** *[str, list]*: One or more local files to parse.</span>
+<span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse.</span>
+<span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files.</span>
+<span class="sd">        * **root_node** *[str]*: Define an alternative root node.</span>
+<span class="sd">        * **root_parent** *[str]*: Define the root parent node identifier.</span>
 <span class="sd">        * **root_name** *[str]*: Define an alternative root name. Set to None to use original name.</span>
 <span class="sd">        * **root_rank** *[str]*: Define an alternative root rank. Set to None to use original name.</span>
-<span class="sd">        * **undefined_node** *[str]*: Define a default return value for undefined nodes</span>
-<span class="sd">        * **undefined_name** *[str]*: Define a default return value for undefined names</span>
-<span class="sd">        * **undefined_rank** *[str]*: Define a default return value for undefined ranks</span>
-<span class="sd">        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **extended_names** *[bool]*: Parse extended names if available for better lookup.</span>
-<span class="sd">        </span>
+<span class="sd">        * **undefined_node** *[str]*: Define a default return value for undefined nodes.</span>
+<span class="sd">        * **undefined_name** *[str]*: Define a default return value for undefined names.</span>
+<span class="sd">        * **undefined_rank** *[str]*: Define a default return value for undefined ranks.</span>
+<span class="sd">        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use).</span>
+<span class="sd">        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use).</span>
+<span class="sd">        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use).</span>
+<span class="sd">        * **extended_names** *[bool]*: Parse extended names if available.</span>
+
 <span class="sd">        Example:</span>
 
 <span class="sd">            tax_ncbi = NcbiTx()</span>
@@ -1253,7 +1253,7 @@
     build_name_nodes: bool = False,
     build_node_children: bool = False,
     build_rank_nodes: bool = False,
-    extended_names: bool = True
+    extended_names: bool = False
 )</span>
     </div>
 
@@ -1273,26 +1273,26 @@
                  <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Main constructor of MultiTax and sub-classes</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        * **files** *[str, list]*: One or more local files to parse</span>
-<span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse</span>
-<span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files</span>
-<span class="sd">        * **root_node** *[str]*: Define an alternative root node</span>
-<span class="sd">        * **root_parent** *[str]*: Define the root parent node identifier</span>
+<span class="sd">        * **files** *[str, list]*: One or more local files to parse.</span>
+<span class="sd">        * **urls** *[str, list]*: One or more urls to download and parse.</span>
+<span class="sd">        * **output_prefix** *[str]*: Directory to write downloaded files.</span>
+<span class="sd">        * **root_node** *[str]*: Define an alternative root node.</span>
+<span class="sd">        * **root_parent** *[str]*: Define the root parent node identifier.</span>
 <span class="sd">        * **root_name** *[str]*: Define an alternative root name. Set to None to use original name.</span>
 <span class="sd">        * **root_rank** *[str]*: Define an alternative root rank. Set to None to use original name.</span>
-<span class="sd">        * **undefined_node** *[str]*: Define a default return value for undefined nodes</span>
-<span class="sd">        * **undefined_name** *[str]*: Define a default return value for undefined names</span>
-<span class="sd">        * **undefined_rank** *[str]*: Define a default return value for undefined ranks</span>
-<span class="sd">        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use)</span>
-<span class="sd">        * **extended_names** *[bool]*: Parse extended names if available for better lookup.</span>
-<span class="sd">        </span>
+<span class="sd">        * **undefined_node** *[str]*: Define a default return value for undefined nodes.</span>
+<span class="sd">        * **undefined_name** *[str]*: Define a default return value for undefined names.</span>
+<span class="sd">        * **undefined_rank** *[str]*: Define a default return value for undefined ranks.</span>
+<span class="sd">        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use).</span>
+<span class="sd">        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use).</span>
+<span class="sd">        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use).</span>
+<span class="sd">        * **extended_names** *[bool]*: Parse extended names if available.</span>
+
 <span class="sd">        Example:</span>
 
 <span class="sd">            tax_ncbi = NcbiTx()</span>
@@ -1361,20 +1361,20 @@
 <p>Parameters:</p>
 
 <ul>
-<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
-<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
-<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node</li>
-<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier</li>
+<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
+<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node.</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier.</li>
 <li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name. Set to None to use original name.</li>
 <li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank. Set to None to use original name.</li>
-<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes</li>
-<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names</li>
-<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks</li>
-<li><strong>build_node_children</strong> <em>[bool]</em>: Build node,children dict (otherwise it will be created on first use)</li>
-<li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use)</li>
-<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use)</li>
-<li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available for better lookup.</li>
+<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes.</li>
+<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names.</li>
+<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks.</li>
+<li><strong>build_node_children</strong> <em>[bool]</em>: Build node,children dict (otherwise it will be created on first use).</li>
+<li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use).</li>
+<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use).</li>
+<li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available.</li>
 </ul>
 
 <p>Example:</p>

@@ -7,7 +7,7 @@ class NcbiTx(MultiTax):
 
     def __init__(self, **kwargs):
         self._merged = {}
-        self._extended_names = {}
+        self._extended_name_nodes = {}
         super().__init__(**kwargs)
 
     def __repr__(self):
@@ -65,9 +65,9 @@ class NcbiTx(MultiTax):
             if name_class.replace('\t|\n', '') == "scientific name":
                 names[node] = name
             elif extended_names:
-                if name not in self._extended_names:
-                    self._extended_names[name] = []
-                self._extended_names[name].append(node)
+                if name not in self._extended_name_nodes:
+                    self._extended_name_nodes[name] = []
+                self._extended_name_nodes[name].append(node)
 
         return names
 
@@ -105,11 +105,11 @@ class NcbiTx(MultiTax):
         """
         Search node by exact or partial name.
 
-        Default order (can be skipped with **force_extended**): 
+        Default order (can be skipped with **force_extended=True**):
 
         1) Search names defined as "scientific name" on nodes.dmp
-        
-        2) If nothing was found, search text in all other categories (if parsed with NcbiTx(extended_names=True))
+
+        2) If nothing was found, search text in all other categories (must be activated with NcbiTx(**extended_names=True**))
 
         Parameters:
         * **text** *[str]*: Text to search.
@@ -124,9 +124,9 @@ class NcbiTx(MultiTax):
             return n
         else:
             if exact:
-                ret = self._exact_name(text, self._extended_names)
+                ret = self._exact_name(text, self._extended_name_nodes)
             else:
-                ret = self._partial_name(text, self._extended_names)
+                ret = self._partial_name(text, self._extended_name_nodes)
 
             # Only return nodes of chosen rank
             if rank:

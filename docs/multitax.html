@@ -180,8 +180,8 @@ multitax    </h1>
 
 <span class="sd">        Example:</span>
 
-<span class="sd">        tax_custom1 = CustomTx(files=&quot;my_custom_tax.tsv&quot;, cols=[&quot;node&quot;,&quot;parent&quot;,&quot;rank&quot;])</span>
-<span class="sd">        tax_custom2 = CustomTx(files=&quot;my_custom_tax.tsv&quot;, cols={&quot;node&quot;: 0, &quot;parent&quot;: 1, &quot;name&quot;: 5, &quot;rank&quot;: 3})</span>
+<span class="sd">            tax_custom1 = CustomTx(files=&quot;my_custom_tax.tsv&quot;, cols=[&quot;node&quot;,&quot;parent&quot;,&quot;rank&quot;])</span>
+<span class="sd">            tax_custom2 = CustomTx(files=&quot;my_custom_tax.tsv&quot;, cols={&quot;node&quot;: 0, &quot;parent&quot;: 1, &quot;name&quot;: 5, &quot;rank&quot;: 3})</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cols</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
@@ -254,8 +254,8 @@ multitax    </h1>
 
 <span class="sd">        Example:</span>
 
-<span class="sd">        tax_custom1 = CustomTx(files=&quot;my_custom_tax.tsv&quot;, cols=[&quot;node&quot;,&quot;parent&quot;,&quot;rank&quot;])</span>
-<span class="sd">        tax_custom2 = CustomTx(files=&quot;my_custom_tax.tsv&quot;, cols={&quot;node&quot;: 0, &quot;parent&quot;: 1, &quot;name&quot;: 5, &quot;rank&quot;: 3})</span>
+<span class="sd">            tax_custom1 = CustomTx(files=&quot;my_custom_tax.tsv&quot;, cols=[&quot;node&quot;,&quot;parent&quot;,&quot;rank&quot;])</span>
+<span class="sd">            tax_custom2 = CustomTx(files=&quot;my_custom_tax.tsv&quot;, cols={&quot;node&quot;: 0, &quot;parent&quot;: 1, &quot;name&quot;: 5, &quot;rank&quot;: 3})</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_cols</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
@@ -277,8 +277,9 @@ multitax    </h1>
 
 <p>Example:</p>
 
-<p>tax_custom1 = CustomTx(files="my_custom_tax.tsv", cols=["node","parent","rank"])
-tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, "name": 5, "rank": 3})</p>
+<pre><code>tax_custom1 = CustomTx(files="my_custom_tax.tsv", cols=["node","parent","rank"])
+tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, "name": 5, "rank": 3})
+</code></pre>
 </div>
 
 
@@ -491,20 +492,20 @@ tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, 
 <p>Parameters:</p>
 
 <ul>
-<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
-<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
-<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node</li>
-<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier</li>
+<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
+<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node.</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier.</li>
 <li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name. Set to None to use original name.</li>
 <li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank. Set to None to use original name.</li>
-<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes</li>
-<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names</li>
-<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks</li>
-<li><strong>build_node_children</strong> <em>[bool]</em>: Build node,children dict (otherwise it will be created on first use)</li>
-<li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use)</li>
-<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use)</li>
-<li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available for better lookup.</li>
+<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes.</li>
+<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names.</li>
+<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks.</li>
+<li><strong>build_node_children</strong> <em>[bool]</em>: Build node,children dict (otherwise it will be created on first use).</li>
+<li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use).</li>
+<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use).</li>
+<li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available.</li>
 </ul>
 
 <p>Example:</p>
@@ -633,20 +634,20 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 <p>Parameters:</p>
 
 <ul>
-<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
-<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
-<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node</li>
-<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier</li>
+<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
+<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node.</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier.</li>
 <li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name. Set to None to use original name.</li>
 <li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank. Set to None to use original name.</li>
-<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes</li>
-<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names</li>
-<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks</li>
-<li><strong>build_node_children</strong> <em>[bool]</em>: Build node,children dict (otherwise it will be created on first use)</li>
-<li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use)</li>
-<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use)</li>
-<li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available for better lookup.</li>
+<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes.</li>
+<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names.</li>
+<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks.</li>
+<li><strong>build_node_children</strong> <em>[bool]</em>: Build node,children dict (otherwise it will be created on first use).</li>
+<li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use).</li>
+<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use).</li>
+<li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available.</li>
 </ul>
 
 <p>Example:</p>
@@ -705,7 +706,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_extended_names</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -763,9 +764,9 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
             <span class="k">if</span> <span class="n">name_class</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">|</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;scientific name&quot;</span><span class="p">:</span>
                 <span class="n">names</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
             <span class="k">elif</span> <span class="n">extended_names</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_names</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_extended_names</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_extended_names</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">names</span>
 
@@ -803,11 +804,11 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Search node by exact or partial name.</span>
 
-<span class="sd">        Default order (can be skipped with **force_extended**): </span>
+<span class="sd">        Default order (can be skipped with **force_extended=True**):</span>
 
 <span class="sd">        1) Search names defined as &quot;scientific name&quot; on nodes.dmp</span>
-<span class="sd">        </span>
-<span class="sd">        2) If nothing was found, search text in all other categories (if parsed with NcbiTx(extended_names=True))</span>
+
+<span class="sd">        2) If nothing was found, search text in all other categories (must be activated with NcbiTx(**extended_names=True**))</span>
 
 <span class="sd">        Parameters:</span>
 <span class="sd">        * **text** *[str]*: Text to search.</span>
@@ -822,9 +823,9 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
             <span class="k">return</span> <span class="n">n</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">exact</span><span class="p">:</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exact_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_names</span><span class="p">)</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exact_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partial_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_names</span><span class="p">)</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partial_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
 
             <span class="c1"># Only return nodes of chosen rank</span>
             <span class="k">if</span> <span class="n">rank</span><span class="p">:</span>
@@ -848,7 +849,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
             <summary>View Source</summary>
             <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_extended_names</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
@@ -859,20 +860,20 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 <p>Parameters:</p>
 
 <ul>
-<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
-<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
-<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node</li>
-<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier</li>
+<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
+<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node.</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier.</li>
 <li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name. Set to None to use original name.</li>
 <li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank. Set to None to use original name.</li>
-<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes</li>
-<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names</li>
-<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks</li>
-<li><strong>build_node_children</strong> <em>[bool]</em>: Build node,children dict (otherwise it will be created on first use)</li>
-<li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use)</li>
-<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use)</li>
-<li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available for better lookup.</li>
+<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes.</li>
+<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names.</li>
+<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks.</li>
+<li><strong>build_node_children</strong> <em>[bool]</em>: Build node,children dict (otherwise it will be created on first use).</li>
+<li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use).</li>
+<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use).</li>
+<li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available.</li>
 </ul>
 
 <p>Example:</p>
@@ -1005,11 +1006,11 @@ pprint(tax.stats())
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Search node by exact or partial name.</span>
 
-<span class="sd">        Default order (can be skipped with **force_extended**): </span>
+<span class="sd">        Default order (can be skipped with **force_extended=True**):</span>
 
 <span class="sd">        1) Search names defined as &quot;scientific name&quot; on nodes.dmp</span>
-<span class="sd">        </span>
-<span class="sd">        2) If nothing was found, search text in all other categories (if parsed with NcbiTx(extended_names=True))</span>
+
+<span class="sd">        2) If nothing was found, search text in all other categories (must be activated with NcbiTx(**extended_names=True**))</span>
 
 <span class="sd">        Parameters:</span>
 <span class="sd">        * **text** *[str]*: Text to search.</span>
@@ -1024,9 +1025,9 @@ pprint(tax.stats())
             <span class="k">return</span> <span class="n">n</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">exact</span><span class="p">:</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exact_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_names</span><span class="p">)</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exact_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partial_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_names</span><span class="p">)</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partial_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
 
             <span class="c1"># Only return nodes of chosen rank</span>
             <span class="k">if</span> <span class="n">rank</span><span class="p">:</span>
@@ -1039,11 +1040,11 @@ pprint(tax.stats())
 
             <div class="docstring"><p>Search node by exact or partial name.</p>
 
-<p>Default order (can be skipped with <strong>force_extended</strong>): </p>
+<p>Default order (can be skipped with <strong>force_extended=True</strong>):</p>
 
 <p>1) Search names defined as "scientific name" on nodes.dmp</p>
 
-<p>2) If nothing was found, search text in all other categories (if parsed with NcbiTx(extended_names=True))</p>
+<p>2) If nothing was found, search text in all other categories (must be activated with NcbiTx(<strong>extended_names=True</strong>))</p>
 
 <p>Parameters:</p>
 
@@ -1209,20 +1210,20 @@ pprint(tax.stats())
 <p>Parameters:</p>
 
 <ul>
-<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
-<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
-<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node</li>
-<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier</li>
+<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
+<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node.</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier.</li>
 <li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name. Set to None to use original name.</li>
 <li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank. Set to None to use original name.</li>
-<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes</li>
-<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names</li>
-<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks</li>
-<li><strong>build_node_children</strong> <em>[bool]</em>: Build node,children dict (otherwise it will be created on first use)</li>
-<li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use)</li>
-<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use)</li>
-<li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available for better lookup.</li>
+<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes.</li>
+<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names.</li>
+<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks.</li>
+<li><strong>build_node_children</strong> <em>[bool]</em>: Build node,children dict (otherwise it will be created on first use).</li>
+<li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use).</li>
+<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use).</li>
+<li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available.</li>
 </ul>
 
 <p>Example:</p>
@@ -1443,20 +1444,20 @@ pprint(tax.stats())
 <p>Parameters:</p>
 
 <ul>
-<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse</li>
-<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse</li>
-<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files</li>
-<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node</li>
-<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier</li>
+<li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
+<li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
+<li><strong>root_node</strong> <em>[str]</em>: Define an alternative root node.</li>
+<li><strong>root_parent</strong> <em>[str]</em>: Define the root parent node identifier.</li>
 <li><strong>root_name</strong> <em>[str]</em>: Define an alternative root name. Set to None to use original name.</li>
 <li><strong>root_rank</strong> <em>[str]</em>: Define an alternative root rank. Set to None to use original name.</li>
-<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes</li>
-<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names</li>
-<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks</li>
-<li><strong>build_node_children</strong> <em>[bool]</em>: Build node,children dict (otherwise it will be created on first use)</li>
-<li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use)</li>
-<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use)</li>
-<li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available for better lookup.</li>
+<li><strong>undefined_node</strong> <em>[str]</em>: Define a default return value for undefined nodes.</li>
+<li><strong>undefined_name</strong> <em>[str]</em>: Define a default return value for undefined names.</li>
+<li><strong>undefined_rank</strong> <em>[str]</em>: Define a default return value for undefined ranks.</li>
+<li><strong>build_node_children</strong> <em>[bool]</em>: Build node,children dict (otherwise it will be created on first use).</li>
+<li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use).</li>
+<li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use).</li>
+<li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available.</li>
 </ul>
 
 <p>Example:</p>

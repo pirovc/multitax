@@ -23,26 +23,26 @@ class MultiTax(object):
                  build_name_nodes: bool=False,
                  build_node_children: bool=False,
                  build_rank_nodes: bool=False,
-                 extended_names: bool=True):
+                 extended_names: bool=False):
         """
         Main constructor of MultiTax and sub-classes
 
         Parameters:
-        * **files** *[str, list]*: One or more local files to parse
-        * **urls** *[str, list]*: One or more urls to download and parse
-        * **output_prefix** *[str]*: Directory to write downloaded files
-        * **root_node** *[str]*: Define an alternative root node
-        * **root_parent** *[str]*: Define the root parent node identifier
+        * **files** *[str, list]*: One or more local files to parse.
+        * **urls** *[str, list]*: One or more urls to download and parse.
+        * **output_prefix** *[str]*: Directory to write downloaded files.
+        * **root_node** *[str]*: Define an alternative root node.
+        * **root_parent** *[str]*: Define the root parent node identifier.
         * **root_name** *[str]*: Define an alternative root name. Set to None to use original name.
         * **root_rank** *[str]*: Define an alternative root rank. Set to None to use original name.
-        * **undefined_node** *[str]*: Define a default return value for undefined nodes
-        * **undefined_name** *[str]*: Define a default return value for undefined names
-        * **undefined_rank** *[str]*: Define a default return value for undefined ranks
-        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use)
-        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use)
-        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use)
-        * **extended_names** *[bool]*: Parse extended names if available for better lookup.
-        
+        * **undefined_node** *[str]*: Define a default return value for undefined nodes.
+        * **undefined_name** *[str]*: Define a default return value for undefined names.
+        * **undefined_rank** *[str]*: Define a default return value for undefined ranks.
+        * **build_node_children** *[bool]*: Build node,children dict (otherwise it will be created on first use).
+        * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use).
+        * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use).
+        * **extended_names** *[bool]*: Parse extended names if available.
+
         Example:
 
             tax_ncbi = NcbiTx()

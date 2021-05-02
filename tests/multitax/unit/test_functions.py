@@ -483,3 +483,36 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(tax.parent("1235908"), tax.undefined_node)
         self.assertEqual(tax.latest("1235908"), "363999")
         self.assertNotEqual(tax.parent(tax.latest("1235908")), tax.undefined_node)
+
+    def test_ncbi_extended_names(self):
+        """
+        Test extended names functionality (ncbi)
+        """
+        # on names.dmp
+        # 363999  |   Xylariaceae sp. 5129    |       |   includes    |
+        # 363999  |   Xylariaceae sp. 5151    |       |   includes    |
+        # 363999  |   Xylariaceae sp. 5228    |       |   includes    |
+        # 37990   |   mitosporic Xylariaceae  |       |   includes    |
+        # 37990   |   Xylariaceae |       |   scientific name |
+
+        tax = NcbiTx(files="tests/multitax/data_minimal/ncbi.tar.gz", extended_names=False)
+        tax_ex = NcbiTx(files="tests/multitax/data_minimal/ncbi.tar.gz", extended_names=True)
+
+        # Exact match on scientific name
+        self.assertCountEqual(tax.search_name("Xylariaceae"), ["37990"])
+        self.assertCountEqual(tax_ex.search_name("Xylariaceae"), ["37990"])
+        # All scientific names containing "Xylaria"
+        self.assertCountEqual(tax.search_name("Xylariaceae", exact=False), ["37990"])
+        self.assertCountEqual(tax_ex.search_name("Xylariaceae", exact=False), ["37990"])
+        # Exact match on scientific name forcing extended
+        self.assertCountEqual(tax.search_name("Xylariaceae", force_extended=True), ["37990"])
+        self.assertCountEqual(tax_ex.search_name("Xylariaceae", force_extended=True), ["37990"])
+        # All names containing "Xylaria"
+        self.assertCountEqual(tax.search_name("Xylariaceae", exact=False, force_extended=True), ["37990"])
+        self.assertCountEqual(tax_ex.search_name("Xylariaceae", exact=False, force_extended=True), ["37990", "363999"])
+        # Exact name available only on extended
+        self.assertCountEqual(tax.search_name("mitosporic Xylariaceae", exact=False), [])
+        self.assertCountEqual(tax_ex.search_name("mitosporic Xylariaceae", exact=False), ["37990"])
+        # Partial name available only on extended
+        self.assertCountEqual(tax.search_name("Xylariaceae sp.", exact=False), [])
+        self.assertCountEqual(tax_ex.search_name("Xylariaceae sp.", exact=False), ["363999"])
