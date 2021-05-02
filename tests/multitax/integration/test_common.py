@@ -81,9 +81,39 @@ class TestCommon(unittest.TestCase):
                     tax_uncompressed = self.taxonomies[t]["class"](files=uncompressed)
                     self.assertEqual(tax_compressed.stats(), tax_uncompressed.stats(), t + " failed with uncompressed files")
 
-    def test_tar_gzip_uncompressed(self):
+    def test_tar_gzip_uncompressed_ncbi(self):
         """
-        Using uncompressed tar gzip files ("ott", "ncbi")
+        Using uncompressed tar gzip files for ncbi
+        """
+
+        # Ncbi
+        tax_compressed = self.taxonomies["ncbi"]["class"](**self.taxonomies["ncbi"]["params"])
+        uncompressed_files = uncompress_tar_gzip(f=self.taxonomies["ncbi"]["params"]["files"][0], outd=self.tmp_dir)
+        self.assertIn("nodes.dmp", uncompressed_files)
+        self.assertIn("names.dmp", uncompressed_files)
+        self.assertIn("merged.dmp", uncompressed_files)
+        tax_uncompressed = self.taxonomies["ncbi"]["class"](files=[self.tmp_dir + "nodes.dmp",
+                                                                   self.tmp_dir + "names.dmp",
+                                                                   self.tmp_dir + "merged.dmp"])
+        # Results of compressed and uncompressed should match
+        self.assertEqual(tax_uncompressed.stats(), tax_compressed.stats())
+
+        # Ncbi with extended names
+        tax_compressed = self.taxonomies["ncbi"]["class"](**self.taxonomies["ncbi"]["params"], extended_names=True)
+        uncompressed_files = uncompress_tar_gzip(f=self.taxonomies["ncbi"]["params"]["files"][0], outd=self.tmp_dir)
+        self.assertIn("nodes.dmp", uncompressed_files)
+        self.assertIn("names.dmp", uncompressed_files)
+        self.assertIn("merged.dmp", uncompressed_files)
+        tax_uncompressed = self.taxonomies["ncbi"]["class"](files=[self.tmp_dir + "nodes.dmp",
+                                                                   self.tmp_dir + "names.dmp",
+                                                                   self.tmp_dir + "merged.dmp"],
+                                                            extended_names=True)
+        # Results of compressed and uncompressed should match
+        self.assertEqual(tax_uncompressed.stats(), tax_compressed.stats())
+
+    def test_tar_gzip_uncompressed_ott(self):
+        """
+        Using uncompressed tar gzip files for ott
         """
         # Ott
         tax_compressed = self.taxonomies["ott"]["class"](**self.taxonomies["ott"]["params"])
@@ -95,15 +125,16 @@ class TestCommon(unittest.TestCase):
         # Results of compressed and uncompressed should match
         self.assertEqual(tax_uncompressed.stats(), tax_compressed.stats())
 
-        # Ncbi
-        tax_compressed = self.taxonomies["ncbi"]["class"](**self.taxonomies["ncbi"]["params"])
-        uncompressed_files = uncompress_tar_gzip(f=self.taxonomies["ncbi"]["params"]["files"][0], outd=self.tmp_dir)
-        self.assertIn("nodes.dmp", uncompressed_files)
-        self.assertIn("names.dmp", uncompressed_files)
-        self.assertIn("merged.dmp", uncompressed_files)
-        tax_uncompressed = self.taxonomies["ncbi"]["class"](files=[self.tmp_dir + "nodes.dmp",
-                                                                   self.tmp_dir + "names.dmp",
-                                                                   self.tmp_dir + "merged.dmp"])
+        # Ott with extended names (synonyms.tsv)
+        tax_compressed = self.taxonomies["ott"]["class"](**self.taxonomies["ott"]["params"], extended_names=True)
+        uncompressed_files = uncompress_tar_gzip(f=self.taxonomies["ott"]["params"]["files"][0], outd=self.tmp_dir)
+        self.assertIn("taxonomy.tsv", uncompressed_files)
+        self.assertIn("forwards.tsv", uncompressed_files)
+        self.assertIn("synonyms.tsv", uncompressed_files)
+        tax_uncompressed = self.taxonomies["ott"]["class"](files=[self.tmp_dir + "taxonomy.tsv",
+                                                                  self.tmp_dir + "forwards.tsv",
+                                                                  self.tmp_dir + "synonyms.tsv"],
+                                                           extended_names=True)
         # Results of compressed and uncompressed should match
         self.assertEqual(tax_uncompressed.stats(), tax_compressed.stats())
 

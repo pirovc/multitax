@@ -98,7 +98,10 @@ class NcbiTx(MultiTax):
 
     def stats(self):
         s = super().stats()
-        s["merged"] = len(self._merged)
+        if self._merged:
+            s["merged"] = len(self._merged)
+        if self._extended_name_nodes:
+            s["extended_names"] = len(self._extended_name_nodes)
         return s
 
     def search_name(self, text: str, rank: str=None, exact: bool=True, force_extended: bool=False):

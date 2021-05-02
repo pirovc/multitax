@@ -100,6 +100,10 @@ tax.build_lineages()
 tax.leaves("p__Hadarchaeota")
 # ['s__DG-33 sp004375695', 's__DG-33 sp001515185', 's__Hadarchaeum yellowstonense', 's__B75-G9 sp003661465', 's__WYZ-LMO6 sp004347925', 's__B88-G9 sp003660555']
 
+# Search names and filter by rank
+tax.search_name("Escherichia", exact=False, rank="genus")
+# ['g__Escherichia', 'g__Escherichia_C']
+
 # Show stats of loaded tax
 tax.stats()
 #{'leaves': 31910,
@@ -212,7 +216,6 @@ Not yet implemented. The goal here is to map different taxonomies if the linkage
 
 ## Further ideas
 
-- Advanced name search
 - Add/remove/update nodes
 - Conversion between taxonomies (write on specific files/format)
 
