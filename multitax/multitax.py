@@ -4,7 +4,7 @@ from collections import Counter
 
 class MultiTax(object):
 
-    version = "1.1.0"
+    version = "1.1.1"
 
     _default_urls = []
     _default_root_node = "1"
