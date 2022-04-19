@@ -5,14 +5,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="multitax",
-    version="1.1.0",
+    version="1.1.1",
     url="https://www.github.com/pirovc/multitax",
     license='MIT',
 
     author="Vitor C. Piro",
     author_email="pirovc@posteo.net",
 
-    description="Python package to obtain, parse and explore biological taxonomies",
+    description="Python package to obtain, parse and explore biological and custom taxonomies",
     long_description=long_description,
     long_description_content_type="text/markdown",
 
