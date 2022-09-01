@@ -28,6 +28,8 @@ class TestInit(unittest.TestCase):
         tax = MultiTax()
         self.assertEqual(tax.root_parent, "0")
         self.assertEqual(tax.root_node, tax._default_root_node)
+        self.assertEqual(tax.root_name, "root")
+        self.assertEqual(tax.root_rank, "root")
 
         self.assertEqual(tax._default_urls, [])
         self.assertEqual(tax._default_root_node, "1")
@@ -47,6 +49,8 @@ class TestInit(unittest.TestCase):
         tax = CustomTx(files=self.test_file)
         self.assertEqual(tax.root_parent, "0")
         self.assertEqual(tax.root_node, tax._default_root_node)
+        self.assertEqual(tax.root_name, "Node1")
+        self.assertEqual(tax.root_rank, "rank-1")
 
         self.assertEqual(tax._default_urls, [])
         self.assertEqual(tax._default_root_node, "1")
@@ -74,7 +78,9 @@ class TestInit(unittest.TestCase):
         self.assertEqual(tax.root_parent, "root_p")
         # Create new root node and link old default (1) {"root_n": "root_p", "1": "root_p"}
         self.assertEqual(tax._nodes, {tax.root_node: tax.root_parent, tax._default_root_node: tax.root_node})
+        self.assertEqual(tax.root_name, 'newRootName')
         self.assertEqual(tax._names, {tax.root_node: 'newRootName'})
+        self.assertEqual(tax.root_rank, 'newRootRank')
         self.assertEqual(tax._ranks, {tax.root_node: 'newRootRank'})
 
         # Root is a new node not in nodes
