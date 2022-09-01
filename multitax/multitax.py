@@ -297,9 +297,10 @@ class MultiTax(object):
 
     def lineage(self, node: str, root_node: str = None, ranks: list = None):
         """
-        Returns a o list with the lineage of a given node.
-        If ranks is provide, returns only nodes annotated with such ranks.
+        Returns a list with the lineage of a given node.
+        If ranks is provided, returns only nodes annotated with such ranks.
         If root_node is provided, use it instead of default root of tree.
+        ranks and root_node are ignored if build_lineages() was used.
         """
         # If lineages were built with build_lineages()
         if node in self._lineages:

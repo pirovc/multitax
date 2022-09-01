@@ -9,7 +9,7 @@ python:
 
 before_install:
   - python -m pip install coverage
-  - python -m pip install setuptools importlib-metadata --upgrade
+  - python -m pip install setuptools importlib-metadata --upgrade  # fix bug setuptools py37
 
 install:
   - python setup.py install
