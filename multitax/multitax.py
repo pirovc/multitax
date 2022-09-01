@@ -122,6 +122,7 @@ class MultiTax(object):
         1) internal: will filter the tree acodingly and delete the default root_node
         2) external: will add node and link to the default
         """
+
         # Set parent/root with defaults
         self.root_parent = parent
         self.root_node = self._default_root_node
@@ -143,16 +144,22 @@ class MultiTax(object):
             self._nodes[self.root_node] = self.root_parent
 
         # User-defined rank/name.
-        # If None, check if is in the tree or inser "root"
+        # If provided, insert manually,
+        # If None, check if is in the tree (defined in the given tax) 
+        #    otherwise insert default "root"
         if name:
             self._names[self.root_node] = name
         elif self.root_node not in self._names:
             self._names[self.root_node] = "root"
+        # Set static name
+        self.root_name = self._names[self.root_node]
 
         if rank:
             self._ranks[self.root_node] = rank
         elif self.root_node not in self._ranks:
             self._ranks[self.root_node] = "root"
+        # Set static rank
+        self.root_rank = self._ranks[self.root_node]
 
     def _remove(self, node: str):
         """
