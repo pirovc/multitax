@@ -1,5 +1,6 @@
 from .utils import *
 from collections import Counter
+import warnings
 
 
 class MultiTax(object):
@@ -10,20 +11,20 @@ class MultiTax(object):
     _default_root_node = "1"
 
     def __init__(self,
-                 files: list=None,
-                 urls: list=None,
-                 output_prefix: str=None,
-                 root_node: str=None,
-                 root_parent: str="0",
-                 root_name: str=None,
-                 root_rank: str=None,
-                 undefined_node: str=None,
-                 undefined_name: str=None,
-                 undefined_rank: str=None,
-                 build_name_nodes: bool=False,
-                 build_node_children: bool=False,
-                 build_rank_nodes: bool=False,
-                 extended_names: bool=False):
+                 files: list = None,
+                 urls: list = None,
+                 output_prefix: str = None,
+                 root_node: str = None,
+                 root_parent: str = "0",
+                 root_name: str = None,
+                 root_rank: str = None,
+                 undefined_node: str = None,
+                 undefined_name: str = None,
+                 undefined_rank: str = None,
+                 build_name_nodes: bool = False,
+                 build_node_children: bool = False,
+                 build_rank_nodes: bool = False,
+                 extended_names: bool = False):
         """
         Main constructor of MultiTax and sub-classes
 
@@ -80,7 +81,8 @@ class MultiTax(object):
 
         if fhs:
             # Parse taxonomy
-            self._nodes, self._ranks, self._names = self._parse(fhs, extended_names=extended_names)
+            self._nodes, self._ranks, self._names = self._parse(
+                fhs, extended_names=extended_names)
             close_files(fhs)
             # Save sources for stats (files or urls)
             self.sources = list(fhs.keys())
@@ -91,7 +93,8 @@ class MultiTax(object):
         self.undefined_rank = undefined_rank
 
         # Set root values
-        self._set_root_node(root=root_node if root_node else self._default_root_node, parent=root_parent, name=root_name, rank=root_rank)
+        self._set_root_node(root=root_node if root_node else self._default_root_node,
+                            parent=root_parent, name=root_name, rank=root_rank)
 
         # build auxiliary structures
         if build_node_children:
@@ -173,7 +176,7 @@ class MultiTax(object):
         else:
             return []
 
-    def search_name(self, text: str, rank: str=None, exact: bool=True):
+    def search_name(self, text: str, rank: str = None, exact: bool = True):
         """
         Search node by exact or partial name
 
@@ -268,7 +271,7 @@ class MultiTax(object):
         else:
             return self.undefined_node
 
-    def leaves(self, node: str=None):
+    def leaves(self, node: str = None):
         """
         Returns a list of leaf nodes of a given node.
         """
@@ -292,14 +295,21 @@ class MultiTax(object):
             leaves.extend(self.leaves(child))
         return leaves
 
-    def lineage(self, node: str, root_node: str=None, ranks: list=None):
+    def lineage(self, node: str, root_node: str = None, ranks: list = None):
         """
         Returns a o list with the lineage of a given node.
         If ranks is provide, returns only nodes annotated with such ranks.
         If root_node is provided, use it instead of default root of tree.
         """
-        # If lineages were built and no special subset is required
+        # If lineages were built with build_lineages()
         if node in self._lineages:
+            if root_node is not None:
+                warnings.warn(
+                    "root_node ignored after build_lineages() was used. Use clear_lineages() to reset it.")
+            if ranks is not None:
+                warnings.warn(
+                    "ranks ignored after build_lineages() was used. Use clear_lineages() to reset it.")
+
             return self._lineages[node]
         else:
             if not root_node:
@@ -337,7 +347,7 @@ class MultiTax(object):
             else:
                 return lin
 
-    def rank_lineage(self, node: str, root_node: str=None, ranks: list=None):
+    def rank_lineage(self, node: str, root_node: str = None, ranks: list = None):
         """
         Returns a list with the rank lineage of a given node.
         """
@@ -346,7 +356,7 @@ class MultiTax(object):
                                      root_node=root_node,
                                      ranks=ranks)))
 
-    def name_lineage(self, node: str, root_node: str=None, ranks: list=None):
+    def name_lineage(self, node: str, root_node: str = None, ranks: list = None):
         """
         Returns a list with the name lineage of a given node.
         """
@@ -398,7 +408,7 @@ class MultiTax(object):
 
         return s
 
-    def build_lineages(self, root_node: str=None, ranks: list=None):
+    def build_lineages(self, root_node: str = None, ranks: list = None):
         """
         Stores lineages in memory for faster access
 
@@ -406,7 +416,8 @@ class MultiTax(object):
         """
         self.clear_lineages()
         for node in self._nodes:
-            self._lineages[node] = self.lineage(node=node, root_node=root_node, ranks=ranks)
+            self._lineages[node] = self.lineage(
+                node=node, root_node=root_node, ranks=ranks)
 
     def clear_lineages(self):
         """
@@ -428,10 +439,11 @@ class MultiTax(object):
         # Difference between values and keys should be only root_parent
         lost_nodes = set(self._nodes.values()).difference(self._nodes)
         assert self.root_parent in lost_nodes, "root_parent not defined"
-        assert len(lost_nodes) == 1, "parent nodes missing: " + ",".join(lost_nodes)
+        assert len(lost_nodes) == 1, "parent nodes missing: " + \
+            ",".join(lost_nodes)
         return None
 
-    def filter(self, nodes: list, desc: bool=False):
+    def filter(self, nodes: list, desc: bool = False):
         """
         Filters taxonomy given a list of nodes.
         By default keep all the ancestors of the given nodes.
@@ -501,11 +513,11 @@ class MultiTax(object):
 
     def write(self,
               output_file: str,
-              cols: list=["node", "parent", "rank", "name"],
-              sep: str="\t",
-              sep_multi: str="|",
-              ranks: list=None,
-              gz: bool=False):
+              cols: list = ["node", "parent", "rank", "name"],
+              sep: str = "\t",
+              sep_multi: str = "|",
+              ranks: list = None,
+              gz: bool = False):
         """
         Writes loaded taxonomy to a file.
 
@@ -520,7 +532,8 @@ class MultiTax(object):
         """
         import gzip
         if gz:
-            output_file = output_file if output_file.endswith(".gz") else output_file + ".gz"
+            output_file = output_file if output_file.endswith(
+                ".gz") else output_file + ".gz"
             check_no_file(output_file)
             outf = gzip.open(output_file, "wt")
         else:
@@ -540,14 +553,17 @@ class MultiTax(object):
 
         for c in cols:
             if c not in write_field:
-                raise ValueError(c + " is not a a valid field: " + ",".join(write_field))
+                raise ValueError(
+                    c + " is not a a valid field: " + ",".join(write_field))
 
         if ranks:
             for rank in ranks:
                 for node in self.nodes_rank(rank):
-                    print(*[write_field[c](node) for c in cols], sep=sep, end="\n", file=outf)
+                    print(*[write_field[c](node)
+                            for c in cols], sep=sep, end="\n", file=outf)
         else:
             for node in self._nodes:
-                print(*[write_field[c](node) for c in cols], sep=sep, end="\n", file=outf)
+                print(*[write_field[c](node)
+                        for c in cols], sep=sep, end="\n", file=outf)
 
         outf.close()
