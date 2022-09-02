@@ -169,7 +169,7 @@ multitax    </h1>
     <span class="n">_required_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">]</span>
     <span class="n">_possible_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        CustomTx()</span>
 
@@ -221,7 +221,8 @@ multitax    </h1>
 
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_possible_cols</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="s2">&quot; is not a valid column: &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_possible_cols</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="s2">&quot; is not a valid column: &quot;</span> <span class="o">+</span>
+                                 <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_possible_cols</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">cols</span>
 </pre></div>
@@ -243,7 +244,7 @@ multitax    </h1>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        CustomTx()</span>
 
@@ -301,6 +302,7 @@ tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, 
                 <dd id="CustomTx.rank_lineage" class="function"><a href="multitax/multitax.html#MultiTax.rank_lineage">rank_lineage</a></dd>
                 <dd id="CustomTx.name_lineage" class="function"><a href="multitax/multitax.html#MultiTax.name_lineage">name_lineage</a></dd>
                 <dd id="CustomTx.parent_rank" class="function"><a href="multitax/multitax.html#MultiTax.parent_rank">parent_rank</a></dd>
+                <dd id="CustomTx.closest_parent" class="function"><a href="multitax/multitax.html#MultiTax.closest_parent">closest_parent</a></dd>
                 <dd id="CustomTx.stats" class="function"><a href="multitax/multitax.html#MultiTax.stats">stats</a></dd>
                 <dd id="CustomTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="CustomTx.clear_lineages" class="function"><a href="multitax/multitax.html#MultiTax.clear_lineages">clear_lineages</a></dd>
@@ -394,6 +396,7 @@ tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, 
                 <dd id="DummyTx.rank_lineage" class="function"><a href="multitax/multitax.html#MultiTax.rank_lineage">rank_lineage</a></dd>
                 <dd id="DummyTx.name_lineage" class="function"><a href="multitax/multitax.html#MultiTax.name_lineage">name_lineage</a></dd>
                 <dd id="DummyTx.parent_rank" class="function"><a href="multitax/multitax.html#MultiTax.parent_rank">parent_rank</a></dd>
+                <dd id="DummyTx.closest_parent" class="function"><a href="multitax/multitax.html#MultiTax.closest_parent">closest_parent</a></dd>
                 <dd id="DummyTx.stats" class="function"><a href="multitax/multitax.html#MultiTax.stats">stats</a></dd>
                 <dd id="DummyTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="DummyTx.clear_lineages" class="function"><a href="multitax/multitax.html#MultiTax.clear_lineages">clear_lineages</a></dd>
@@ -417,7 +420,8 @@ tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, 
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span><span class="k">class</span> <span class="nc">GreengenesTx</span><span class="p">(</span><span class="n">MultiTax</span><span class="p">):</span>
-    <span class="n">_default_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz&quot;</span><span class="p">]</span>
+    <span class="n">_default_urls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz&quot;</span><span class="p">]</span>
     <span class="n">_rank_codes</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;k__&quot;</span><span class="p">,</span> <span class="s2">&quot;kingdom&quot;</span><span class="p">),</span>
                    <span class="p">(</span><span class="s2">&quot;p__&quot;</span><span class="p">,</span> <span class="s2">&quot;phylum&quot;</span><span class="p">),</span>
                    <span class="p">(</span><span class="s2">&quot;c__&quot;</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">),</span>
@@ -449,13 +453,14 @@ tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, 
                 <span class="n">lin</span> <span class="o">=</span> <span class="n">lineage</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;; &quot;</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lin</span><span class="p">))[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
                     <span class="c1"># assert rank</span>
-                    <span class="k">assert</span> <span class="n">lin</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span><span class="o">==</span><span class="bp">self</span><span class="o">.</span><span class="n">_rank_codes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">assert</span> <span class="n">lin</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rank_codes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                     <span class="c1"># taxid = &quot;c__Deinococci&quot;, rank = &quot;class&quot;, name = &quot;Deinococci&quot;</span>
                     <span class="n">taxid</span> <span class="o">=</span> <span class="n">lin</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                     <span class="n">name</span> <span class="o">=</span> <span class="n">lin</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">3</span><span class="p">:]</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span> <span class="k">continue</span> <span class="c1"># empty entry &quot;s__&quot;</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+                        <span class="k">continue</span>  <span class="c1"># empty entry &quot;s__&quot;</span>
                     <span class="n">rank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rank_codes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="n">parent_taxid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">parent_taxid</span> <span class="o">=</span> <span class="n">lin</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -537,6 +542,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
                 <dd id="GreengenesTx.rank_lineage" class="function"><a href="multitax/multitax.html#MultiTax.rank_lineage">rank_lineage</a></dd>
                 <dd id="GreengenesTx.name_lineage" class="function"><a href="multitax/multitax.html#MultiTax.name_lineage">name_lineage</a></dd>
                 <dd id="GreengenesTx.parent_rank" class="function"><a href="multitax/multitax.html#MultiTax.parent_rank">parent_rank</a></dd>
+                <dd id="GreengenesTx.closest_parent" class="function"><a href="multitax/multitax.html#MultiTax.closest_parent">closest_parent</a></dd>
                 <dd id="GreengenesTx.stats" class="function"><a href="multitax/multitax.html#MultiTax.stats">stats</a></dd>
                 <dd id="GreengenesTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="GreengenesTx.clear_lineages" class="function"><a href="multitax/multitax.html#MultiTax.clear_lineages">clear_lineages</a></dd>
@@ -560,7 +566,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span><span class="k">class</span> <span class="nc">GtdbTx</span><span class="p">(</span><span class="n">MultiTax</span><span class="p">):</span>
-    
+
     <span class="n">_default_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://data.gtdb.ecogenomic.org/releases/latest/ar53_taxonomy.tsv.gz&quot;</span><span class="p">,</span>
                      <span class="s2">&quot;https://data.gtdb.ecogenomic.org/releases/latest/bac120_taxonomy.tsv.gz&quot;</span><span class="p">]</span>
     <span class="n">_rank_codes</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;d__&quot;</span><span class="p">,</span> <span class="s2">&quot;domain&quot;</span><span class="p">),</span>
@@ -680,6 +686,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
                 <dd id="GtdbTx.rank_lineage" class="function"><a href="multitax/multitax.html#MultiTax.rank_lineage">rank_lineage</a></dd>
                 <dd id="GtdbTx.name_lineage" class="function"><a href="multitax/multitax.html#MultiTax.name_lineage">name_lineage</a></dd>
                 <dd id="GtdbTx.parent_rank" class="function"><a href="multitax/multitax.html#MultiTax.parent_rank">parent_rank</a></dd>
+                <dd id="GtdbTx.closest_parent" class="function"><a href="multitax/multitax.html#MultiTax.closest_parent">closest_parent</a></dd>
                 <dd id="GtdbTx.stats" class="function"><a href="multitax/multitax.html#MultiTax.stats">stats</a></dd>
                 <dd id="GtdbTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="GtdbTx.clear_lineages" class="function"><a href="multitax/multitax.html#MultiTax.clear_lineages">clear_lineages</a></dd>
@@ -718,14 +725,16 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
         <span class="n">fhs_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="c1"># One element tar.gz -&gt; taxdump.tar.gz</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fhs_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tar.gz&quot;</span><span class="p">):</span>
-            <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_taxdump</span><span class="p">(</span><span class="n">fhs_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">])</span>
+            <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merged</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_taxdump</span><span class="p">(</span>
+                <span class="n">fhs_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># nodes.dmp</span>
             <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_nodes</span><span class="p">(</span><span class="n">fhs_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
             <span class="c1"># [names.dmp]</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_names</span><span class="p">(</span><span class="n">fhs_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">])</span>
+                <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_names</span><span class="p">(</span>
+                    <span class="n">fhs_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">names</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -804,7 +813,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
             <span class="n">s</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">s</span>
 
-    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">force_extended</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">force_extended</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Search node by exact or partial name.</span>
 
@@ -1009,7 +1018,7 @@ pprint(tax.stats())
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">force_extended</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">force_extended</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Search node by exact or partial name.</span>
 
@@ -1082,6 +1091,7 @@ pprint(tax.stats())
                 <dd id="NcbiTx.rank_lineage" class="function"><a href="multitax/multitax.html#MultiTax.rank_lineage">rank_lineage</a></dd>
                 <dd id="NcbiTx.name_lineage" class="function"><a href="multitax/multitax.html#MultiTax.name_lineage">name_lineage</a></dd>
                 <dd id="NcbiTx.parent_rank" class="function"><a href="multitax/multitax.html#MultiTax.parent_rank">parent_rank</a></dd>
+                <dd id="NcbiTx.closest_parent" class="function"><a href="multitax/multitax.html#MultiTax.closest_parent">closest_parent</a></dd>
                 <dd id="NcbiTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="NcbiTx.clear_lineages" class="function"><a href="multitax/multitax.html#MultiTax.clear_lineages">clear_lineages</a></dd>
                 <dd id="NcbiTx.check_consistency" class="function"><a href="multitax/multitax.html#MultiTax.check_consistency">check_consistency</a></dd>
@@ -1119,7 +1129,8 @@ pprint(tax.stats())
     <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">fhs_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fhs_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tgz&quot;</span><span class="p">):</span>
-            <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_ott</span><span class="p">(</span><span class="n">fhs_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">])</span>
+            <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_ott</span><span class="p">(</span>
+                <span class="n">fhs_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># nodes.dmp</span>
             <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_taxonomy</span><span class="p">(</span><span class="n">fhs_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -1216,7 +1227,7 @@ pprint(tax.stats())
             <span class="n">s</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">s</span>
 
-    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">force_extended</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">force_extended</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Search node by exact or partial name.</span>
 
@@ -1421,7 +1432,7 @@ pprint(tax.stats())
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">force_extended</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">force_extended</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Search node by exact or partial name.</span>
 
@@ -1494,6 +1505,7 @@ pprint(tax.stats())
                 <dd id="OttTx.rank_lineage" class="function"><a href="multitax/multitax.html#MultiTax.rank_lineage">rank_lineage</a></dd>
                 <dd id="OttTx.name_lineage" class="function"><a href="multitax/multitax.html#MultiTax.name_lineage">name_lineage</a></dd>
                 <dd id="OttTx.parent_rank" class="function"><a href="multitax/multitax.html#MultiTax.parent_rank">parent_rank</a></dd>
+                <dd id="OttTx.closest_parent" class="function"><a href="multitax/multitax.html#MultiTax.closest_parent">closest_parent</a></dd>
                 <dd id="OttTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="OttTx.clear_lineages" class="function"><a href="multitax/multitax.html#MultiTax.clear_lineages">clear_lineages</a></dd>
                 <dd id="OttTx.check_consistency" class="function"><a href="multitax/multitax.html#MultiTax.check_consistency">check_consistency</a></dd>
@@ -1516,7 +1528,8 @@ pprint(tax.stats())
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span><span class="k">class</span> <span class="nc">SilvaTx</span><span class="p">(</span><span class="n">MultiTax</span><span class="p">):</span>
-    <span class="n">_default_urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.1.txt.gz&quot;</span><span class="p">]</span>
+    <span class="n">_default_urls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.1.txt.gz&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -1554,7 +1567,7 @@ pprint(tax.stats())
                 <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
                     <span class="n">nodes</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_taxid</span>
                 <span class="n">t</span> <span class="o">=</span> <span class="n">parent_taxid</span>
-                <span class="k">del</span> <span class="n">l</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># remove last element</span>
+                <span class="k">del</span> <span class="n">l</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># remove last element</span>
             <span class="c1"># Connect last node to root</span>
             <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
                 <span class="n">nodes</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
@@ -1631,6 +1644,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
                 <dd id="SilvaTx.rank_lineage" class="function"><a href="multitax/multitax.html#MultiTax.rank_lineage">rank_lineage</a></dd>
                 <dd id="SilvaTx.name_lineage" class="function"><a href="multitax/multitax.html#MultiTax.name_lineage">name_lineage</a></dd>
                 <dd id="SilvaTx.parent_rank" class="function"><a href="multitax/multitax.html#MultiTax.parent_rank">parent_rank</a></dd>
+                <dd id="SilvaTx.closest_parent" class="function"><a href="multitax/multitax.html#MultiTax.closest_parent">closest_parent</a></dd>
                 <dd id="SilvaTx.stats" class="function"><a href="multitax/multitax.html#MultiTax.stats">stats</a></dd>
                 <dd id="SilvaTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="SilvaTx.clear_lineages" class="function"><a href="multitax/multitax.html#MultiTax.clear_lineages">clear_lineages</a></dd>

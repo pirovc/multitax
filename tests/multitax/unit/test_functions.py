@@ -1,9 +1,6 @@
-import sys
-sys.path.append("tests/multitax/")
-
 from multitax.utils import check_file
 from multitax import CustomTx, OttTx, NcbiTx
-from utils import setup_dir
+from tests.multitax.utils import setup_dir
 import unittest
 
 
@@ -302,6 +299,29 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(tax.parent_rank("2.2", "XXXX"), tax.undefined_node)
         self.assertEqual(tax.parent_rank("CCCC", "XXXX"), tax.undefined_node)
 
+    def test_closest_parent(self):
+        """
+        test closest_parent function
+        """
+        tax = CustomTx(files=self.test_file)
+        self.assertEqual(tax.closest_parent(
+            "5.2", ["rank-1", "rank-3"]), "3.4")
+        self.assertEqual(tax.closest_parent(
+            "5.2", ["rank-1", "rank-3", "rank-4"]), "4.4")
+        self.assertEqual(tax.closest_parent(
+            "5.2", ["rank-1", "rank-3", "rank-4", "rank-5"]), "5.2")
+        self.assertEqual(tax.closest_parent(
+            "5.2", ["rank-1", "rank-3", "rank-4", "rank-5", "XXXXX"]), "5.2")
+        self.assertEqual(tax.closest_parent(
+            "3.4", ["rank-1", "rank-4", "rank-5"]), "1")
+        self.assertEqual(tax.closest_parent(
+            "4.6", ["rank-1", "rank-2", "rank-3", "rank-5"]), "1")
+        self.assertEqual(tax.closest_parent(
+            "4.6", ["rank-2", "rank-3", "rank-5"]), tax.undefined_node)
+        self.assertEqual(tax.closest_parent(
+            "3.4", ["X", "Y", "Z"]), tax.undefined_node)
+        self.assertEqual(tax.closest_parent("3.4", []), "3.4")
+
     def test_stats(self):
         """
         test stats function
@@ -322,21 +342,35 @@ class TestFunctions(unittest.TestCase):
         """
         test build_lineages function
         """
+        # build full lineages
         tax = CustomTx(files=self.test_file)
         self.assertEqual(len(tax._lineages), 0)
         tax.build_lineages()
         self.assertEqual(len(tax._lineages), 14)
         self.assertEqual(tax.lineage("5.2"), ["1", "2.2", "3.4", "4.4", "5.2"])
         self.assertEqual(tax.lineage("XXX"), [])
+        # do not use stored lineage with keyword arguments
+        self.assertEqual(tax.lineage("5.2", root_node="2.2"),
+                         ["2.2", "3.4", "4.4", "5.2"])
+        self.assertEqual(tax.lineage(
+            "5.2", ranks=["rank-2", "rank-4"]), ["2.2", "4.4"])
+        self.assertEqual(tax.lineage("5.2", root_node="2.2", ranks=[
+                         "rank-2", "rank-4"]), ["2.2", "4.4"])
 
-        # trigger warning in lineages with rank/root_node
-        with self.assertWarns(UserWarning):
-            tax.name_lineage("5.2", root_node="2.2")
-        with self.assertWarns(UserWarning):
-            tax.name_lineage("5.2", ranks=["rank-3", "rank-4"])
-        with self.assertWarns(UserWarning):
-            tax.name_lineage("5.2", root_node="2.2",
-                             ranks=["rank-3", "rank-4"])
+        # build filtered lineages
+        tax.clear_lineages()
+        self.assertEqual(len(tax._lineages), 0)
+        tax.build_lineages(root_node="2.2", ranks=["rank-2", "rank-4"])
+        self.assertEqual(len(tax._lineages), 14)
+        self.assertEqual(tax.lineage("5.2"), ["2.2", "4.4"])
+        self.assertEqual(tax.lineage("XXX"), [])
+        # do not use stored lineage with keyword arguments
+        self.assertEqual(tax.lineage("5.2", root_node="3.4"),
+                         ["3.4", "4.4", "5.2"])
+        self.assertEqual(tax.lineage("5.2", ranks=[]), [
+                         "1", "2.2", "3.4", "4.4", "5.2"])
+        self.assertEqual(tax.lineage("5.2", root_node="2.2", ranks=[
+                         "rank-2", "rank-5"]), ["2.2", "5.2"])
 
     def test_clear_lineages(self):
         """
@@ -350,9 +384,6 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(len(tax._lineages), 0)
         self.assertEqual(tax.lineage("5.2"), ["1", "2.2", "3.4", "4.4", "5.2"])
         self.assertEqual(tax.lineage("XXX"), [])
-        # should not raise an UserWarning
-        self.assertEqual(tax.lineage("5.2", root_node="2.2", ranks=["rank-3", "rank-4"]),
-                         ["3.4", "4.4"])
 
     def test_check_consistency(self):
         """

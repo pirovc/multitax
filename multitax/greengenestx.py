@@ -2,7 +2,8 @@ from .multitax import MultiTax
 
 
 class GreengenesTx(MultiTax):
-    _default_urls = ["https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz"]
+    _default_urls = [
+        "https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz"]
     _rank_codes = [("k__", "kingdom"),
                    ("p__", "phylum"),
                    ("c__", "class"),
@@ -34,13 +35,14 @@ class GreengenesTx(MultiTax):
                 lin = lineage.split("; ")
                 for i in range(len(lin))[::-1]:
                     # assert rank
-                    assert lin[i][:3]==self._rank_codes[i][0]
+                    assert lin[i][:3] == self._rank_codes[i][0]
                     # taxid = "c__Deinococci", rank = "class", name = "Deinococci"
                     taxid = lin[i]
                     name = lin[i][3:]
-                    if not name: continue # empty entry "s__"
+                    if not name:
+                        continue  # empty entry "s__"
                     rank = self._rank_codes[i][1]
-                    if i==0:
+                    if i == 0:
                         parent_taxid = self._default_root_node
                     else:
                         parent_taxid = lin[i-1]
