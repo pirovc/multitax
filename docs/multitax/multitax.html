@@ -76,6 +76,9 @@
                                 <a class="function" href="#MultiTax.parent_rank">parent_rank</a>
                         </li>
                         <li>
+                                <a class="function" href="#MultiTax.closest_parent">closest_parent</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#MultiTax.stats">stats</a>
                         </li>
                         <li>
@@ -239,6 +242,7 @@
 <span class="sd">        1) internal: will filter the tree acodingly and delete the default root_node</span>
 <span class="sd">        2) external: will add node and link to the default</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="c1"># Set parent/root with defaults</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">parent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
@@ -260,16 +264,22 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span>
 
         <span class="c1"># User-defined rank/name.</span>
-        <span class="c1"># If None, check if is in the tree or inser &quot;root&quot;</span>
+        <span class="c1"># If provided, insert manually,</span>
+        <span class="c1"># If None, check if is in the tree (defined in the given tax)</span>
+        <span class="c1">#    otherwise insert default &quot;root&quot;</span>
         <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
+        <span class="c1"># Set static name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">rank</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
+        <span class="c1"># Set static rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -352,7 +362,7 @@
 
     <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns parent node of a given node.</span>
+<span class="sd">        Returns the direct parent node of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
@@ -419,15 +429,8 @@
 <span class="sd">        If root_node is provided, use it instead of default root of tree.</span>
 <span class="sd">        ranks and root_node are ignored if build_lineages() was used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If lineages were built with build_lineages()</span>
-        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">root_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="s2">&quot;root_node ignored after build_lineages() was used. Use clear_lineages() to reset it.&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">ranks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="s2">&quot;ranks ignored after build_lineages() was used. Use clear_lineages() to reset it.&quot;</span><span class="p">)</span>
-
+        <span class="c1"># If lineages were built with build_lineages() with matching params</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span> <span class="ow">and</span> <span class="n">root_node</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ranks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">root_node</span><span class="p">:</span>
@@ -490,6 +493,21 @@
         <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span><span class="n">rank</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">parent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
+    <span class="k">def</span> <span class="nf">closest_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the closest parent node based on a defined list of ranks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Rank of node is already on the list</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">node</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># check lineage from back to front until find a valid node</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">n</span>
+        <span class="c1"># nothing found</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
+
     <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a dict with general numbers of the taxonomic tree</span>
@@ -528,7 +546,9 @@
 
     <span class="k">def</span> <span class="nf">build_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Stores lineages in memory for faster access</span>
+<span class="sd">        Stores lineages in memory for faster access.</span>
+<span class="sd">        It is valid for lineage(), rank_lineage() and name_lineage().</span>
+<span class="sd">        If keyword arguments (root_node, ranks) are used in those functions stored lineages are not used.</span>
 
 <span class="sd">        Returns: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -613,7 +633,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Keep ancestors of the given nodes (full lineage up-to root)</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                <span class="c1"># ranks=[] in case build_lineages() was used with specific ranks</span>
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[]):</span>
                     <span class="c1"># Discard nodes from set to be kept</span>
                     <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
@@ -820,6 +841,7 @@
 <span class="sd">        1) internal: will filter the tree acodingly and delete the default root_node</span>
 <span class="sd">        2) external: will add node and link to the default</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="c1"># Set parent/root with defaults</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">parent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
@@ -841,16 +863,22 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span>
 
         <span class="c1"># User-defined rank/name.</span>
-        <span class="c1"># If None, check if is in the tree or inser &quot;root&quot;</span>
+        <span class="c1"># If provided, insert manually,</span>
+        <span class="c1"># If None, check if is in the tree (defined in the given tax)</span>
+        <span class="c1">#    otherwise insert default &quot;root&quot;</span>
         <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
+        <span class="c1"># Set static name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">rank</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
+        <span class="c1"># Set static rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -933,7 +961,7 @@
 
     <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns parent node of a given node.</span>
+<span class="sd">        Returns the direct parent node of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
@@ -1000,15 +1028,8 @@
 <span class="sd">        If root_node is provided, use it instead of default root of tree.</span>
 <span class="sd">        ranks and root_node are ignored if build_lineages() was used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If lineages were built with build_lineages()</span>
-        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">root_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="s2">&quot;root_node ignored after build_lineages() was used. Use clear_lineages() to reset it.&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">ranks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="s2">&quot;ranks ignored after build_lineages() was used. Use clear_lineages() to reset it.&quot;</span><span class="p">)</span>
-
+        <span class="c1"># If lineages were built with build_lineages() with matching params</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span> <span class="ow">and</span> <span class="n">root_node</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ranks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">root_node</span><span class="p">:</span>
@@ -1071,6 +1092,21 @@
         <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span><span class="n">rank</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">parent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
+    <span class="k">def</span> <span class="nf">closest_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the closest parent node based on a defined list of ranks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Rank of node is already on the list</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">node</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># check lineage from back to front until find a valid node</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">n</span>
+        <span class="c1"># nothing found</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
+
     <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a dict with general numbers of the taxonomic tree</span>
@@ -1109,7 +1145,9 @@
 
     <span class="k">def</span> <span class="nf">build_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Stores lineages in memory for faster access</span>
+<span class="sd">        Stores lineages in memory for faster access.</span>
+<span class="sd">        It is valid for lineage(), rank_lineage() and name_lineage().</span>
+<span class="sd">        If keyword arguments (root_node, ranks) are used in those functions stored lineages are not used.</span>
 
 <span class="sd">        Returns: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1194,7 +1232,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Keep ancestors of the given nodes (full lineage up-to root)</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                <span class="c1"># ranks=[] in case build_lineages() was used with specific ranks</span>
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[]):</span>
                     <span class="c1"># Discard nodes from set to be kept</span>
                     <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
@@ -1564,7 +1603,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns parent node of a given node.</span>
+<span class="sd">        Returns the direct parent node of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
@@ -1574,7 +1613,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
         </details>
 
-            <div class="docstring"><p>Returns parent node of a given node.</p>
+            <div class="docstring"><p>Returns the direct parent node of a given node.</p>
 </div>
 
 
@@ -1711,15 +1750,8 @@ Mainly used for NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 <span class="sd">        If root_node is provided, use it instead of default root of tree.</span>
 <span class="sd">        ranks and root_node are ignored if build_lineages() was used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If lineages were built with build_lineages()</span>
-        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">root_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="s2">&quot;root_node ignored after build_lineages() was used. Use clear_lineages() to reset it.&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">ranks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="s2">&quot;ranks ignored after build_lineages() was used. Use clear_lineages() to reset it.&quot;</span><span class="p">)</span>
-
+        <span class="c1"># If lineages were built with build_lineages() with matching params</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span> <span class="ow">and</span> <span class="n">root_node</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ranks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">root_node</span><span class="p">:</span>
@@ -1847,6 +1879,39 @@ ranks and root_node are ignored if build_lineages() was used.</p>
 
 
                             </div>
+                            <div id="MultiTax.closest_parent" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#MultiTax.closest_parent">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">closest_parent</span><span class="signature">(self, node: str, ranks: str)</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">closest_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the closest parent node based on a defined list of ranks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Rank of node is already on the list</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">node</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># check lineage from back to front until find a valid node</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">n</span>
+        <span class="c1"># nothing found</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Returns the closest parent node based on a defined list of ranks</p>
+</div>
+
+
+                            </div>
                             <div id="MultiTax.stats" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#MultiTax.stats">#&nbsp;&nbsp</a>
 
@@ -1935,7 +2000,9 @@ pprint(tax.stats())
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">build_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Stores lineages in memory for faster access</span>
+<span class="sd">        Stores lineages in memory for faster access.</span>
+<span class="sd">        It is valid for lineage(), rank_lineage() and name_lineage().</span>
+<span class="sd">        If keyword arguments (root_node, ranks) are used in those functions stored lineages are not used.</span>
 
 <span class="sd">        Returns: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1947,7 +2014,9 @@ pprint(tax.stats())
 
         </details>
 
-            <div class="docstring"><p>Stores lineages in memory for faster access</p>
+            <div class="docstring"><p>Stores lineages in memory for faster access.
+It is valid for lineage(), rank_lineage() and name_lineage().
+If keyword arguments (root_node, ranks) are used in those functions stored lineages are not used.</p>
 
 <p>Returns: None</p>
 </div>
@@ -2080,7 +2149,8 @@ pprint(tax.stats())
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Keep ancestors of the given nodes (full lineage up-to root)</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                <span class="c1"># ranks=[] in case build_lineages() was used with specific ranks</span>
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[]):</span>
                     <span class="c1"># Discard nodes from set to be kept</span>
                     <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 

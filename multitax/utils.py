@@ -27,7 +27,7 @@ def open_files(files: list):
     return fhs
 
 
-def download_files(urls: list, output_prefix: str=None):
+def download_files(urls: list, output_prefix: str = None):
     """
     Download and open files (memory/stream) or write to disk (multitax.utils.save_urls)
 

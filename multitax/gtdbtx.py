@@ -2,7 +2,7 @@ from .multitax import MultiTax
 
 
 class GtdbTx(MultiTax):
-    
+
     _default_urls = ["https://data.gtdb.ecogenomic.org/releases/latest/ar53_taxonomy.tsv.gz",
                      "https://data.gtdb.ecogenomic.org/releases/latest/bac120_taxonomy.tsv.gz"]
     _rank_codes = [("d__", "domain"),

@@ -6,7 +6,7 @@ class CustomTx(MultiTax):
     _required_cols = ["node", "parent"]
     _possible_cols = ["node", "parent", "rank", "name"]
 
-    def __init__(self, cols: list=["node", "parent", "rank", "name"], sep: str="\t", **kwargs):
+    def __init__(self, cols: list = ["node", "parent", "rank", "name"], sep: str = "\t", **kwargs):
         """
         CustomTx()
 
@@ -58,6 +58,7 @@ class CustomTx(MultiTax):
 
         for c in cols:
             if c not in self._possible_cols:
-                raise ValueError(c + " is not a valid column: " + ",".join(self._possible_cols))
+                raise ValueError(c + " is not a valid column: " +
+                                 ",".join(self._possible_cols))
 
         return cols

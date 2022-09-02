@@ -145,7 +145,7 @@ class MultiTax(object):
 
         # User-defined rank/name.
         # If provided, insert manually,
-        # If None, check if is in the tree (defined in the given tax) 
+        # If None, check if is in the tree (defined in the given tax)
         #    otherwise insert default "root"
         if name:
             self._names[self.root_node] = name
@@ -242,7 +242,7 @@ class MultiTax(object):
 
     def parent(self, node: str):
         """
-        Returns parent node of a given node.
+        Returns the direct parent node of a given node.
         """
         if node in self._nodes:
             return self._nodes[node]
@@ -309,15 +309,8 @@ class MultiTax(object):
         If root_node is provided, use it instead of default root of tree.
         ranks and root_node are ignored if build_lineages() was used.
         """
-        # If lineages were built with build_lineages()
-        if node in self._lineages:
-            if root_node is not None:
-                warnings.warn(
-                    "root_node ignored after build_lineages() was used. Use clear_lineages() to reset it.")
-            if ranks is not None:
-                warnings.warn(
-                    "ranks ignored after build_lineages() was used. Use clear_lineages() to reset it.")
-
+        # If lineages were built with build_lineages() with matching params
+        if node in self._lineages and root_node is None and ranks is None:
             return self._lineages[node]
         else:
             if not root_node:
@@ -380,6 +373,21 @@ class MultiTax(object):
         parent = self.lineage(node=node, ranks=[rank])
         return parent[0] if parent else self.undefined_node
 
+    def closest_parent(self, node: str, ranks: str):
+        """
+        Returns the closest parent node based on a defined list of ranks
+        """
+        # Rank of node is already on the list
+        if self.rank(node) in ranks:
+            return node
+        else:
+            # check lineage from back to front until find a valid node
+            for n in self.lineage(node, ranks=ranks)[::-1]:
+                if n != self.undefined_node:
+                    return n
+        # nothing found
+        return self.undefined_node
+
     def stats(self):
         """
         Returns a dict with general numbers of the taxonomic tree
@@ -418,7 +426,9 @@ class MultiTax(object):
 
     def build_lineages(self, root_node: str = None, ranks: list = None):
         """
-        Stores lineages in memory for faster access
+        Stores lineages in memory for faster access.
+        It is valid for lineage(), rank_lineage() and name_lineage().
+        If keyword arguments (root_node, ranks) are used in those functions stored lineages are not used.
 
         Returns: None
         """
@@ -503,7 +513,8 @@ class MultiTax(object):
         else:
             # Keep ancestors of the given nodes (full lineage up-to root)
             for node in nodes:
-                for n in self.lineage(node):
+                # ranks=[] in case build_lineages() was used with specific ranks
+                for n in self.lineage(node, ranks=[]):
                     # Discard nodes from set to be kept
                     filtered_nodes.discard(n)
 
