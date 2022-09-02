@@ -149,3 +149,7 @@ def join_check(elements, sep: str):
 
 def filter_function(elements, function, value):
     return [elements[i] for i, v in enumerate(map(function, elements)) if v == value]
+
+
+def warning_on_one_line(message, category, filename, lineno, file=None, line=None):
+    return '%s:%s: %s: %s\n' % (filename, lineno, category.__name__, message)

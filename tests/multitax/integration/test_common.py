@@ -53,6 +53,14 @@ class TestCommon(unittest.TestCase):
             self.assertGreater(
                 tax.stats()["nodes"], 0, t + " failed with urls")
 
+    def test_fail_to_download(self):
+        """
+        Using wrong urls should fail (using ncbi)
+        """
+        with self.assertRaises(Exception):
+            with self.assertWarns(UserWarning):
+               tax = self.taxonomies["ncbi"]["class"](urls=["www.thisisnotawebsite.com/neither/a/file", "fasfafsafasfasf"])
+
     def test_urls_output_prefix(self):
         """
         Using urls and saving files on disk

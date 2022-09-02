@@ -2,6 +2,8 @@ from .utils import *
 from collections import Counter
 import warnings
 
+warnings.formatwarning = warning_on_one_line
+
 
 class MultiTax(object):
 
@@ -76,8 +78,19 @@ class MultiTax(object):
         if files:
             fhs = open_files(files)
         elif urls or self._default_urls:
-            fhs = download_files(urls=urls if urls else self._default_urls,
-                                 output_prefix=output_prefix)
+            retry_attempts = 3
+            att = 0
+            while att < retry_attempts:
+                att += 1
+                try:
+                    fhs = download_files(urls=urls if urls else self._default_urls,
+                                         output_prefix=output_prefix)
+                    break
+                except:
+                    warnings.warn(
+                        "Download failed, trying again (" + str(att) + "/" + str(retry_attempts) + ")", UserWarning)
+            if not fhs:
+                raise Exception("One or more files could not be downloaded: " + ", ".join(urls if urls else self._default_urls))
 
         if fhs:
             # Parse taxonomy
