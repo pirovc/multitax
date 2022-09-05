@@ -1,6 +1,5 @@
 from .utils import *
 from collections import Counter
-import warnings
 
 
 class MultiTax(object):
@@ -77,7 +76,8 @@ class MultiTax(object):
             fhs = open_files(files)
         elif urls or self._default_urls:
             fhs = download_files(urls=urls if urls else self._default_urls,
-                                 output_prefix=output_prefix)
+                                 output_prefix=output_prefix,
+                                 retry_attempts=3)
 
         if fhs:
             # Parse taxonomy
