@@ -13,23 +13,23 @@ class TestOnline(unittest.TestCase):
     tmp_dir = "tests/multitax/integration/tmp_online/"
 
     taxonomies = {}
-    taxonomies["gtdb"] = {"class": GtdbTx, "params": {}}
-    taxonomies["ncbi"] = {"class": NcbiTx, "params": {}}
-    taxonomies["silva"] = {"class": SilvaTx, "params": {}}
-    taxonomies["ott"] = {"class": OttTx, "params": {}}
-    taxonomies["greengenes"] = {"class": GreengenesTx, "params": {}}
+    taxonomies["gtdb"] = {"class": GtdbTx}
+    taxonomies["ncbi"] = {"class": NcbiTx}
+    taxonomies["silva"] = {"class": SilvaTx}
+    taxonomies["ott"] = {"class": OttTx}
+    taxonomies["greengenes"] = {"class": GreengenesTx}
     # todo test online custom
 
     @classmethod
     def setUpClass(self):
         setup_dir(self.tmp_dir)
 
-    def test_online_deafult(self):
+    def test_online_default(self):
         """
         Default test online
         """
         for t in self.taxonomies:
-            tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
+            tax = self.taxonomies[t]["class"]()
             self.assertGreater(tax.stats()["nodes"], 0, t + " failed")
 
     def test_online_output_prefix(self):
@@ -37,6 +37,6 @@ class TestOnline(unittest.TestCase):
         Saving files on disk
         """
         for t in self.taxonomies:
-            tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"], output_prefix=self.tmp_dir)
+            tax = self.taxonomies[t]["class"](output_prefix=self.tmp_dir)
             self.assertGreater(
                 tax.stats()["nodes"], 0, t + " failed with urls and output_prefix")
