@@ -24,7 +24,6 @@ def open_files(files: list):
             fhs[file] = tarfile.open(file, mode='r:gz')
         elif file.endswith(".gz"):
             fhs[file] = gzip.open(file, "rt")
-            fhs[file].peek(1)  # peek into file to check if is valid
         else:
             fhs[file] = open(file, "r")
     return fhs
