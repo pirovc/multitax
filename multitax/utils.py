@@ -1,10 +1,12 @@
-import os
 import gzip
+import io
+import os
 import tarfile
 import urllib.request
-import io
-
+import zlib
+import warnings
 from collections import OrderedDict
+from urllib.error import HTTPError
 
 
 def open_files(files: list):
@@ -27,7 +29,7 @@ def open_files(files: list):
     return fhs
 
 
-def download_files(urls: list, output_prefix: str=None):
+def download_files(urls: list, output_prefix: str = None, retry_attempts: int = 1):
     """
     Download and open files (memory/stream) or write to disk (multitax.utils.save_urls)
 
@@ -41,23 +43,37 @@ def download_files(urls: list, output_prefix: str=None):
     if isinstance(urls, str):
         urls = [urls]
 
-    # If output is provided, save files and parse from disc
-    if output_prefix:
-        files = save_urls(urls, output_prefix)
-        return open_files(files)
-    else:
-        # stream contents from url
-        fhs = OrderedDict()
-        for url in urls:
-            if url.endswith(".tar.gz") or url.endswith(".tgz"):
-                # tar files have mixed headers and content
-                # whole file should be loaded in memory first and not streamed
-                fhs[url] = tarfile.open(fileobj=load_url_mem(url), mode='r:gz')
-            elif url.endswith(".gz"):
-                fhs[url] = gzip.open(urllib.request.urlopen(url), mode="rb")
+    att = 0
+    while att < retry_attempts:
+        att += 1
+        try:
+            # If output is provided, save files and parse from disc
+            if output_prefix:
+                files = save_urls(urls, output_prefix)
+                return open_files(files)
             else:
-                fhs[url] = urllib.request.urlopen(url)
-        return fhs
+                # stream contents from url
+                fhs = OrderedDict()
+                for url in urls:
+                    if url.endswith(".tar.gz") or url.endswith(".tgz"):
+                        # tar files have mixed headers and content
+                        # whole file should be loaded in memory first and not streamed
+                        fhs[url] = tarfile.open(
+                            fileobj=load_url_mem(url), mode='r:gz')
+                    elif url.endswith(".gz"):
+                        fhs[url] = gzip.open(
+                            urllib.request.urlopen(url), mode="rb")
+                        fhs[url].peek(1)  # peek into file to check if is valid
+                    else:
+                        fhs[url] = urllib.request.urlopen(url)
+
+                return fhs
+        except (HTTPError, zlib.error, tarfile.TarError):
+            warnings.warn(
+                "Download failed, trying again (" + str(att) + "/" + str(retry_attempts) + ")", UserWarning)
+
+    raise Exception("One or more files could not be downloaded: " +
+                    ", ".join(urls))
 
 
 def close_files(fhs: dict):
@@ -149,3 +165,10 @@ def join_check(elements, sep: str):
 
 def filter_function(elements, function, value):
     return [elements[i] for i, v in enumerate(map(function, elements)) if v == value]
+
+
+def warning_on_one_line(message, category, filename, lineno, file=None, line=None):
+    return '%s:%s: %s: %s\n' % (filename, lineno, category.__name__, message)
+
+
+warnings.formatwarning = warning_on_one_line

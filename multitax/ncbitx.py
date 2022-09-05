@@ -18,14 +18,16 @@ class NcbiTx(MultiTax):
         fhs_list = list(fhs.values())
         # One element tar.gz -> taxdump.tar.gz
         if len(fhs_list) == 1 and list(fhs)[0].endswith(".tar.gz"):
-            nodes, ranks, names, self._merged = self._parse_taxdump(fhs_list[0], extended_names=kwargs["extended_names"])
+            nodes, ranks, names, self._merged = self._parse_taxdump(
+                fhs_list[0], extended_names=kwargs["extended_names"])
         else:
             # nodes.dmp
             nodes, ranks = self._parse_nodes(fhs_list[0])
 
             # [names.dmp]
             if len(fhs) >= 2:
-                names = self._parse_names(fhs_list[1], extended_names=kwargs["extended_names"])
+                names = self._parse_names(
+                    fhs_list[1], extended_names=kwargs["extended_names"])
             else:
                 names = {}
 
@@ -104,7 +106,7 @@ class NcbiTx(MultiTax):
             s["extended_names"] = len(self._extended_name_nodes)
         return s
 
-    def search_name(self, text: str, rank: str=None, exact: bool=True, force_extended: bool=False):
+    def search_name(self, text: str, rank: str = None, exact: bool = True, force_extended: bool = False):
         """
         Search node by exact or partial name.
 

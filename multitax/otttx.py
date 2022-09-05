@@ -18,7 +18,8 @@ class OttTx(MultiTax):
     def _parse(self, fhs, **kwargs):
         fhs_list = list(fhs.values())
         if len(fhs_list) == 1 and list(fhs)[0].endswith(".tgz"):
-            nodes, ranks, names = self._parse_ott(fhs_list[0], extended_names=kwargs["extended_names"])
+            nodes, ranks, names = self._parse_ott(
+                fhs_list[0], extended_names=kwargs["extended_names"])
         else:
             # nodes.dmp
             nodes, ranks, names = self._parse_taxonomy(fhs_list[0])
@@ -115,7 +116,7 @@ class OttTx(MultiTax):
             s["extended_names"] = len(self._extended_name_nodes)
         return s
 
-    def search_name(self, text: str, rank: str=None, exact: bool=True, force_extended: bool=False):
+    def search_name(self, text: str, rank: str = None, exact: bool = True, force_extended: bool = False):
         """
         Search node by exact or partial name.
 

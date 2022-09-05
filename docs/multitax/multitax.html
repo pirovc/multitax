@@ -76,6 +76,9 @@
                                 <a class="function" href="#MultiTax.parent_rank">parent_rank</a>
                         </li>
                         <li>
+                                <a class="function" href="#MultiTax.closest_parent">closest_parent</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#MultiTax.stats">stats</a>
                         </li>
                         <li>
@@ -121,26 +124,26 @@
 
 <span class="k">class</span> <span class="nc">MultiTax</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-    <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;1.1.1&quot;</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;1.2.0&quot;</span>
 
     <span class="n">_default_urls</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">_default_root_node</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">files</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">urls</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">root_parent</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
-                 <span class="n">root_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">root_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">undefined_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">undefined_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">undefined_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                 <span class="n">files</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">urls</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_parent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+                 <span class="n">root_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_rank</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_rank</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Main constructor of MultiTax and sub-classes</span>
 
@@ -193,11 +196,13 @@
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">urls</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">:</span>
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">download_files</span><span class="p">(</span><span class="n">urls</span><span class="o">=</span><span class="n">urls</span> <span class="k">if</span> <span class="n">urls</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">,</span>
-                                 <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">)</span>
+                                 <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">,</span>
+                                 <span class="n">retry_attempts</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">fhs</span><span class="p">:</span>
             <span class="c1"># Parse taxonomy</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">,</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">extended_names</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span>
+                <span class="n">fhs</span><span class="p">,</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">extended_names</span><span class="p">)</span>
             <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
             <span class="c1"># Save sources for stats (files or urls)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -208,7 +213,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">undefined_rank</span> <span class="o">=</span> <span class="n">undefined_rank</span>
 
         <span class="c1"># Set root values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_node</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">root_parent</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_node</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">,</span>
+                            <span class="n">parent</span><span class="o">=</span><span class="n">root_parent</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
 
         <span class="c1"># build auxiliary structures</span>
         <span class="k">if</span> <span class="n">build_node_children</span><span class="p">:</span>
@@ -236,6 +242,7 @@
 <span class="sd">        1) internal: will filter the tree acodingly and delete the default root_node</span>
 <span class="sd">        2) external: will add node and link to the default</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="c1"># Set parent/root with defaults</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">parent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
@@ -257,16 +264,22 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span>
 
         <span class="c1"># User-defined rank/name.</span>
-        <span class="c1"># If None, check if is in the tree or inser &quot;root&quot;</span>
+        <span class="c1"># If provided, insert manually,</span>
+        <span class="c1"># If None, check if is in the tree (defined in the given tax)</span>
+        <span class="c1">#    otherwise insert default &quot;root&quot;</span>
         <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
+        <span class="c1"># Set static name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">rank</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
+        <span class="c1"># Set static rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -290,7 +303,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Search node by exact or partial name</span>
 
@@ -349,7 +362,7 @@
 
     <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns parent node of a given node.</span>
+<span class="sd">        Returns the direct parent node of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
@@ -385,7 +398,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
-    <span class="k">def</span> <span class="nf">leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list of leaf nodes of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -409,14 +422,15 @@
             <span class="n">leaves</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">leaves</span>
 
-    <span class="k">def</span> <span class="nf">lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a o list with the lineage of a given node.</span>
-<span class="sd">        If ranks is provide, returns only nodes annotated with such ranks.</span>
+<span class="sd">        Returns a list with the lineage of a given node.</span>
+<span class="sd">        If ranks is provided, returns only nodes annotated with such ranks.</span>
 <span class="sd">        If root_node is provided, use it instead of default root of tree.</span>
+<span class="sd">        ranks and root_node are ignored if build_lineages() was used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If lineages were built and no special subset is required</span>
-        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">:</span>
+        <span class="c1"># If lineages were built with build_lineages() with matching params</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span> <span class="ow">and</span> <span class="n">root_node</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ranks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">root_node</span><span class="p">:</span>
@@ -454,7 +468,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">lin</span>
 
-    <span class="k">def</span> <span class="nf">rank_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">rank_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list with the rank lineage of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -463,7 +477,7 @@
                                      <span class="n">root_node</span><span class="o">=</span><span class="n">root_node</span><span class="p">,</span>
                                      <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)))</span>
 
-    <span class="k">def</span> <span class="nf">name_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">name_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list with the name lineage of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -478,6 +492,21 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span><span class="n">rank</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">parent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
+
+    <span class="k">def</span> <span class="nf">closest_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the closest parent node based on a defined list of ranks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Rank of node is already on the list</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">node</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># check lineage from back to front until find a valid node</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">n</span>
+        <span class="c1"># nothing found</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
     <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -515,15 +544,18 @@
 
         <span class="k">return</span> <span class="n">s</span>
 
-    <span class="k">def</span> <span class="nf">build_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">build_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Stores lineages in memory for faster access</span>
+<span class="sd">        Stores lineages in memory for faster access.</span>
+<span class="sd">        It is valid for lineage(), rank_lineage() and name_lineage().</span>
+<span class="sd">        If keyword arguments (root_node, ranks) are used in those functions stored lineages are not used.</span>
 
 <span class="sd">        Returns: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clear_lineages</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="n">root_node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span>
+                <span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="n">root_node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">clear_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -545,10 +577,11 @@
         <span class="c1"># Difference between values and keys should be only root_parent</span>
         <span class="n">lost_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="ow">in</span> <span class="n">lost_nodes</span><span class="p">,</span> <span class="s2">&quot;root_parent not defined&quot;</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;parent nodes missing: &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;parent nodes missing: &quot;</span> <span class="o">+</span> \
+            <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Filters taxonomy given a list of nodes.</span>
 <span class="sd">        By default keep all the ancestors of the given nodes.</span>
@@ -600,7 +633,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Keep ancestors of the given nodes (full lineage up-to root)</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                <span class="c1"># ranks=[] in case build_lineages() was used with specific ranks</span>
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[]):</span>
                     <span class="c1"># Discard nodes from set to be kept</span>
                     <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
@@ -618,11 +652,11 @@
 
     <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
               <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-              <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span>
-              <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
-              <span class="n">sep_multi</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span>
-              <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-              <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+              <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span>
+              <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+              <span class="n">sep_multi</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span>
+              <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Writes loaded taxonomy to a file.</span>
 
@@ -637,7 +671,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">gzip</span>
         <span class="k">if</span> <span class="n">gz</span><span class="p">:</span>
-            <span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span> <span class="k">if</span> <span class="n">output_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">output_file</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span>
+            <span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span> <span class="k">if</span> <span class="n">output_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+                <span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">output_file</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span>
             <span class="n">check_no_file</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
             <span class="n">outf</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -657,15 +692,18 @@
 
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">write_field</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="s2">&quot; is not a a valid field: &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">write_field</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="n">c</span> <span class="o">+</span> <span class="s2">&quot; is not a a valid field: &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">write_field</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">ranks</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">rank</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_rank</span><span class="p">(</span><span class="n">rank</span><span class="p">):</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">write_field</span><span class="p">[</span><span class="n">c</span><span class="p">](</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">outf</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">write_field</span><span class="p">[</span><span class="n">c</span><span class="p">](</span><span class="n">node</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">outf</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">write_field</span><span class="p">[</span><span class="n">c</span><span class="p">](</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">outf</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">write_field</span><span class="p">[</span><span class="n">c</span><span class="p">](</span><span class="n">node</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">outf</span><span class="p">)</span>
 
         <span class="n">outf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
@@ -686,26 +724,26 @@
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span><span class="k">class</span> <span class="nc">MultiTax</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
-    <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;1.1.1&quot;</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;1.2.0&quot;</span>
 
     <span class="n">_default_urls</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">_default_root_node</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">files</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">urls</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">root_parent</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
-                 <span class="n">root_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">root_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">undefined_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">undefined_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">undefined_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                 <span class="n">files</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">urls</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_parent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+                 <span class="n">root_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_rank</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_rank</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Main constructor of MultiTax and sub-classes</span>
 
@@ -758,11 +796,13 @@
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">urls</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">:</span>
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">download_files</span><span class="p">(</span><span class="n">urls</span><span class="o">=</span><span class="n">urls</span> <span class="k">if</span> <span class="n">urls</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">,</span>
-                                 <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">)</span>
+                                 <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">,</span>
+                                 <span class="n">retry_attempts</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">fhs</span><span class="p">:</span>
             <span class="c1"># Parse taxonomy</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">,</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">extended_names</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span>
+                <span class="n">fhs</span><span class="p">,</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">extended_names</span><span class="p">)</span>
             <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
             <span class="c1"># Save sources for stats (files or urls)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -773,7 +813,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">undefined_rank</span> <span class="o">=</span> <span class="n">undefined_rank</span>
 
         <span class="c1"># Set root values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_node</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">root_parent</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_node</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">,</span>
+                            <span class="n">parent</span><span class="o">=</span><span class="n">root_parent</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
 
         <span class="c1"># build auxiliary structures</span>
         <span class="k">if</span> <span class="n">build_node_children</span><span class="p">:</span>
@@ -801,6 +842,7 @@
 <span class="sd">        1) internal: will filter the tree acodingly and delete the default root_node</span>
 <span class="sd">        2) external: will add node and link to the default</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="c1"># Set parent/root with defaults</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="o">=</span> <span class="n">parent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
@@ -822,16 +864,22 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span>
 
         <span class="c1"># User-defined rank/name.</span>
-        <span class="c1"># If None, check if is in the tree or inser &quot;root&quot;</span>
+        <span class="c1"># If provided, insert manually,</span>
+        <span class="c1"># If None, check if is in the tree (defined in the given tax)</span>
+        <span class="c1">#    otherwise insert default &quot;root&quot;</span>
         <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
+        <span class="c1"># Set static name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">rank</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;root&quot;</span>
+        <span class="c1"># Set static rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_rank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">root_node</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -855,7 +903,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Search node by exact or partial name</span>
 
@@ -914,7 +962,7 @@
 
     <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns parent node of a given node.</span>
+<span class="sd">        Returns the direct parent node of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
@@ -950,7 +998,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
-    <span class="k">def</span> <span class="nf">leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list of leaf nodes of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -974,14 +1022,15 @@
             <span class="n">leaves</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">child</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">leaves</span>
 
-    <span class="k">def</span> <span class="nf">lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a o list with the lineage of a given node.</span>
-<span class="sd">        If ranks is provide, returns only nodes annotated with such ranks.</span>
+<span class="sd">        Returns a list with the lineage of a given node.</span>
+<span class="sd">        If ranks is provided, returns only nodes annotated with such ranks.</span>
 <span class="sd">        If root_node is provided, use it instead of default root of tree.</span>
+<span class="sd">        ranks and root_node are ignored if build_lineages() was used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If lineages were built and no special subset is required</span>
-        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">:</span>
+        <span class="c1"># If lineages were built with build_lineages() with matching params</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span> <span class="ow">and</span> <span class="n">root_node</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ranks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">root_node</span><span class="p">:</span>
@@ -1019,7 +1068,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">lin</span>
 
-    <span class="k">def</span> <span class="nf">rank_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">rank_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list with the rank lineage of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1028,7 +1077,7 @@
                                      <span class="n">root_node</span><span class="o">=</span><span class="n">root_node</span><span class="p">,</span>
                                      <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)))</span>
 
-    <span class="k">def</span> <span class="nf">name_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">name_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list with the name lineage of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1043,6 +1092,21 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span><span class="n">rank</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">parent</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">parent</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
+
+    <span class="k">def</span> <span class="nf">closest_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the closest parent node based on a defined list of ranks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Rank of node is already on the list</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">node</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># check lineage from back to front until find a valid node</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">n</span>
+        <span class="c1"># nothing found</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
 
     <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1080,15 +1144,18 @@
 
         <span class="k">return</span> <span class="n">s</span>
 
-    <span class="k">def</span> <span class="nf">build_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">build_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Stores lineages in memory for faster access</span>
+<span class="sd">        Stores lineages in memory for faster access.</span>
+<span class="sd">        It is valid for lineage(), rank_lineage() and name_lineage().</span>
+<span class="sd">        If keyword arguments (root_node, ranks) are used in those functions stored lineages are not used.</span>
 
 <span class="sd">        Returns: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clear_lineages</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="n">root_node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span>
+                <span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="n">root_node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">clear_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1110,10 +1177,11 @@
         <span class="c1"># Difference between values and keys should be only root_parent</span>
         <span class="n">lost_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="ow">in</span> <span class="n">lost_nodes</span><span class="p">,</span> <span class="s2">&quot;root_parent not defined&quot;</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;parent nodes missing: &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;parent nodes missing: &quot;</span> <span class="o">+</span> \
+            <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Filters taxonomy given a list of nodes.</span>
 <span class="sd">        By default keep all the ancestors of the given nodes.</span>
@@ -1165,7 +1233,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Keep ancestors of the given nodes (full lineage up-to root)</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                <span class="c1"># ranks=[] in case build_lineages() was used with specific ranks</span>
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[]):</span>
                     <span class="c1"># Discard nodes from set to be kept</span>
                     <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
@@ -1183,11 +1252,11 @@
 
     <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
               <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-              <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span>
-              <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
-              <span class="n">sep_multi</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span>
-              <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-              <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+              <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span>
+              <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+              <span class="n">sep_multi</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span>
+              <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Writes loaded taxonomy to a file.</span>
 
@@ -1202,7 +1271,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">gzip</span>
         <span class="k">if</span> <span class="n">gz</span><span class="p">:</span>
-            <span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span> <span class="k">if</span> <span class="n">output_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">output_file</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span>
+            <span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span> <span class="k">if</span> <span class="n">output_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+                <span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">output_file</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span>
             <span class="n">check_no_file</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
             <span class="n">outf</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1222,15 +1292,18 @@
 
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">write_field</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="s2">&quot; is not a a valid field: &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">write_field</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="n">c</span> <span class="o">+</span> <span class="s2">&quot; is not a a valid field: &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">write_field</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">ranks</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">rank</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_rank</span><span class="p">(</span><span class="n">rank</span><span class="p">):</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">write_field</span><span class="p">[</span><span class="n">c</span><span class="p">](</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">outf</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">write_field</span><span class="p">[</span><span class="n">c</span><span class="p">](</span><span class="n">node</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">outf</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">write_field</span><span class="p">[</span><span class="n">c</span><span class="p">](</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">outf</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">write_field</span><span class="p">[</span><span class="n">c</span><span class="p">](</span><span class="n">node</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">outf</span><span class="p">)</span>
 
         <span class="n">outf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
@@ -1264,20 +1337,20 @@
             <details>
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">files</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">urls</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">root_parent</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
-                 <span class="n">root_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">root_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">undefined_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">undefined_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">undefined_rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                 <span class="n">files</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">urls</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_parent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span>
+                 <span class="n">root_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">root_rank</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">undefined_rank</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">build_name_nodes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">build_node_children</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">build_rank_nodes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">extended_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Main constructor of MultiTax and sub-classes</span>
 
@@ -1330,11 +1403,13 @@
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">urls</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">:</span>
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">download_files</span><span class="p">(</span><span class="n">urls</span><span class="o">=</span><span class="n">urls</span> <span class="k">if</span> <span class="n">urls</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">,</span>
-                                 <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">)</span>
+                                 <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">,</span>
+                                 <span class="n">retry_attempts</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">fhs</span><span class="p">:</span>
             <span class="c1"># Parse taxonomy</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">fhs</span><span class="p">,</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">extended_names</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ranks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span>
+                <span class="n">fhs</span><span class="p">,</span> <span class="n">extended_names</span><span class="o">=</span><span class="n">extended_names</span><span class="p">)</span>
             <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
             <span class="c1"># Save sources for stats (files or urls)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fhs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -1345,7 +1420,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">undefined_rank</span> <span class="o">=</span> <span class="n">undefined_rank</span>
 
         <span class="c1"># Set root values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_node</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">root_parent</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_root_node</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">root_node</span> <span class="k">if</span> <span class="n">root_node</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span><span class="p">,</span>
+                            <span class="n">parent</span><span class="o">=</span><span class="n">root_parent</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">root_name</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">root_rank</span><span class="p">)</span>
 
         <span class="c1"># build auxiliary structures</span>
         <span class="k">if</span> <span class="n">build_node_children</span><span class="p">:</span>
@@ -1396,7 +1472,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
                             <div id="MultiTax.version" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#MultiTax.version">#&nbsp;&nbsp</a>
 
-        <span class="name">version</span><span class="default_value"> = &#39;1.1.1&#39;</span>
+        <span class="name">version</span><span class="default_value"> = &#39;1.2.0&#39;</span>
     </div>
 
     
@@ -1443,7 +1519,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Search node by exact or partial name</span>
 
@@ -1529,7 +1605,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns parent node of a given node.</span>
+<span class="sd">        Returns the direct parent node of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
@@ -1539,7 +1615,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 
         </details>
 
-            <div class="docstring"><p>Returns parent node of a given node.</p>
+            <div class="docstring"><p>Returns the direct parent node of a given node.</p>
 </div>
 
 
@@ -1639,7 +1715,7 @@ Mainly used for NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">leaves</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list of leaf nodes of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1669,14 +1745,15 @@ Mainly used for NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a o list with the lineage of a given node.</span>
-<span class="sd">        If ranks is provide, returns only nodes annotated with such ranks.</span>
+<span class="sd">        Returns a list with the lineage of a given node.</span>
+<span class="sd">        If ranks is provided, returns only nodes annotated with such ranks.</span>
 <span class="sd">        If root_node is provided, use it instead of default root of tree.</span>
+<span class="sd">        ranks and root_node are ignored if build_lineages() was used.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If lineages were built and no special subset is required</span>
-        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">:</span>
+        <span class="c1"># If lineages were built with build_lineages() with matching params</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span> <span class="ow">and</span> <span class="n">root_node</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ranks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">root_node</span><span class="p">:</span>
@@ -1717,9 +1794,10 @@ Mainly used for NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 
         </details>
 
-            <div class="docstring"><p>Returns a o list with the lineage of a given node.
-If ranks is provide, returns only nodes annotated with such ranks.
-If root_node is provided, use it instead of default root of tree.</p>
+            <div class="docstring"><p>Returns a list with the lineage of a given node.
+If ranks is provided, returns only nodes annotated with such ranks.
+If root_node is provided, use it instead of default root of tree.
+ranks and root_node are ignored if build_lineages() was used.</p>
 </div>
 
 
@@ -1734,7 +1812,7 @@ If root_node is provided, use it instead of default root of tree.</p>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">rank_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">rank_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list with the rank lineage of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1761,7 +1839,7 @@ If root_node is provided, use it instead of default root of tree.</p>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">name_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">name_lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list with the name lineage of a given node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1799,6 +1877,39 @@ If root_node is provided, use it instead of default root of tree.</p>
         </details>
 
             <div class="docstring"><p>Returns the parent node of a given rank in the specified rank.</p>
+</div>
+
+
+                            </div>
+                            <div id="MultiTax.closest_parent" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#MultiTax.closest_parent">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">closest_parent</span><span class="signature">(self, node: str, ranks: str)</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">closest_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the closest parent node based on a defined list of ranks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Rank of node is already on the list</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">node</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># check lineage from back to front until find a valid node</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">n</span>
+        <span class="c1"># nothing found</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Returns the closest parent node based on a defined list of ranks</p>
 </div>
 
 
@@ -1889,20 +2000,25 @@ pprint(tax.stats())
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">build_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">build_lineages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_node</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Stores lineages in memory for faster access</span>
+<span class="sd">        Stores lineages in memory for faster access.</span>
+<span class="sd">        It is valid for lineage(), rank_lineage() and name_lineage().</span>
+<span class="sd">        If keyword arguments (root_node, ranks) are used in those functions stored lineages are not used.</span>
 
 <span class="sd">        Returns: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clear_lineages</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="n">root_node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lineages</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span>
+                <span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">root_node</span><span class="o">=</span><span class="n">root_node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="n">ranks</span><span class="p">)</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Stores lineages in memory for faster access</p>
+            <div class="docstring"><p>Stores lineages in memory for faster access.
+It is valid for lineage(), rank_lineage() and name_lineage().
+If keyword arguments (root_node, ranks) are used in those functions stored lineages are not used.</p>
 
 <p>Returns: None</p>
 </div>
@@ -1959,7 +2075,8 @@ pprint(tax.stats())
         <span class="c1"># Difference between values and keys should be only root_parent</span>
         <span class="n">lost_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_parent</span> <span class="ow">in</span> <span class="n">lost_nodes</span><span class="p">,</span> <span class="s2">&quot;root_parent not defined&quot;</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;parent nodes missing: &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;parent nodes missing: &quot;</span> <span class="o">+</span> \
+            <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lost_nodes</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 </pre></div>
 
@@ -1982,7 +2099,7 @@ pprint(tax.stats())
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">desc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Filters taxonomy given a list of nodes.</span>
 <span class="sd">        By default keep all the ancestors of the given nodes.</span>
@@ -2034,7 +2151,8 @@ pprint(tax.stats())
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Keep ancestors of the given nodes (full lineage up-to root)</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+                <span class="c1"># ranks=[] in case build_lineages() was used with specific ranks</span>
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[]):</span>
                     <span class="c1"># Discard nodes from set to be kept</span>
                     <span class="n">filtered_nodes</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 
@@ -2099,11 +2217,11 @@ tax.filter('g__Enterovibrio', desc=True)
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
               <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-              <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span>
-              <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
-              <span class="n">sep_multi</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;|&quot;</span><span class="p">,</span>
-              <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-              <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+              <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;node&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">,</span> <span class="s2">&quot;rank&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">],</span>
+              <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
+              <span class="n">sep_multi</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;|&quot;</span><span class="p">,</span>
+              <span class="n">ranks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">gz</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Writes loaded taxonomy to a file.</span>
 
@@ -2118,7 +2236,8 @@ tax.filter('g__Enterovibrio', desc=True)
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">gzip</span>
         <span class="k">if</span> <span class="n">gz</span><span class="p">:</span>
-            <span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span> <span class="k">if</span> <span class="n">output_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">output_file</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span>
+            <span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span> <span class="k">if</span> <span class="n">output_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+                <span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">output_file</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span>
             <span class="n">check_no_file</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
             <span class="n">outf</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;wt&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2138,15 +2257,18 @@ tax.filter('g__Enterovibrio', desc=True)
 
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">write_field</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="s2">&quot; is not a a valid field: &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">write_field</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="n">c</span> <span class="o">+</span> <span class="s2">&quot; is not a a valid field: &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">write_field</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">ranks</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">rank</span> <span class="ow">in</span> <span class="n">ranks</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes_rank</span><span class="p">(</span><span class="n">rank</span><span class="p">):</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">write_field</span><span class="p">[</span><span class="n">c</span><span class="p">](</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">outf</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">write_field</span><span class="p">[</span><span class="n">c</span><span class="p">](</span><span class="n">node</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">outf</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">write_field</span><span class="p">[</span><span class="n">c</span><span class="p">](</span><span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">outf</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">write_field</span><span class="p">[</span><span class="n">c</span><span class="p">](</span><span class="n">node</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">outf</span><span class="p">)</span>
 
         <span class="n">outf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>

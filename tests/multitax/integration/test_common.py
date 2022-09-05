@@ -1,12 +1,11 @@
+from multitax import GreengenesTx, GtdbTx, NcbiTx, OttTx, SilvaTx, CustomTx
+from tests.multitax.utils import setup_dir, uncompress_gzip, uncompress_tar_gzip
 import unittest
 import os
 import sys
 import random
 
 sys.path.append("tests/multitax/")
-from utils import setup_dir, uncompress_gzip, uncompress_tar_gzip
-
-from multitax import GreengenesTx, GtdbTx, NcbiTx, OttTx, SilvaTx, CustomTx
 
 
 class TestCommon(unittest.TestCase):
@@ -48,9 +47,19 @@ class TestCommon(unittest.TestCase):
         """
         for t in self.taxonomies:
             # simulate url with "file://" and absolute path
-            urls = ["file://" + os.path.abspath(file) for file in self.taxonomies[t]["params"]["files"]]
+            urls = ["file://" + os.path.abspath(file)
+                    for file in self.taxonomies[t]["params"]["files"]]
             tax = self.taxonomies[t]["class"](urls=urls)
-            self.assertGreater(tax.stats()["nodes"], 0, t + " failed with urls")
+            self.assertGreater(
+                tax.stats()["nodes"], 0, t + " failed with urls")
+
+    def test_fail_to_download(self):
+        """
+        Using wrong urls should fail (using ncbi)
+        """
+        with self.assertRaises(Exception):
+            with self.assertWarns(UserWarning):
+               tax = self.taxonomies["ncbi"]["class"](urls=["www.thisisnotawebsite.com/neither/a/file", "fasfafsafasfasf"])
 
     def test_urls_output_prefix(self):
         """
@@ -58,9 +67,12 @@ class TestCommon(unittest.TestCase):
         """
         for t in self.taxonomies:
             # simulate url with "file://" and absolute path
-            urls = ["file://" + os.path.abspath(file) for file in self.taxonomies[t]["params"]["files"]]
-            tax = self.taxonomies[t]["class"](urls=urls, output_prefix=self.tmp_dir)
-            self.assertGreater(tax.stats()["nodes"], 0, t + " failed with urls and output_prefix")
+            urls = ["file://" + os.path.abspath(file)
+                    for file in self.taxonomies[t]["params"]["files"]]
+            tax = self.taxonomies[t]["class"](
+                urls=urls, output_prefix=self.tmp_dir)
+            self.assertGreater(
+                tax.stats()["nodes"], 0, t + " failed with urls and output_prefix")
 
     def test_gzip_uncompressed(self):
         """
@@ -77,9 +89,12 @@ class TestCommon(unittest.TestCase):
 
                 if uncompressed:
                     # Check if results are equal with compressed and uncompressed files
-                    tax_compressed = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
-                    tax_uncompressed = self.taxonomies[t]["class"](files=uncompressed)
-                    self.assertEqual(tax_compressed.stats(), tax_uncompressed.stats(), t + " failed with uncompressed files")
+                    tax_compressed = self.taxonomies[t]["class"](
+                        **self.taxonomies[t]["params"])
+                    tax_uncompressed = self.taxonomies[t]["class"](
+                        files=uncompressed)
+                    self.assertEqual(tax_compressed.stats(), tax_uncompressed.stats(
+                    ), t + " failed with uncompressed files")
 
     def test_tar_gzip_uncompressed_ncbi(self):
         """
@@ -87,8 +102,10 @@ class TestCommon(unittest.TestCase):
         """
 
         # Ncbi
-        tax_compressed = self.taxonomies["ncbi"]["class"](**self.taxonomies["ncbi"]["params"])
-        uncompressed_files = uncompress_tar_gzip(f=self.taxonomies["ncbi"]["params"]["files"][0], outd=self.tmp_dir)
+        tax_compressed = self.taxonomies["ncbi"]["class"](
+            **self.taxonomies["ncbi"]["params"])
+        uncompressed_files = uncompress_tar_gzip(
+            f=self.taxonomies["ncbi"]["params"]["files"][0], outd=self.tmp_dir)
         self.assertIn("nodes.dmp", uncompressed_files)
         self.assertIn("names.dmp", uncompressed_files)
         self.assertIn("merged.dmp", uncompressed_files)
@@ -102,7 +119,8 @@ class TestCommon(unittest.TestCase):
         ext_ncbi_conf = self.taxonomies["ncbi"].copy()
         ext_ncbi_conf["params"]["extended_names"] = True
         tax_compressed = ext_ncbi_conf["class"](**ext_ncbi_conf["params"])
-        uncompressed_files = uncompress_tar_gzip(f=ext_ncbi_conf["params"]["files"][0], outd=self.tmp_dir)
+        uncompressed_files = uncompress_tar_gzip(
+            f=ext_ncbi_conf["params"]["files"][0], outd=self.tmp_dir)
         self.assertIn("nodes.dmp", uncompressed_files)
         self.assertIn("names.dmp", uncompressed_files)
         self.assertIn("merged.dmp", uncompressed_files)
@@ -118,8 +136,10 @@ class TestCommon(unittest.TestCase):
         Using uncompressed tar gzip files for ott
         """
         # Ott
-        tax_compressed = self.taxonomies["ott"]["class"](**self.taxonomies["ott"]["params"])
-        uncompressed_files = uncompress_tar_gzip(f=self.taxonomies["ott"]["params"]["files"][0], outd=self.tmp_dir)
+        tax_compressed = self.taxonomies["ott"]["class"](
+            **self.taxonomies["ott"]["params"])
+        uncompressed_files = uncompress_tar_gzip(
+            f=self.taxonomies["ott"]["params"]["files"][0], outd=self.tmp_dir)
         self.assertIn("taxonomy.tsv", uncompressed_files)
         self.assertIn("forwards.tsv", uncompressed_files)
         tax_uncompressed = self.taxonomies["ott"]["class"](files=[self.tmp_dir + "taxonomy.tsv",
@@ -131,7 +151,8 @@ class TestCommon(unittest.TestCase):
         ext_ott_conf = self.taxonomies["ott"].copy()
         ext_ott_conf["params"]["extended_names"] = True
         tax_compressed = ext_ott_conf["class"](**ext_ott_conf["params"])
-        uncompressed_files = uncompress_tar_gzip(f=ext_ott_conf["params"]["files"][0], outd=self.tmp_dir)
+        uncompressed_files = uncompress_tar_gzip(
+            f=ext_ott_conf["params"]["files"][0], outd=self.tmp_dir)
         self.assertIn("taxonomy.tsv", uncompressed_files)
         self.assertIn("forwards.tsv", uncompressed_files)
         self.assertIn("synonyms.tsv", uncompressed_files)

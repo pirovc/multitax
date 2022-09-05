@@ -11,6 +11,8 @@ MultiTax is a Python package that provides a common and generalized set of funct
  - Enable integration and compatibility with multiple taxonomies
  - *Translate and convert taxonomies (not yet implemented)*
 
+MultiTax does not link sequence identifiers to taxonomic nodes, it just handles the taxonomy alone. Some kind of integration to work with sequence ids is planned, but not yet implemented.
+
 ## Installation
 	
 ### pip
@@ -50,8 +52,10 @@ tax.lineage("g__Escherichia")
 
 [List of all functions](https://pirovc.github.io/multitax/multitax/multitax.html)
 
+### Obtain/load/parse taxonomy
+
 ```python
-from multitax import GtdbTx
+from multitax import GtdbTx  # or NcbiTx, SilvaTx, ...
 
 # Download and parse in memory
 tax = GtdbTx()
@@ -64,7 +68,11 @@ tax = GtdbTx(output_prefix="my/path/")
 
 # Download and filter only specific branch
 tax = GtdbTx(root_node="p__Proteobacteria") 
+```
 
+### Explore
+
+```python
 # List parent node
 tax.parent("g__Escherichia")
 # f__Enterobacteriaceae
@@ -73,9 +81,13 @@ tax.parent("g__Escherichia")
 tax.children("g__Escherichia")
 # ['s__Escherichia flexneri', 's__Escherichia coli', 's__Escherichia dysenteriae', 's__Escherichia coli_D', 's__Escherichia albertii', 's__Escherichia marmotae', 's__Escherichia coli_C', 's__Escherichia sp005843885', 's__Escherichia sp000208585', 's__Escherichia fergusonii', 's__Escherichia sp001660175', 's__Escherichia sp004211955', 's__Escherichia sp002965065']
 
-# Get specific rank parent node
+# Get parent node from a defined rank
 tax.parent_rank("s__Lentisphaera araneosa", "phylum")
 # 'p__Verrucomicrobiota'
+
+# Get the closest parent from a list of ranks
+tax.closest_parent("s__Lentisphaera araneosa", ranks=["phylum", "class", "family"])
+# 'f__Lentisphaeraceae'
 
 # Get lineage
 tax.lineage("g__Escherichia")
@@ -89,7 +101,7 @@ tax.name_lineage("g__Escherichia")
 tax.rank_lineage("g__Escherichia")
 # ['root', 'domain', 'phylum', 'class', 'order', 'family', 'genus']
 
-# Get lineage with specific ranks and root
+# Get lineage with defined ranks and root node
 tax.lineage("g__Escherichia", root_node="p__Proteobacteria", ranks=["phylum", "class", "family", "genus"])
 # ['p__Proteobacteria', 'c__Gammaproteobacteria', 'f__Enterobacteriaceae', 'g__Escherichia']
 
@@ -147,7 +159,7 @@ tax.write("custom_tax.tsv", cols=["node", "rank", "name_lineage"])
 #...
 ```
 
-## The same goes for the other taxonomies
+### The same goes for the other taxonomies
 
 ```python
 # NCBI
@@ -179,6 +191,8 @@ tax.lineage("f__Enterobacteriaceae")
 
 Using pylca: https://github.com/pirovc/pylca
 
+    conda install -c bioconda pylca
+
 ```python
 from pylca.pylca import LCA
 from multitax import GtdbTx
@@ -195,13 +209,13 @@ L("s__Escherichia dysenteriae", "s__Pseudomonas aeruginosa")
 ```
 
 ## General information
-
- - Taxonomies are parsed into nodes. Each node is annotated with a name and a rank.
- - Some taxonomies have a numeric taxonomic identifier (NCBI, Silva) and other use the rank + name as an identifier. In MultiTax all identifiers are treated as strings.
+ 
+ - Taxonomies are parsed into `nodes`. Each node is annotated with a `name` and a `rank`.
+ - Some taxonomies have a numeric taxonomic identifier (e.g. NCBI) and other use the rank + name as an identifier (e.g. GTDB). In MultiTax all identifiers are treated as strings.
  - A single root node is defined by default for each taxonomy (or `1` when not defined). This can be changed with `root_node` when loading the taxonomy (as well as annotations `root_parent`, `root_name`, `root_rank`). If the `root_node` already exists, the tree will be filtered.
  - Standard values for unknown/undefined nodes can be configured with `undefined_node`,`undefined_name` and `undefined_rank`. Those are default values returned when nodes/names/ranks are not found.
  - Taxonomy files are automatically download or can be loaded from disk (`files` parameter). Alternative `urls` can be provided. When downloaded, files are handled in memory. It is possible to save the downloaded file to disk with `output_prefix`.
- 
+
 ## Translation between taxonomies
 
 Not yet implemented. The goal here is to map different taxonomies if the linkage data is available. That's what I think will be possible.
@@ -225,3 +239,4 @@ Not yet implemented. The goal here is to map different taxonomies if the linkage
 - https://github.com/shenwei356/taxonkit
 - https://github.com/bioforensics/pytaxonkit
 - https://github.com/chanzuckerberg/taxoniq
+- https://github.com/sherrillmix/taxonomizr

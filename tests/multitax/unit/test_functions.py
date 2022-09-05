@@ -1,11 +1,7 @@
-import unittest
-import sys
-
-sys.path.append("tests/multitax/")
-from utils import setup_dir
-
-from multitax import CustomTx, OttTx, NcbiTx
 from multitax.utils import check_file
+from multitax import CustomTx, OttTx, NcbiTx
+from tests.multitax.utils import setup_dir
+import unittest
 
 
 class TestFunctions(unittest.TestCase):
@@ -46,7 +42,7 @@ class TestFunctions(unittest.TestCase):
         """
         test search_name function
         """
-        
+
         # Exact matches
         tax = CustomTx(files=self.test_file)
         self.assertCountEqual(tax.search_name("Node1"), ["1"])
@@ -56,7 +52,8 @@ class TestFunctions(unittest.TestCase):
 
         # not exact matches
         tax = CustomTx(files=self.test_file)
-        self.assertCountEqual(tax.search_name("Node2", exact=False), ["2.1", "2.2"])
+        self.assertCountEqual(tax.search_name(
+            "Node2", exact=False), ["2.1", "2.2"])
         self.assertCountEqual(tax.search_name("Node2", exact=True), [])
         self.assertCountEqual(tax.search_name("Node1", exact=False), ["1"])
         self.assertCountEqual(tax.search_name("NotThere", exact=False), [])
@@ -64,17 +61,24 @@ class TestFunctions(unittest.TestCase):
         # Changing root name
         tax = CustomTx(files=self.test_file, root_name="AnotherRootName")
         self.assertCountEqual(tax.search_name("Node1", exact=False), [])
-        self.assertCountEqual(tax.search_name("AnotherRootName", exact=True), ["1"])
+        self.assertCountEqual(tax.search_name(
+            "AnotherRootName", exact=True), ["1"])
         self.assertCountEqual(tax.search_name("Another", exact=False), ["1"])
 
         # With specific rank
         tax = CustomTx(files=self.test_file)
-        self.assertCountEqual(tax.search_name("Node2.1", exact=True, rank="rank-2"), ["2.1"])
-        self.assertCountEqual(tax.search_name("Node4.4", exact=True, rank="rank-4"), ["4.4"])
-        self.assertCountEqual(tax.search_name("Node", exact=False, rank="rank-5"), ["5.1", "5.2"])
-        self.assertCountEqual(tax.search_name("Node2.1", exact=True, rank="rank-3"), [])
-        self.assertCountEqual(tax.search_name("Node4.4", exact=True, rank="rank-1"), [])
-        self.assertCountEqual(tax.search_name("Node5", exact=False, rank="rank-XXX"), [])
+        self.assertCountEqual(tax.search_name(
+            "Node2.1", exact=True, rank="rank-2"), ["2.1"])
+        self.assertCountEqual(tax.search_name(
+            "Node4.4", exact=True, rank="rank-4"), ["4.4"])
+        self.assertCountEqual(tax.search_name(
+            "Node", exact=False, rank="rank-5"), ["5.1", "5.2"])
+        self.assertCountEqual(tax.search_name(
+            "Node2.1", exact=True, rank="rank-3"), [])
+        self.assertCountEqual(tax.search_name(
+            "Node4.4", exact=True, rank="rank-1"), [])
+        self.assertCountEqual(tax.search_name(
+            "Node5", exact=False, rank="rank-XXX"), [])
 
     def test_nodes_rank(self):
         """
@@ -82,7 +86,8 @@ class TestFunctions(unittest.TestCase):
         """
         tax = CustomTx(files=self.test_file)
         self.assertCountEqual(tax.nodes_rank("rank-1"), ["1"])
-        self.assertCountEqual(tax.nodes_rank("rank-4"), ["4.1", "4.2", "4.3", "4.4", "4.5", "4.6"])
+        self.assertCountEqual(tax.nodes_rank("rank-4"),
+                              ["4.1", "4.2", "4.3", "4.4", "4.5", "4.6"])
         self.assertCountEqual(tax.nodes_rank("rank-9999"), [])
 
     def test_parent(self):
@@ -139,8 +144,10 @@ class TestFunctions(unittest.TestCase):
         test leaves function
         """
         tax = CustomTx(files=self.test_file)
-        self.assertCountEqual(tax.leaves(), ["4.1", "4.2", "4.3", "4.5", "4.6", "5.1", "5.2"])
-        self.assertCountEqual(tax.leaves("1"), ["4.1", "4.2", "4.3", "5.1", "5.2", "4.5", "4.6"])
+        self.assertCountEqual(
+            tax.leaves(), ["4.1", "4.2", "4.3", "4.5", "4.6", "5.1", "5.2"])
+        self.assertCountEqual(tax.leaves(
+            "1"), ["4.1", "4.2", "4.3", "5.1", "5.2", "4.5", "4.6"])
         self.assertCountEqual(tax.leaves("2.2"), ["5.1", "5.2", "4.5"])
         self.assertCountEqual(tax.leaves("4.4"), ["5.1", "5.2"])
         self.assertCountEqual(tax.leaves("5.1"), ["5.1"])
@@ -211,7 +218,8 @@ class TestFunctions(unittest.TestCase):
         test rank_lineage function
         """
         tax = CustomTx(files=self.test_file)
-        self.assertEqual(tax.rank_lineage("5.2"), ["rank-1", "rank-2", "rank-3", "rank-4", "rank-5"])
+        self.assertEqual(tax.rank_lineage("5.2"), [
+                         "rank-1", "rank-2", "rank-3", "rank-4", "rank-5"])
         self.assertEqual(tax.rank_lineage("4.6"), ["rank-1", "rank-4"])
         self.assertEqual(tax.rank_lineage("1"), ["rank-1"])
         self.assertEqual(tax.rank_lineage("9999"), [])
@@ -247,7 +255,8 @@ class TestFunctions(unittest.TestCase):
         test rank_lineage function
         """
         tax = CustomTx(files=self.test_file)
-        self.assertEqual(tax.name_lineage("5.2"), ["Node1", "Node2.2", "Node3.4", "Node4.4", "Node5.2"])
+        self.assertEqual(tax.name_lineage("5.2"), [
+                         "Node1", "Node2.2", "Node3.4", "Node4.4", "Node5.2"])
         self.assertEqual(tax.name_lineage("4.6"), ["Node1", "Node4.6"])
         self.assertEqual(tax.name_lineage("1"), ["Node1"])
         self.assertEqual(tax.name_lineage("9999"), [])
@@ -290,6 +299,29 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(tax.parent_rank("2.2", "XXXX"), tax.undefined_node)
         self.assertEqual(tax.parent_rank("CCCC", "XXXX"), tax.undefined_node)
 
+    def test_closest_parent(self):
+        """
+        test closest_parent function
+        """
+        tax = CustomTx(files=self.test_file)
+        self.assertEqual(tax.closest_parent(
+            "5.2", ["rank-1", "rank-3"]), "3.4")
+        self.assertEqual(tax.closest_parent(
+            "5.2", ["rank-1", "rank-3", "rank-4"]), "4.4")
+        self.assertEqual(tax.closest_parent(
+            "5.2", ["rank-1", "rank-3", "rank-4", "rank-5"]), "5.2")
+        self.assertEqual(tax.closest_parent(
+            "5.2", ["rank-1", "rank-3", "rank-4", "rank-5", "XXXXX"]), "5.2")
+        self.assertEqual(tax.closest_parent(
+            "3.4", ["rank-1", "rank-4", "rank-5"]), "1")
+        self.assertEqual(tax.closest_parent(
+            "4.6", ["rank-1", "rank-2", "rank-3", "rank-5"]), "1")
+        self.assertEqual(tax.closest_parent(
+            "4.6", ["rank-2", "rank-3", "rank-5"]), tax.undefined_node)
+        self.assertEqual(tax.closest_parent(
+            "3.4", ["X", "Y", "Z"]), tax.undefined_node)
+        self.assertEqual(tax.closest_parent("3.4", []), "3.4")
+
     def test_stats(self):
         """
         test stats function
@@ -303,18 +335,42 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(len(stats["ranked_nodes"]), 5)
         self.assertEqual(sum(stats["ranked_nodes"].values()), stats["nodes"])
         self.assertEqual(sum(stats["ranked_leaves"].values()), stats["leaves"])
-        self.assertCountEqual(list(stats["ranked_leaves"].keys()), ["rank-4", "rank-5"])
+        self.assertCountEqual(list(stats["ranked_leaves"].keys()), [
+                              "rank-4", "rank-5"])
 
     def test_build_lineages(self):
         """
         test build_lineages function
         """
+        # build full lineages
         tax = CustomTx(files=self.test_file)
         self.assertEqual(len(tax._lineages), 0)
         tax.build_lineages()
         self.assertEqual(len(tax._lineages), 14)
         self.assertEqual(tax.lineage("5.2"), ["1", "2.2", "3.4", "4.4", "5.2"])
         self.assertEqual(tax.lineage("XXX"), [])
+        # do not use stored lineage with keyword arguments
+        self.assertEqual(tax.lineage("5.2", root_node="2.2"),
+                         ["2.2", "3.4", "4.4", "5.2"])
+        self.assertEqual(tax.lineage(
+            "5.2", ranks=["rank-2", "rank-4"]), ["2.2", "4.4"])
+        self.assertEqual(tax.lineage("5.2", root_node="2.2", ranks=[
+                         "rank-2", "rank-4"]), ["2.2", "4.4"])
+
+        # build filtered lineages
+        tax.clear_lineages()
+        self.assertEqual(len(tax._lineages), 0)
+        tax.build_lineages(root_node="2.2", ranks=["rank-2", "rank-4"])
+        self.assertEqual(len(tax._lineages), 14)
+        self.assertEqual(tax.lineage("5.2"), ["2.2", "4.4"])
+        self.assertEqual(tax.lineage("XXX"), [])
+        # do not use stored lineage with keyword arguments
+        self.assertEqual(tax.lineage("5.2", root_node="3.4"),
+                         ["3.4", "4.4", "5.2"])
+        self.assertEqual(tax.lineage("5.2", ranks=[]), [
+                         "1", "2.2", "3.4", "4.4", "5.2"])
+        self.assertEqual(tax.lineage("5.2", root_node="2.2", ranks=[
+                         "rank-2", "rank-5"]), ["2.2", "5.2"])
 
     def test_clear_lineages(self):
         """
@@ -459,11 +515,13 @@ class TestFunctions(unittest.TestCase):
 
         self.assertEqual(tax.parent("5044012"), tax.undefined_node)
         self.assertEqual(tax.latest("5044012"), "4603004")
-        self.assertNotEqual(tax.parent(tax.latest("5044012")), tax.undefined_node)
+        self.assertNotEqual(tax.parent(
+            tax.latest("5044012")), tax.undefined_node)
 
         self.assertEqual(tax.parent("391495"), tax.undefined_node)
         self.assertEqual(tax.latest("391495"), "391494")
-        self.assertNotEqual(tax.parent(tax.latest("391495")), tax.undefined_node)
+        self.assertNotEqual(tax.parent(
+            tax.latest("391495")), tax.undefined_node)
 
     def test_ncbi_merged(self):
         """
@@ -478,11 +536,13 @@ class TestFunctions(unittest.TestCase):
 
         self.assertEqual(tax.parent("1235230"), tax.undefined_node)
         self.assertEqual(tax.latest("1235230"), "459525")
-        self.assertNotEqual(tax.parent(tax.latest("1235230")), tax.undefined_node)
+        self.assertNotEqual(tax.parent(
+            tax.latest("1235230")), tax.undefined_node)
 
         self.assertEqual(tax.parent("1235908"), tax.undefined_node)
         self.assertEqual(tax.latest("1235908"), "363999")
-        self.assertNotEqual(tax.parent(tax.latest("1235908")), tax.undefined_node)
+        self.assertNotEqual(tax.parent(
+            tax.latest("1235908")), tax.undefined_node)
 
     def test_ncbi_extended_names(self):
         """
@@ -495,27 +555,38 @@ class TestFunctions(unittest.TestCase):
         # 37990   |   mitosporic Xylariaceae  |       |   includes    |
         # 37990   |   Xylariaceae |       |   scientific name |
 
-        tax = NcbiTx(files="tests/multitax/data_minimal/ncbi.tar.gz", extended_names=False)
-        tax_ex = NcbiTx(files="tests/multitax/data_minimal/ncbi.tar.gz", extended_names=True)
+        tax = NcbiTx(files="tests/multitax/data_minimal/ncbi.tar.gz",
+                     extended_names=False)
+        tax_ex = NcbiTx(
+            files="tests/multitax/data_minimal/ncbi.tar.gz", extended_names=True)
 
         # Exact match on scientific name
         self.assertCountEqual(tax.search_name("Xylariaceae"), ["37990"])
         self.assertCountEqual(tax_ex.search_name("Xylariaceae"), ["37990"])
         # All scientific names
-        self.assertCountEqual(tax.search_name("Xylariaceae", exact=False), ["37990"])
-        self.assertCountEqual(tax_ex.search_name("Xylariaceae", exact=False), ["37990"])
+        self.assertCountEqual(tax.search_name(
+            "Xylariaceae", exact=False), ["37990"])
+        self.assertCountEqual(tax_ex.search_name(
+            "Xylariaceae", exact=False), ["37990"])
         # Exact match on scientific name forcing extended
         self.assertCountEqual(tax.search_name("Xylariaceae"), ["37990"])
-        self.assertCountEqual(tax_ex.search_name("Xylariaceae", force_extended=True), ["37990"])
+        self.assertCountEqual(tax_ex.search_name(
+            "Xylariaceae", force_extended=True), ["37990"])
         # All names
-        self.assertCountEqual(tax.search_name("Xylariaceae", exact=False), ["37990"])
-        self.assertCountEqual(tax_ex.search_name("Xylariaceae", exact=False, force_extended=True), ["37990", "363999"])
+        self.assertCountEqual(tax.search_name(
+            "Xylariaceae", exact=False), ["37990"])
+        self.assertCountEqual(tax_ex.search_name(
+            "Xylariaceae", exact=False, force_extended=True), ["37990", "363999"])
         # Exact name available only on extended
-        self.assertCountEqual(tax.search_name("mitosporic Xylariaceae", exact=True), [])
-        self.assertCountEqual(tax_ex.search_name("mitosporic Xylariaceae", exact=True), ["37990"])
+        self.assertCountEqual(tax.search_name(
+            "mitosporic Xylariaceae", exact=True), [])
+        self.assertCountEqual(tax_ex.search_name(
+            "mitosporic Xylariaceae", exact=True), ["37990"])
         # Partial name available only on extended
-        self.assertCountEqual(tax.search_name("Xylariaceae sp.", exact=False), [])
-        self.assertCountEqual(tax_ex.search_name("Xylariaceae sp.", exact=False), ["363999"])
+        self.assertCountEqual(tax.search_name(
+            "Xylariaceae sp.", exact=False), [])
+        self.assertCountEqual(tax_ex.search_name(
+            "Xylariaceae sp.", exact=False), ["363999"])
 
     def test_ott_extended_names(self):
         """
@@ -535,24 +606,34 @@ class TestFunctions(unittest.TestCase):
         # Haemophilus sp. CCUG 26672  |   788108  |   includes    |   Haemophilus sp. CCUG 26672 (synonym for Haemophilus sputorum)   |   ncbi:1078480    |
         # Haemophilus sp. CCUG 47809  |   788108  |   includes    |   Haemophilus sp. CCUG 47809 (synonym for Haemophilus sputorum)   |   ncbi:1078480    |
 
-        tax = OttTx(files="tests/multitax/data_minimal/ott.tgz", extended_names=False)
-        tax_ex = OttTx(files="tests/multitax/data_minimal/ott.tgz", extended_names=True)
+        tax = OttTx(files="tests/multitax/data_minimal/ott.tgz",
+                    extended_names=False)
+        tax_ex = OttTx(
+            files="tests/multitax/data_minimal/ott.tgz", extended_names=True)
 
         # Exact match on scientific name
         self.assertCountEqual(tax.search_name("Haemophilus"), ["470454"])
         self.assertCountEqual(tax_ex.search_name("Haemophilus"), ["470454"])
         # All scientific names
-        self.assertCountEqual(tax.search_name("Haemophilus sp.", exact=False), ["391494", "158636", "4621", "4622"])
-        self.assertCountEqual(tax_ex.search_name("Haemophilus sp.", exact=False), ["391494", "158636", "4621", "4622"])
+        self.assertCountEqual(tax.search_name("Haemophilus sp.", exact=False), [
+                              "391494", "158636", "4621", "4622"])
+        self.assertCountEqual(tax_ex.search_name("Haemophilus sp.", exact=False), [
+                              "391494", "158636", "4621", "4622"])
         # Exact match on scientific name forcing extended
         self.assertCountEqual(tax.search_name("Haemophilus"), ["470454"])
-        self.assertCountEqual(tax_ex.search_name("Haemophilus", force_extended=True), ["470454"])
+        self.assertCountEqual(tax_ex.search_name(
+            "Haemophilus", force_extended=True), ["470454"])
         # All names
-        self.assertCountEqual(tax.search_name("Haemophilus sp. CCUG", exact=False), ["391494", "158636", "4621", "4622"])
-        self.assertCountEqual(tax_ex.search_name("Haemophilus sp. CCUG", exact=False, force_extended=True), ["391494", "158636", "4621", "4622", "788108"])
+        self.assertCountEqual(tax.search_name("Haemophilus sp. CCUG", exact=False), [
+                              "391494", "158636", "4621", "4622"])
+        self.assertCountEqual(tax_ex.search_name("Haemophilus sp. CCUG", exact=False, force_extended=True), [
+                              "391494", "158636", "4621", "4622", "788108"])
         # Exact name available only on extended
-        self.assertCountEqual(tax.search_name("Haemophilus sp. HK 85", exact=True), [])
-        self.assertCountEqual(tax_ex.search_name("Haemophilus sp. HK 85", exact=True), ["525972"])
+        self.assertCountEqual(tax.search_name(
+            "Haemophilus sp. HK 85", exact=True), [])
+        self.assertCountEqual(tax_ex.search_name(
+            "Haemophilus sp. HK 85", exact=True), ["525972"])
         # Partial name available only on extended
         self.assertCountEqual(tax.search_name("CCUG 26672", exact=False), [])
-        self.assertCountEqual(tax_ex.search_name("CCUG 26672", exact=False), ["788108"])
+        self.assertCountEqual(tax_ex.search_name(
+            "CCUG 26672", exact=False), ["788108"])

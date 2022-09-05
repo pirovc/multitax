@@ -2,7 +2,8 @@ from .multitax import MultiTax
 
 
 class SilvaTx(MultiTax):
-    _default_urls = ["https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.1.txt.gz"]
+    _default_urls = [
+        "https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.1.txt.gz"]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -40,7 +41,7 @@ class SilvaTx(MultiTax):
                 if t not in nodes:
                     nodes[t] = parent_taxid
                 t = parent_taxid
-                del l[-1] # remove last element
+                del l[-1]  # remove last element
             # Connect last node to root
             if t not in nodes:
                 nodes[t] = self._default_root_node
