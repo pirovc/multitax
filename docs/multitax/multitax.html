@@ -120,7 +120,6 @@
             <summary>View Source</summary>
             <div class="pdoc-code codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
 
 
 <span class="k">class</span> <span class="nc">MultiTax</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -197,7 +196,8 @@
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">urls</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">:</span>
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">download_files</span><span class="p">(</span><span class="n">urls</span><span class="o">=</span><span class="n">urls</span> <span class="k">if</span> <span class="n">urls</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">,</span>
-                                 <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">)</span>
+                                 <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">,</span>
+                                 <span class="n">retry_attempts</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">fhs</span><span class="p">:</span>
             <span class="c1"># Parse taxonomy</span>
@@ -796,7 +796,8 @@
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">urls</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">:</span>
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">download_files</span><span class="p">(</span><span class="n">urls</span><span class="o">=</span><span class="n">urls</span> <span class="k">if</span> <span class="n">urls</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">,</span>
-                                 <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">)</span>
+                                 <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">,</span>
+                                 <span class="n">retry_attempts</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">fhs</span><span class="p">:</span>
             <span class="c1"># Parse taxonomy</span>
@@ -1402,7 +1403,8 @@
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">urls</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">:</span>
             <span class="n">fhs</span> <span class="o">=</span> <span class="n">download_files</span><span class="p">(</span><span class="n">urls</span><span class="o">=</span><span class="n">urls</span> <span class="k">if</span> <span class="n">urls</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_urls</span><span class="p">,</span>
-                                 <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">)</span>
+                                 <span class="n">output_prefix</span><span class="o">=</span><span class="n">output_prefix</span><span class="p">,</span>
+                                 <span class="n">retry_attempts</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">fhs</span><span class="p">:</span>
             <span class="c1"># Parse taxonomy</span>
