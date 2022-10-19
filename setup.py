@@ -14,7 +14,7 @@ def read(filename):
 
 setup(
     name="multitax",
-    version="1.2.0",
+    version="1.2.1",
     url="https://www.github.com/pirovc/multitax",
     license="MIT",
     author="Vitor C. Piro",
@@ -29,5 +29,6 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
     ],
 )
