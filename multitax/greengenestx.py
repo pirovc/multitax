@@ -50,4 +50,5 @@ class GreengenesTx(MultiTax):
                         nodes[taxid] = parent_taxid
                         names[taxid] = name
                         ranks[taxid] = rank
+
         return nodes, ranks, names
