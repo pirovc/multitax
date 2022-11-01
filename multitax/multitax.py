@@ -307,7 +307,6 @@ class MultiTax(object):
         Returns a list with the lineage of a given node.
         If ranks is provided, returns only nodes annotated with such ranks.
         If root_node is provided, use it instead of default root of tree.
-        ranks and root_node are ignored if build_lineages() was used.
         """
         # If lineages were built with build_lineages() with matching params
         if node in self._lineages and root_node is None and ranks is None:
