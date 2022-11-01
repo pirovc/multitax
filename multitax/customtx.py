@@ -46,7 +46,8 @@ class CustomTx(MultiTax):
                     names[node] = fields[self._cols["name"]]
                 if "rank" in self._cols:
                     ranks[node] = fields[self._cols["rank"]]
-            return nodes, ranks, names
+
+        return nodes, ranks, names
 
     def _parse_cols(self, cols):
         if isinstance(cols, list):

@@ -27,7 +27,8 @@ class TestCommon(unittest.TestCase):
     taxonomies["greengenes"] = {"class": GreengenesTx,
                                 "params": {"files": [data_dir + "gg.txt.gz"]}}
     taxonomies["custom"] = {"class": CustomTx,
-                            "params": {"files": [data_dir + "custom.tsv.gz"]}}
+                            "params": {"files": [data_dir + "custom.tsv.gz",
+                                                 data_dir + "custom2.tsv.gz"]}}
 
     @classmethod
     def setUpClass(self):
@@ -59,7 +60,8 @@ class TestCommon(unittest.TestCase):
         """
         with self.assertRaises(Exception):
             with self.assertWarns(UserWarning):
-               tax = self.taxonomies["ncbi"]["class"](urls=["www.thisisnotawebsite.com/neither/a/file", "fasfafsafasfasf"])
+                tax = self.taxonomies["ncbi"]["class"](
+                    urls=["www.thisisnotawebsite.com/neither/a/file", "fasfafsafasfasf"])
 
     def test_urls_output_prefix(self):
         """

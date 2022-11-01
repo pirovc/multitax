@@ -7,6 +7,7 @@ import random
 
 sys.path.append("tests/multitax/")
 
+
 @unittest.skip('Skip online by default')
 class TestOnline(unittest.TestCase):
 
