@@ -68,6 +68,7 @@ class MultiTax(object):
         self._name_nodes = {}
         self._node_children = {}
         self._rank_nodes = {}
+        self._translated_nodes = {}
         self.sources = []
 
         # Open/Download/Write files
@@ -585,3 +586,23 @@ class MultiTax(object):
                         for c in cols], sep=sep, end="\n", file=outf)
 
         outf.close()
+
+
+    def translate(self, tax, files: list = None, urls: list = None):
+
+        if files:
+            if isinstance(files, str):
+                files = [files]
+            for file in files:
+                check_file(file)
+                
+        self._translated_nodes = self._translate(tax, files, urls)
+
+    def link(self, node):
+        """
+        Returns the translated node of a given node.
+        """
+        if node in self._translated_nodes:
+            return self._translated_nodes[node]
+        else:
+            return []
