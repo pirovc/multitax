@@ -184,7 +184,7 @@ tax.write("custom_tax.tsv", cols=["node", "rank", "name_lineage"])
 #...
 ```
 
-### The same applies to the other taxonomies
+### The same applies to other taxonomies
 
 ```python
 # NCBI

@@ -1,6 +1,7 @@
 from .utils import *
 from collections import Counter
 
+
 class MultiTax(object):
 
     version = "1.3.0"
@@ -224,7 +225,7 @@ class MultiTax(object):
         * **tax** [MultiTax]: A target taxonomy to be translated to.
         * **files** *[str, list]*: One or more local files to parse.
         * **urls** *[str, list]*: One or more urls to download and parse.
-        
+
         Example:
 
             from multitax import GtdbTx, NcbiTx
@@ -246,7 +247,7 @@ class MultiTax(object):
                 files = [files]
             for file in files:
                 check_file(file)
-                
+
         self._translated_nodes = self._build_translation(tax, files, urls)
 
     def children(self, node: str):
@@ -260,7 +261,7 @@ class MultiTax(object):
             return self._node_children[node]
         else:
             return []
- 
+
     def check_consistency(self):
         """
         Checks consistency of the tree
@@ -483,7 +484,6 @@ class MultiTax(object):
         parent = self.lineage(node=node, ranks=[rank])
         return parent[0] if parent else self.undefined_node
 
-
     def rank(self, node: str):
         """
         Returns the rank of a given node.
@@ -563,7 +563,6 @@ class MultiTax(object):
         s["ranked_leaves"] = Counter(map(self.rank, all_leaves))
 
         return s
-
 
     def translate(self, node: str):
         """

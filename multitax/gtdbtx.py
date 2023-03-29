@@ -4,6 +4,7 @@ from .utils import open_files
 from .utils import download_files
 import warnings
 
+
 class GtdbTx(MultiTax):
 
     _default_urls = ["https://data.gtdb.ecogenomic.org/releases/latest/ar53_taxonomy.tsv.gz",
@@ -69,8 +70,8 @@ class GtdbTx(MultiTax):
                             gtdb_leaf_node = fields[16].split(";")[-1]
                             if gtdb_leaf_node != self.undefined_node:
                                 gtdb_nodes = self.lineage(gtdb_leaf_node, ranks=[
-                                                                "domain", "phylum", "class", "order", 
-                                                                "family", "genus", "species"])
+                                    "domain", "phylum", "class", "order",
+                                    "family", "genus", "species"])
                             else:
                                 continue
 
@@ -82,7 +83,8 @@ class GtdbTx(MultiTax):
                                     translated_nodes[gtdb_n].add(ncbi_nodes[i])
 
         else:
-            warnings.warn("Translation between taxonomies [" + self.__class__.__name__ + "," + target_tax.__class__.__name__ + "] not yet implemented.")
+            warnings.warn("Translation between taxonomies [" + self.__class__.__name__ +
+                          "," + target_tax.__class__.__name__ + "] not yet implemented.")
 
         return translated_nodes
 

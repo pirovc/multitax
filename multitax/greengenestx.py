@@ -1,6 +1,7 @@
 from .multitax import MultiTax
 import warnings
 
+
 class GreengenesTx(MultiTax):
     _default_urls = [
         "https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz"]
@@ -22,7 +23,9 @@ class GreengenesTx(MultiTax):
         return 'GreengenesTx({})'.format(', '.join(args))
 
     def _build_translation(self, target_tax, files: list = None, urls: list = None):
-        warnings.warn("Translation between taxonomies [" + self.__class__.__name__ + "," + target_tax.__class__.__name__ + "] not yet implemented.")
+        warnings.warn("Translation between taxonomies [" + self.__class__.__name__ +
+                      "," + target_tax.__class__.__name__ + "] not yet implemented.")
+        return {}
 
     def _parse(self, fhs, **kwargs):
         nodes = {}

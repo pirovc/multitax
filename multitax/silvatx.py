@@ -1,6 +1,7 @@
 from .multitax import MultiTax
 import warnings
 
+
 class SilvaTx(MultiTax):
     _default_urls = [
         "https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.1.txt.gz"]
@@ -13,7 +14,8 @@ class SilvaTx(MultiTax):
         return 'SilvaTx({})'.format(', '.join(args))
 
     def _build_translation(self, target_tax, files: list = None, urls: list = None):
-        warnings.warn("Translation between taxonomies [" + self.__class__.__name__ + "," + target_tax.__class__.__name__ + "] not yet implemented.")
+        warnings.warn("Translation between taxonomies [" + self.__class__.__name__ +
+                      "," + target_tax.__class__.__name__ + "] not yet implemented.")
         return {}
 
     def _parse(self, fhs, **kwargs):

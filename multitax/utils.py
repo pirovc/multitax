@@ -9,24 +9,33 @@ from collections import OrderedDict
 from urllib.error import HTTPError
 
 
-def open_files(files: list):
+def check_dir(prefix: str):
+    abs_path = os.path.dirname(os.path.abspath(prefix))
+    if not os.path.exists(abs_path):
+        raise NotADirectoryError(abs_path)
+
+
+def check_file(file: str):
+    if not os.path.isfile(file):
+        raise FileNotFoundError(file + " file do not exist")
+    if os.path.getsize(file) == 0:
+        raise FileNotFoundError(file + " file is empty")
+
+
+def check_no_file(file: str):
+    if os.path.isfile(file):
+        raise FileExistsError(file)
+
+
+def close_files(fhs: dict):
     """
     Parameters:
-    * **files** *[list]*: List of files to open (text, ".gz", ".tar.gz", ".tgz")
+    * **fhs** *[dict]*: {file: file handler}
 
-    Returns:
-    * OrderedDict {file: file handler} (same order as input)
+    Returns: Nothing
     """
-
-    fhs = OrderedDict()
-    for file in files:
-        if file.endswith(".tar.gz") or file.endswith(".tgz"):
-            fhs[file] = tarfile.open(file, mode='r:gz')
-        elif file.endswith(".gz"):
-            fhs[file] = gzip.open(file, "rt")
-        else:
-            fhs[file] = open(file, "r")
-    return fhs
+    for fh in fhs.values():
+        fh.close()
 
 
 def download_files(urls: list, output_prefix: str = None, retry_attempts: int = 1):
@@ -76,36 +85,15 @@ def download_files(urls: list, output_prefix: str = None, retry_attempts: int = 
                     ", ".join(urls))
 
 
-def close_files(fhs: dict):
-    """
-    Parameters:
-    * **fhs** *[dict]*: {file: file handler}
-
-    Returns: Nothing
-    """
-    for fh in fhs.values():
-        fh.close()
+def filter_function(elements, function, value):
+    return [elements[i] for i, v in enumerate(map(function, elements)) if v == value]
 
 
-def save_urls(urls: list, output_prefix: str):
-    """
-    Parameters:
-    * **urls** *[list]*: List of urls to download
-    * **output_prefix** *[str]*: Output directory to save files
-
-    Returns:
-    * list of files saved
-    """
-    files = []
-    for url in urls:
-        outfile = output_prefix + os.path.basename(url)
-        check_no_file(outfile)
-        urlstream = urllib.request.urlopen(url)
-        with open(outfile, 'b+w') as f:
-            f.write(urlstream.read())
-        urlstream.close()
-        files.append(outfile)
-    return files
+def join_check(elements, sep: str):
+    if elements:
+        return sep.join(map(str, elements))
+    else:
+        return ""
 
 
 def load_url_mem(url: str):
@@ -129,22 +117,24 @@ def load_url_mem(url: str):
     return tmpfile
 
 
-def check_file(file: str):
-    if not os.path.isfile(file):
-        raise FileNotFoundError(file + " file do not exist")
-    if os.path.getsize(file) == 0:
-        raise FileNotFoundError(file + " file is empty")
+def open_files(files: list):
+    """
+    Parameters:
+    * **files** *[list]*: List of files to open (text, ".gz", ".tar.gz", ".tgz")
 
+    Returns:
+    * OrderedDict {file: file handler} (same order as input)
+    """
 
-def check_no_file(file: str):
-    if os.path.isfile(file):
-        raise FileExistsError(file)
-
-
-def check_dir(prefix: str):
-    abs_path = os.path.dirname(os.path.abspath(prefix))
-    if not os.path.exists(abs_path):
-        raise NotADirectoryError(abs_path)
+    fhs = OrderedDict()
+    for file in files:
+        if file.endswith(".tar.gz") or file.endswith(".tgz"):
+            fhs[file] = tarfile.open(file, mode='r:gz')
+        elif file.endswith(".gz"):
+            fhs[file] = gzip.open(file, "rt")
+        else:
+            fhs[file] = open(file, "r")
+    return fhs
 
 
 def reverse_dict(d: dict):
@@ -156,15 +146,25 @@ def reverse_dict(d: dict):
     return rd
 
 
-def join_check(elements, sep: str):
-    if elements:
-        return sep.join(map(str, elements))
-    else:
-        return ""
+def save_urls(urls: list, output_prefix: str):
+    """
+    Parameters:
+    * **urls** *[list]*: List of urls to download
+    * **output_prefix** *[str]*: Output directory to save files
 
-
-def filter_function(elements, function, value):
-    return [elements[i] for i, v in enumerate(map(function, elements)) if v == value]
+    Returns:
+    * list of files saved
+    """
+    files = []
+    for url in urls:
+        outfile = output_prefix + os.path.basename(url)
+        check_no_file(outfile)
+        urlstream = urllib.request.urlopen(url)
+        with open(outfile, 'b+w') as f:
+            f.write(urlstream.read())
+        urlstream.close()
+        files.append(outfile)
+    return files
 
 
 def warning_on_one_line(message, category, filename, lineno, file=None, line=None):

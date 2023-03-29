@@ -5,6 +5,7 @@ from .utils import open_files
 from .utils import download_files
 import warnings
 
+
 class NcbiTx(MultiTax):
     _default_urls = ["ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"]
 
@@ -54,7 +55,7 @@ class NcbiTx(MultiTax):
                             gtdb_leaf_node = fields[16].split(";")[-1]
                             if gtdb_leaf_node != target_tax.undefined_node:
                                 gtdb_nodes = target_tax.lineage(gtdb_leaf_node, ranks=[
-                                                                "domain", "phylum", "class", "order", 
+                                                                "domain", "phylum", "class", "order",
                                                                 "family", "genus", "species"])
                             else:
                                 continue
@@ -69,7 +70,7 @@ class NcbiTx(MultiTax):
                                 translated_nodes[ncbi_leaf_node].add(
                                     gtdb_leaf_node)
                                 ncbi_nodes = self.lineage(ncbi_leaf_node, ranks=[
-                                                          "superkingdom", "phylum", "class", "order", 
+                                                          "superkingdom", "phylum", "class", "order",
                                                           "family", "genus", "species"])
                             else:
                                 continue
@@ -81,9 +82,9 @@ class NcbiTx(MultiTax):
                                         translated_nodes[ncbi_n] = set()
                                     translated_nodes[ncbi_n].add(gtdb_nodes[i])
 
-
         else:
-            warnings.warn("Translation between taxonomies [" + self.__class__.__name__ + "," + target_tax.__class__.__name__ + "] not yet implemented.")
+            warnings.warn("Translation between taxonomies [" + self.__class__.__name__ +
+                          "," + target_tax.__class__.__name__ + "] not yet implemented.")
 
         return translated_nodes
 
@@ -211,5 +212,3 @@ class NcbiTx(MultiTax):
         if self._extended_name_nodes:
             s["extended_names"] = len(self._extended_name_nodes)
         return s
-
-
