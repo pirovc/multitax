@@ -4,7 +4,7 @@ Python package to obtain, parse and explore biological taxonomies
 
 ## Description
 
-MultiTax is a Python package that provides a common and generalized set of functions to download, parse, filter and explore multiple biological taxonomies (**GTDB, NCBI, Silva, Greengenes, Open Tree taxonomy**) and custom formatted taxonomies. Main goals are:
+MultiTax is a Python package that provides a common and generalized set of functions to download, parse, filter, explore, translate, convert and write multiple biological taxonomies (**GTDB, NCBI, Silva, Greengenes, Open Tree taxonomy**) and custom formatted taxonomies. Main goals are:
 
  - Be fast, intuitive, generalized and easy to use
  - Explore different taxonomies with same set of commands
@@ -12,7 +12,7 @@ MultiTax is a Python package that provides a common and generalized set of funct
  - Translate taxonomies (partially implemented)
  - Convert taxonomies (not yet implemented)
 
-MultiTax does not link sequence identifiers to taxonomic nodes, it just handles the taxonomy alone. Some kind of integration to work with sequence ids is planned, but not yet implemented.
+MultiTax does not link sequence identifiers to taxonomic nodes, it just handles the taxonomy alone. Some kind of integration to work with sequence or external identifiers is planned, but not yet implemented.
 
 ## API Documentation
 
@@ -22,11 +22,15 @@ https://pirovc.github.io/multitax/
 
 ### pip
 
-	pip install multitax
+```bash
+pip install multitax
+```
 
 ### conda
 
-	conda install -c bioconda multitax
+```bash
+conda install -c bioconda multitax
+```
 
 ### local
 
@@ -36,7 +40,7 @@ cd multitax
 python setup.py install --record files.txt
 ```
 
-## Basic Example with GTDB
+## Basic usage with GTDB
 
 ```python
 from multitax import GtdbTx
@@ -49,11 +53,11 @@ tax.lineage("g__Escherichia")
 # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
 ```
 
-## Further Examples
+## Examples
 
  - [List of functions](https://pirovc.github.io/multitax/multitax/multitax.html)
 
-### Obtain/load/parse taxonomy
+### Load
 
 ```python
 from multitax import GtdbTx  # or NcbiTx, SilvaTx, ...
@@ -132,7 +136,11 @@ tax.stats()
 #                          'domain': 2,
 #                          'root': 1}),
 # 'ranks': 45503}
+```
 
+### Filter
+
+```python
 # Filter ancestors (desc=True for descendants)
 tax.filter(['g__Escherichia', 's__Pseudomonas aeruginosa'])
 tax.stats()
@@ -149,7 +157,23 @@ tax.stats()
 #                          'species': 1,
 #                          'root': 1}),
 # 'ranks': 11}
+```
 
+### Translate
+
+```python
+# GTDB to NCBI
+from multitax import GtdbTx, NcbiTx
+ncbi_tax = NcbiTx()
+gtdb_tax = GtdbTx()
+gtdb_tax.build_translation(ncbi_tax)
+gtdb_tax.translate("g__Escherichia")
+# {'1301', '547', '561', '570', '590', '620'}
+```
+
+### Write
+
+```python
 # Write tax to file
 tax.write("custom_tax.tsv", cols=["node", "rank", "name_lineage"])
 
@@ -158,18 +182,6 @@ tax.write("custom_tax.tsv", cols=["node", "rank", "name_lineage"])
 #o__Enterobacterales        order    root|Bacteria|Proteobacteria|Gammaproteobacteria|Enterobacterales
 #c__Gammaproteobacteria     class    root|Bacteria|Proteobacteria|Gammaproteobacteria
 #...
-```
-
-### Translating
-
-```python
-# NCBI
-from multitax import GtdbTx, NcbiTx
-ncbi_tax = NcbiTx()
-gtdb_tax = GtdbTx()
-gtdb_tax.build_translation(ncbi_tax)
-gtdb_tax.translate("g__Escherichia")
-# {'1301', '547', '561', '570', '590', '620'}
 ```
 
 ### The same applies to the other taxonomies
@@ -204,7 +216,9 @@ tax.lineage("f__Enterobacteriaceae")
 
 Using pylca: https://github.com/pirovc/pylca
 
-    conda install -c bioconda pylca
+```bash
+conda install -c bioconda pylca
+```
 
 ```python
 from pylca.pylca import LCA
@@ -221,7 +235,7 @@ L("s__Escherichia dysenteriae", "s__Pseudomonas aeruginosa")
 # 'c__Gammaproteobacteria'
 ```
 
-## General information
+## Details
  
  - Taxonomies are parsed into `nodes`. Each node is annotated with a `name` and a `rank`.
  - Some taxonomies have a numeric taxonomic identifier (e.g. NCBI) and other use the rank + name as an identifier (e.g. GTDB). In MultiTax all identifiers are treated as strings.
