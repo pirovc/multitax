@@ -9,12 +9,17 @@ MultiTax is a Python package that provides a common and generalized set of funct
  - Be fast, intuitive, generalized and easy to use
  - Explore different taxonomies with same set of commands
  - Enable integration and compatibility with multiple taxonomies
- - *Translate and convert taxonomies (not yet implemented)*
+ - Translate taxonomies (partially implemented)
+ - Convert taxonomies (not yet implemented)
 
 MultiTax does not link sequence identifiers to taxonomic nodes, it just handles the taxonomy alone. Some kind of integration to work with sequence ids is planned, but not yet implemented.
 
+## API Documentation
+
+https://pirovc.github.io/multitax/
+
 ## Installation
-	
+
 ### pip
 
 	pip install multitax
@@ -31,10 +36,6 @@ cd multitax
 python setup.py install --record files.txt
 ```
 
-## Documentation
-    
-https://pirovc.github.io/multitax/
-
 ## Basic Example with GTDB
 
 ```python
@@ -50,7 +51,7 @@ tax.lineage("g__Escherichia")
 
 ## Further Examples
 
-[List of all functions](https://pirovc.github.io/multitax/multitax/multitax.html)
+ - [List of functions](https://pirovc.github.io/multitax/multitax/multitax.html)
 
 ### Obtain/load/parse taxonomy
 
@@ -159,7 +160,19 @@ tax.write("custom_tax.tsv", cols=["node", "rank", "name_lineage"])
 #...
 ```
 
-### The same goes for the other taxonomies
+### Translating
+
+```python
+# NCBI
+from multitax import GtdbTx, NcbiTx
+ncbi_tax = NcbiTx()
+gtdb_tax = GtdbTx()
+gtdb_tax.build_translation(ncbi_tax)
+gtdb_tax.translate("g__Escherichia")
+# {'1301', '547', '561', '570', '590', '620'}
+```
+
+### The same applies to the other taxonomies
 
 ```python
 # NCBI
@@ -214,24 +227,38 @@ L("s__Escherichia dysenteriae", "s__Pseudomonas aeruginosa")
  - Some taxonomies have a numeric taxonomic identifier (e.g. NCBI) and other use the rank + name as an identifier (e.g. GTDB). In MultiTax all identifiers are treated as strings.
  - A single root node is defined by default for each taxonomy (or `1` when not defined). This can be changed with `root_node` when loading the taxonomy (as well as annotations `root_parent`, `root_name`, `root_rank`). If the `root_node` already exists, the tree will be filtered.
  - Standard values for unknown/undefined nodes can be configured with `undefined_node`,`undefined_name` and `undefined_rank`. Those are default values returned when nodes/names/ranks are not found.
- - Taxonomy files are automatically download or can be loaded from disk (`files` parameter). Alternative `urls` can be provided. When downloaded, files are handled in memory. It is possible to save the downloaded file to disk with `output_prefix`.
+ - Taxonomy files are automatically downloaded or can be loaded from disk (`files` parameter). Alternative `urls` can be provided. When downloaded, files are handled in memory. It is possible to save the downloaded file to disk with `output_prefix`.
 
 ## Translation between taxonomies
 
-Not yet implemented. The goal here is to map different taxonomies if the linkage data is available. That's what I think will be possible.
+Partially implemented. The goal is to map different taxonomies if the linkage data is available. That's what is currently availble.
 
- |from/to |NCBI   |GTDB   |SILVA   |OTT   |GG  |
- |--------|-------|-------|--------|------|----|
- |NCBI    |-      |part   |part    |part  |no  |
- |GTDB    |full   |-      |no      |no    |no  |
- |SILVA   |full   |no     |-       |part  |no  |
- |OTT     |part   |no     |part    |-     |no  |
- |GG      |no     |no     |no      |no    |-   |
+
+ |from/to |NCBI     |GTDB   |SILVA     |OTT     |GG    |
+ |--------|---------|-------|----------|--------|------|
+ |NCBI    |-        |PART   |[part]    |[part]  |no    |
+ |GTDB    |FULL     |-      |[part]    |no      |[part]|
+ |SILVA   |[full]   |[part] |-         |[part]  |no    |
+ |OTT     |[part]   |no     |[part]    |-       |no    |
+ |GG      |no       |[part] |no        |no      |-     |
+
+Legend:
+
+ - full: complete translation available
+ - part: partial translation available
+ - no: no translation possible
+ - []: not yet implemented
+
+### Files and information about specific translations
+
+ - NCBI <-> GTDB
+   - GTDB is a subset of the NCBI repository, so the translation from NCBI to GTDB can be only partial
+   - Translation in both ways is based on: https://data.gtdb.ecogenomic.org/releases/latest/ar53_metadata.tar.gz and https://data.gtdb.ecogenomic.org/releases/latest/bac120_metadata.tar.gz
 
 ## Further ideas
 
 - Add/remove/update nodes
-- Conversion between taxonomies (write on specific files/format)
+- Conversion between taxonomies (write on specific format)
 
 ## Similar projects
 

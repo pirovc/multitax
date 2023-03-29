@@ -1,6 +1,6 @@
 from .multitax import MultiTax
 from .utils import filter_function
-
+import warnings
 
 class OttTx(MultiTax):
     _default_urls = ["http://files.opentreeoflife.org/ott/ott3.2/ott3.2.tgz"]
@@ -14,6 +14,10 @@ class OttTx(MultiTax):
     def __repr__(self):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
         return 'OttTx({})'.format(', '.join(args))
+
+    def _build_translation(self, target_tax, files: list = None, urls: list = None):
+        warnings.warn("Translation between taxonomies [" + self.__class__.__name__ + "," + target_tax.__class__.__name__ + "] not yet implemented.")
+        return {}
 
     def _parse(self, fhs, **kwargs):
         fhs_list = list(fhs.values())
