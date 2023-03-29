@@ -95,10 +95,10 @@
                                 <a class="function" href="#OttTx.latest">latest</a>
                         </li>
                         <li>
-                                <a class="function" href="#OttTx.stats">stats</a>
+                                <a class="function" href="#OttTx.search_name">search_name</a>
                         </li>
                         <li>
-                                <a class="function" href="#OttTx.search_name">search_name</a>
+                                <a class="function" href="#OttTx.stats">stats</a>
                         </li>
                 </ul>
 
@@ -193,7 +193,8 @@ multitax    </h1>
         <span class="k">return</span> <span class="s1">&#39;CustomTx(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_build_translation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_tax</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">urls</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Translation between taxonomies [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;] not yet implemented.&quot;</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Translation between taxonomies [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span>
+                      <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;] not yet implemented.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -449,7 +450,9 @@ tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, 
         <span class="k">return</span> <span class="s1">&#39;GreengenesTx(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_build_translation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_tax</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">urls</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Translation between taxonomies [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;] not yet implemented.&quot;</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Translation between taxonomies [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span>
+                      <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;] not yet implemented.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span>
@@ -645,8 +648,8 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
                             <span class="n">gtdb_leaf_node</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                             <span class="k">if</span> <span class="n">gtdb_leaf_node</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
                                 <span class="n">gtdb_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">gtdb_leaf_node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span>
-                                                                <span class="s2">&quot;domain&quot;</span><span class="p">,</span> <span class="s2">&quot;phylum&quot;</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;order&quot;</span><span class="p">,</span> 
-                                                                <span class="s2">&quot;family&quot;</span><span class="p">,</span> <span class="s2">&quot;genus&quot;</span><span class="p">,</span> <span class="s2">&quot;species&quot;</span><span class="p">])</span>
+                                    <span class="s2">&quot;domain&quot;</span><span class="p">,</span> <span class="s2">&quot;phylum&quot;</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;order&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;family&quot;</span><span class="p">,</span> <span class="s2">&quot;genus&quot;</span><span class="p">,</span> <span class="s2">&quot;species&quot;</span><span class="p">])</span>
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="k">continue</span>
 
@@ -658,7 +661,8 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
                                     <span class="n">translated_nodes</span><span class="p">[</span><span class="n">gtdb_n</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ncbi_nodes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Translation between taxonomies [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;] not yet implemented.&quot;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Translation between taxonomies [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span>
+                          <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;] not yet implemented.&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">translated_nodes</span>
 
@@ -838,7 +842,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
                             <span class="n">gtdb_leaf_node</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                             <span class="k">if</span> <span class="n">gtdb_leaf_node</span> <span class="o">!=</span> <span class="n">target_tax</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
                                 <span class="n">gtdb_nodes</span> <span class="o">=</span> <span class="n">target_tax</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">gtdb_leaf_node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span>
-                                                                <span class="s2">&quot;domain&quot;</span><span class="p">,</span> <span class="s2">&quot;phylum&quot;</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;order&quot;</span><span class="p">,</span> 
+                                                                <span class="s2">&quot;domain&quot;</span><span class="p">,</span> <span class="s2">&quot;phylum&quot;</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;order&quot;</span><span class="p">,</span>
                                                                 <span class="s2">&quot;family&quot;</span><span class="p">,</span> <span class="s2">&quot;genus&quot;</span><span class="p">,</span> <span class="s2">&quot;species&quot;</span><span class="p">])</span>
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="k">continue</span>
@@ -853,7 +857,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
                                 <span class="n">translated_nodes</span><span class="p">[</span><span class="n">ncbi_leaf_node</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
                                     <span class="n">gtdb_leaf_node</span><span class="p">)</span>
                                 <span class="n">ncbi_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span><span class="n">ncbi_leaf_node</span><span class="p">,</span> <span class="n">ranks</span><span class="o">=</span><span class="p">[</span>
-                                                          <span class="s2">&quot;superkingdom&quot;</span><span class="p">,</span> <span class="s2">&quot;phylum&quot;</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;order&quot;</span><span class="p">,</span> 
+                                                          <span class="s2">&quot;superkingdom&quot;</span><span class="p">,</span> <span class="s2">&quot;phylum&quot;</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;order&quot;</span><span class="p">,</span>
                                                           <span class="s2">&quot;family&quot;</span><span class="p">,</span> <span class="s2">&quot;genus&quot;</span><span class="p">,</span> <span class="s2">&quot;species&quot;</span><span class="p">])</span>
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="k">continue</span>
@@ -865,9 +869,9 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
                                         <span class="n">translated_nodes</span><span class="p">[</span><span class="n">ncbi_n</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
                                     <span class="n">translated_nodes</span><span class="p">[</span><span class="n">ncbi_n</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">gtdb_nodes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
-
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Translation between taxonomies [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;] not yet implemented.&quot;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Translation between taxonomies [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span>
+                          <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;] not yet implemented.&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">translated_nodes</span>
 
@@ -1279,7 +1283,8 @@ pprint(tax.stats())
         <span class="k">return</span> <span class="s1">&#39;OttTx(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_build_translation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_tax</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">urls</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Translation between taxonomies [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;] not yet implemented.&quot;</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Translation between taxonomies [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span>
+                      <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;] not yet implemented.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1297,6 +1302,18 @@ pprint(tax.stats())
                 <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_synonyms</span><span class="p">(</span><span class="n">fhs_list</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span>
+
+    <span class="k">def</span> <span class="nf">_parse_forwards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="n">forwards</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># skip first line header</span>
+        <span class="nb">next</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">old_taxid</span><span class="p">,</span> <span class="n">new_taxid</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">old_taxid</span><span class="p">,</span> <span class="n">new_taxid</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">forwards</span><span class="p">[</span><span class="n">old_taxid</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_taxid</span>
+        <span class="k">return</span> <span class="n">forwards</span>
 
     <span class="k">def</span> <span class="nf">_parse_ott</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh_taxdump</span><span class="p">,</span> <span class="n">extended_names</span><span class="p">):</span>
         <span class="c1"># Get files inside folder by name</span>
@@ -1317,6 +1334,21 @@ pprint(tax.stats())
                 <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_synonyms</span><span class="p">(</span><span class="n">fh_synonyms</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span>
 
+    <span class="k">def</span> <span class="nf">_parse_synonyms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="n">synonyms</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># skip first line header</span>
+        <span class="nb">next</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">taxid</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">|</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">taxid</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">|</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">synonyms</span><span class="p">:</span>
+                <span class="n">synonyms</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">synonyms</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">taxid</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">synonyms</span>
+
     <span class="k">def</span> <span class="nf">_parse_taxonomy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
         <span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">ranks</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1333,33 +1365,6 @@ pprint(tax.stats())
             <span class="n">names</span><span class="p">[</span><span class="n">taxid</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
         <span class="k">return</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span>
 
-    <span class="k">def</span> <span class="nf">_parse_forwards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
-        <span class="n">forwards</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1"># skip first line header</span>
-        <span class="nb">next</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">old_taxid</span><span class="p">,</span> <span class="n">new_taxid</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="n">old_taxid</span><span class="p">,</span> <span class="n">new_taxid</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="n">forwards</span><span class="p">[</span><span class="n">old_taxid</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_taxid</span>
-        <span class="k">return</span> <span class="n">forwards</span>
-
-    <span class="k">def</span> <span class="nf">_parse_synonyms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
-        <span class="n">synonyms</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="c1"># skip first line header</span>
-        <span class="nb">next</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">name</span><span class="p">,</span> <span class="n">taxid</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">|</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="n">name</span><span class="p">,</span> <span class="n">taxid</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">|</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">synonyms</span><span class="p">:</span>
-                <span class="n">synonyms</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">synonyms</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">taxid</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">synonyms</span>
-
     <span class="k">def</span> <span class="nf">forwards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns relative entry from the forwards.tsv file of a given node.</span>
@@ -1374,14 +1379,6 @@ pprint(tax.stats())
         <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forwards</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">n</span>
-
-    <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">:</span>
-            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;forwards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">:</span>
-            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">s</span>
 
     <span class="k">def</span> <span class="nf">search_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">force_extended</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1415,6 +1412,14 @@ pprint(tax.stats())
                 <span class="n">ret</span> <span class="o">=</span> <span class="n">filter_function</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="n">rank</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">ret</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;forwards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span>
 </pre></div>
 
         </details>
@@ -1524,54 +1529,6 @@ Mainly used for NCBI (merged.dmp) and OTT (forwards.tsv)</p>
 
 
                             </div>
-                            <div id="OttTx.stats" class="classattr">
-                                        <div class="attr function"><a class="headerlink" href="#OttTx.stats">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">stats</span><span class="signature">(self)</span>:
-    </div>
-
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">:</span>
-            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;forwards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">:</span>
-            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">s</span>
-</pre></div>
-
-        </details>
-
-            <div class="docstring"><p>Returns a dict with general numbers of the taxonomic tree</p>
-
-<p>Example:</p>
-
-<pre><code>from pprint import pprint
-from multitax import GtdbTx
-tax = GtdbTx()
-
-pprint(tax.stats())
-{'leaves': 30238,
- 'names': 42739,
- 'nodes': 42739,
- 'ranked_leaves': Counter({'species': 30238}),
- 'ranked_nodes': Counter({'species': 30238,
-                          'genus': 8778,
-                          'family': 2323,
-                          'order': 930,
-                          'class': 337,
-                          'phylum': 131,
-                          'domain': 1,
-                          'root': 1}),
- 'ranks': 42739}
-</code></pre>
-</div>
-
-
-                            </div>
                             <div id="OttTx.search_name" class="classattr">
                                         <div class="attr function"><a class="headerlink" href="#OttTx.search_name">#&nbsp;&nbsp</a>
 
@@ -1646,6 +1603,54 @@ pprint(tax.stats())
 
 
                             </div>
+                            <div id="OttTx.stats" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#OttTx.stats">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">stats</span><span class="signature">(self)</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;forwards&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forwards</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">:</span>
+            <span class="n">s</span><span class="p">[</span><span class="s2">&quot;extended_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extended_name_nodes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Returns a dict with general numbers of the taxonomic tree</p>
+
+<p>Example:</p>
+
+<pre><code>from pprint import pprint
+from multitax import GtdbTx
+tax = GtdbTx()
+
+pprint(tax.stats())
+{'leaves': 30238,
+ 'names': 42739,
+ 'nodes': 42739,
+ 'ranked_leaves': Counter({'species': 30238}),
+ 'ranked_nodes': Counter({'species': 30238,
+                          'genus': 8778,
+                          'family': 2323,
+                          'order': 930,
+                          'class': 337,
+                          'phylum': 131,
+                          'domain': 1,
+                          'root': 1}),
+ 'ranks': 42739}
+</code></pre>
+</div>
+
+
+                            </div>
                             <div class="inherited">
                                 <h5>Inherited Members</h5>
                                 <dl>
@@ -1697,7 +1702,8 @@ pprint(tax.stats())
         <span class="k">return</span> <span class="s1">&#39;SilvaTx(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_build_translation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_tax</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">urls</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Translation between taxonomies [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;] not yet implemented.&quot;</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Translation between taxonomies [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span>
+                      <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">&quot;] not yet implemented.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
