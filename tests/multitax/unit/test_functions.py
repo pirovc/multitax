@@ -1,5 +1,5 @@
 from multitax.utils import check_file
-from multitax import CustomTx, OttTx, NcbiTx
+from multitax import *
 from tests.multitax.utils import setup_dir
 import unittest
 
@@ -384,6 +384,45 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(len(tax._lineages), 0)
         self.assertEqual(tax.lineage("5.2"), ["1", "2.2", "3.4", "4.4", "5.2"])
         self.assertEqual(tax.lineage("XXX"), [])
+
+    def test_translation(self):
+        """
+        test build_translation and tranlate functions (GTDB<->NCBI)
+        """
+        gtdb_tax = GtdbTx(files=["tests/multitax/data_minimal/gtdb_ar.tsv.gz", "tests/multitax/data_minimal/gtdb_bac.tsv.gz"])
+        ncbi_tax = NcbiTx(files="tests/multitax/data_minimal/ncbi.tar.gz")
+        
+        # GTDB->NCBI
+        # Should be no translation yet (g__Paenibacillus is contained in both test sets)
+        self.assertCountEqual(gtdb_tax.translate("g__Paenibacillus"), [])
+        gtdb_tax.build_translation(ncbi_tax, files=["tests/multitax/data_minimal/gtdb_ar_metadata.tar.gz", "tests/multitax/data_minimal/gtdb_bac_metadata.tar.gz"])
+        self.assertCountEqual(gtdb_tax.translate("g__Paenibacillus"), ["44249"])
+        
+        # NCBI->GTDB
+        # Should be no translation yet (g__Paenibacillus is contained in both test sets)
+        self.assertCountEqual(ncbi_tax.translate("44249"), [])
+        ncbi_tax.build_translation(gtdb_tax, files=["tests/multitax/data_minimal/gtdb_ar_metadata.tar.gz", "tests/multitax/data_minimal/gtdb_bac_metadata.tar.gz"])
+        self.assertCountEqual(ncbi_tax.translate("44249"), ["g__Paenibacillus"])
+        
+        # Other translations not yet implemented
+        ott_tax = OttTx(files="tests/multitax/data_minimal/ott.tgz")
+        silva_tax = SilvaTx(files="tests/multitax/data_minimal/silva.txt.gz")
+        gg_tax = GreengenesTx(files="tests/multitax/data_minimal/gg.txt.gz")
+        with self.assertWarns(UserWarning):
+            ncbi_tax.build_translation(ott_tax)
+            ncbi_tax.build_translation(silva_tax)
+            ncbi_tax.build_translation(gg_tax)
+            gtdb_tax.build_translation(ott_tax)
+            gtdb_tax.build_translation(silva_tax)
+            gtdb_tax.build_translation(gg_tax)
+            ott_tax.build_translation(silva_tax)
+            ott_tax.build_translation(gg_tax)
+            ott_tax.build_translation(gtdb_tax)
+            ott_tax.build_translation(ncbi_tax)
+            gg_tax.build_translation(ott_tax)
+            gg_tax.build_translation(silva_tax)
+            gg_tax.build_translation(gtdb_tax)
+            gg_tax.build_translation(ncbi_tax)
 
     def test_check_consistency(self):
         """

@@ -4,24 +4,33 @@ Python package to obtain, parse and explore biological taxonomies
 
 ## Description
 
-MultiTax is a Python package that provides a common and generalized set of functions to download, parse, filter and explore multiple biological taxonomies (**GTDB, NCBI, Silva, Greengenes, Open Tree taxonomy**) and custom formatted taxonomies. Main goals are:
+MultiTax is a Python package that provides a common and generalized set of functions to download, parse, filter, explore, translate, convert and write multiple biological taxonomies (**GTDB, NCBI, Silva, Greengenes, Open Tree taxonomy**) and custom formatted taxonomies. Main goals are:
 
  - Be fast, intuitive, generalized and easy to use
  - Explore different taxonomies with same set of commands
  - Enable integration and compatibility with multiple taxonomies
- - *Translate and convert taxonomies (not yet implemented)*
+ - Translate taxonomies (partially implemented)
+ - Convert taxonomies (not yet implemented)
 
-MultiTax does not link sequence identifiers to taxonomic nodes, it just handles the taxonomy alone. Some kind of integration to work with sequence ids is planned, but not yet implemented.
+MultiTax does not link sequence identifiers to taxonomic nodes, it just handles the taxonomy alone. Some kind of integration to work with sequence or external identifiers is planned, but not yet implemented.
+
+## API Documentation
+
+https://pirovc.github.io/multitax/
 
 ## Installation
-	
+
 ### pip
 
-	pip install multitax
+```bash
+pip install multitax
+```
 
 ### conda
 
-	conda install -c bioconda multitax
+```bash
+conda install -c bioconda multitax
+```
 
 ### local
 
@@ -31,11 +40,7 @@ cd multitax
 python setup.py install --record files.txt
 ```
 
-## Documentation
-    
-https://pirovc.github.io/multitax/
-
-## Basic Example with GTDB
+## Basic usage with GTDB
 
 ```python
 from multitax import GtdbTx
@@ -48,11 +53,11 @@ tax.lineage("g__Escherichia")
 # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
 ```
 
-## Further Examples
+## Examples
 
-[List of all functions](https://pirovc.github.io/multitax/multitax/multitax.html)
+ - [List of functions](https://pirovc.github.io/multitax/multitax/multitax.html)
 
-### Obtain/load/parse taxonomy
+### Load
 
 ```python
 from multitax import GtdbTx  # or NcbiTx, SilvaTx, ...
@@ -131,7 +136,11 @@ tax.stats()
 #                          'domain': 2,
 #                          'root': 1}),
 # 'ranks': 45503}
+```
 
+### Filter
+
+```python
 # Filter ancestors (desc=True for descendants)
 tax.filter(['g__Escherichia', 's__Pseudomonas aeruginosa'])
 tax.stats()
@@ -148,7 +157,23 @@ tax.stats()
 #                          'species': 1,
 #                          'root': 1}),
 # 'ranks': 11}
+```
 
+### Translate
+
+```python
+# GTDB to NCBI
+from multitax import GtdbTx, NcbiTx
+ncbi_tax = NcbiTx()
+gtdb_tax = GtdbTx()
+gtdb_tax.build_translation(ncbi_tax)
+gtdb_tax.translate("g__Escherichia")
+# {'1301', '547', '561', '570', '590', '620'}
+```
+
+### Write
+
+```python
 # Write tax to file
 tax.write("custom_tax.tsv", cols=["node", "rank", "name_lineage"])
 
@@ -159,7 +184,7 @@ tax.write("custom_tax.tsv", cols=["node", "rank", "name_lineage"])
 #...
 ```
 
-### The same goes for the other taxonomies
+### The same applies to other taxonomies
 
 ```python
 # NCBI
@@ -191,7 +216,9 @@ tax.lineage("f__Enterobacteriaceae")
 
 Using pylca: https://github.com/pirovc/pylca
 
-    conda install -c bioconda pylca
+```bash
+conda install -c bioconda pylca
+```
 
 ```python
 from pylca.pylca import LCA
@@ -208,30 +235,44 @@ L("s__Escherichia dysenteriae", "s__Pseudomonas aeruginosa")
 # 'c__Gammaproteobacteria'
 ```
 
-## General information
+## Details
  
  - Taxonomies are parsed into `nodes`. Each node is annotated with a `name` and a `rank`.
  - Some taxonomies have a numeric taxonomic identifier (e.g. NCBI) and other use the rank + name as an identifier (e.g. GTDB). In MultiTax all identifiers are treated as strings.
  - A single root node is defined by default for each taxonomy (or `1` when not defined). This can be changed with `root_node` when loading the taxonomy (as well as annotations `root_parent`, `root_name`, `root_rank`). If the `root_node` already exists, the tree will be filtered.
  - Standard values for unknown/undefined nodes can be configured with `undefined_node`,`undefined_name` and `undefined_rank`. Those are default values returned when nodes/names/ranks are not found.
- - Taxonomy files are automatically download or can be loaded from disk (`files` parameter). Alternative `urls` can be provided. When downloaded, files are handled in memory. It is possible to save the downloaded file to disk with `output_prefix`.
+ - Taxonomy files are automatically downloaded or can be loaded from disk (`files` parameter). Alternative `urls` can be provided. When downloaded, files are handled in memory. It is possible to save the downloaded file to disk with `output_prefix`.
 
 ## Translation between taxonomies
 
-Not yet implemented. The goal here is to map different taxonomies if the linkage data is available. That's what I think will be possible.
+Partially implemented. The goal is to map different taxonomies if the linkage data is available. That's what is currently availble.
 
- |from/to |NCBI   |GTDB   |SILVA   |OTT   |GG  |
- |--------|-------|-------|--------|------|----|
- |NCBI    |-      |part   |part    |part  |no  |
- |GTDB    |full   |-      |no      |no    |no  |
- |SILVA   |full   |no     |-       |part  |no  |
- |OTT     |part   |no     |part    |-     |no  |
- |GG      |no     |no     |no      |no    |-   |
+
+ |from/to |NCBI     |GTDB   |SILVA     |OTT     |GG    |
+ |--------|---------|-------|----------|--------|------|
+ |NCBI    |-        |PART   |[part]    |[part]  |no    |
+ |GTDB    |FULL     |-      |[part]    |no      |[part]|
+ |SILVA   |[full]   |[part] |-         |[part]  |no    |
+ |OTT     |[part]   |no     |[part]    |-       |no    |
+ |GG      |no       |[part] |no        |no      |-     |
+
+Legend:
+
+ - full: complete translation available
+ - part: partial translation available
+ - no: no translation possible
+ - []: not yet implemented
+
+### Files and information about specific translations
+
+ - NCBI <-> GTDB
+   - GTDB is a subset of the NCBI repository, so the translation from NCBI to GTDB can be only partial
+   - Translation in both ways is based on: https://data.gtdb.ecogenomic.org/releases/latest/ar53_metadata.tar.gz and https://data.gtdb.ecogenomic.org/releases/latest/bac120_metadata.tar.gz
 
 ## Further ideas
 
 - Add/remove/update nodes
-- Conversion between taxonomies (write on specific files/format)
+- Conversion between taxonomies (write on specific format)
 
 ## Similar projects
 

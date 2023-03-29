@@ -31,19 +31,7 @@
         <h2>API Documentation</h2>
             <ul class="memberlist">
             <li>
-                    <a class="function" href="#open_files">open_files</a>
-            </li>
-            <li>
-                    <a class="function" href="#download_files">download_files</a>
-            </li>
-            <li>
-                    <a class="function" href="#close_files">close_files</a>
-            </li>
-            <li>
-                    <a class="function" href="#save_urls">save_urls</a>
-            </li>
-            <li>
-                    <a class="function" href="#load_url_mem">load_url_mem</a>
+                    <a class="function" href="#check_dir">check_dir</a>
             </li>
             <li>
                     <a class="function" href="#check_file">check_file</a>
@@ -52,16 +40,28 @@
                     <a class="function" href="#check_no_file">check_no_file</a>
             </li>
             <li>
-                    <a class="function" href="#check_dir">check_dir</a>
+                    <a class="function" href="#close_files">close_files</a>
             </li>
             <li>
-                    <a class="function" href="#reverse_dict">reverse_dict</a>
+                    <a class="function" href="#download_files">download_files</a>
+            </li>
+            <li>
+                    <a class="function" href="#filter_function">filter_function</a>
             </li>
             <li>
                     <a class="function" href="#join_check">join_check</a>
             </li>
             <li>
-                    <a class="function" href="#filter_function">filter_function</a>
+                    <a class="function" href="#load_url_mem">load_url_mem</a>
+            </li>
+            <li>
+                    <a class="function" href="#open_files">open_files</a>
+            </li>
+            <li>
+                    <a class="function" href="#reverse_dict">reverse_dict</a>
+            </li>
+            <li>
+                    <a class="function" href="#save_urls">save_urls</a>
             </li>
             <li>
                     <a class="function" href="#warning_on_one_line">warning_on_one_line</a>
@@ -96,24 +96,33 @@
 <span class="kn">from</span> <span class="nn">urllib.error</span> <span class="kn">import</span> <span class="n">HTTPError</span>
 
 
-<span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">check_dir</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">abs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">prefix</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">abs_path</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">abs_path</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">check_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">file</span> <span class="o">+</span> <span class="s2">&quot; file do not exist&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">file</span> <span class="o">+</span> <span class="s2">&quot; file is empty&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">check_no_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters:</span>
-<span class="sd">    * **files** *[list]*: List of files to open (text, &quot;.gz&quot;, &quot;.tar.gz&quot;, &quot;.tgz&quot;)</span>
+<span class="sd">    * **fhs** *[dict]*: {file: file handler}</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">    * OrderedDict {file: file handler} (same order as input)</span>
+<span class="sd">    Returns: Nothing</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">fhs</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tar.gz&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tgz&quot;</span><span class="p">):</span>
-            <span class="n">fhs</span><span class="p">[</span><span class="n">file</span><span class="p">]</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r:gz&#39;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">):</span>
-            <span class="n">fhs</span><span class="p">[</span><span class="n">file</span><span class="p">]</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">fhs</span><span class="p">[</span><span class="n">file</span><span class="p">]</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">fhs</span>
+    <span class="k">for</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">fhs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 
 <span class="k">def</span> <span class="nf">download_files</span><span class="p">(</span><span class="n">urls</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">retry_attempts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
@@ -163,36 +172,15 @@
                     <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">urls</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parameters:</span>
-<span class="sd">    * **fhs** *[dict]*: {file: file handler}</span>
-
-<span class="sd">    Returns: Nothing</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">fhs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">filter_function</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">elements</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">elements</span><span class="p">))</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="n">value</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">save_urls</span><span class="p">(</span><span class="n">urls</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parameters:</span>
-<span class="sd">    * **urls** *[list]*: List of urls to download</span>
-<span class="sd">    * **output_prefix** *[str]*: Output directory to save files</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">    * list of files saved</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
-        <span class="n">outfile</span> <span class="o">=</span> <span class="n">output_prefix</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="n">check_no_file</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
-        <span class="n">urlstream</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s1">&#39;b+w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">urlstream</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-        <span class="n">urlstream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">files</span>
+<span class="k">def</span> <span class="nf">join_check</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">elements</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">elements</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">load_url_mem</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -216,65 +204,7 @@
     <span class="k">return</span> <span class="n">tmpfile</span>
 
 
-<span class="k">def</span> <span class="nf">check_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">file</span> <span class="o">+</span> <span class="s2">&quot; file do not exist&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">file</span> <span class="o">+</span> <span class="s2">&quot; file is empty&quot;</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">check_no_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">check_dir</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="n">abs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">prefix</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">abs_path</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">abs_path</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">reverse_dict</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-    <span class="n">rd</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rd</span><span class="p">:</span>
-            <span class="n">rd</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">rd</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">rd</span>
-
-
-<span class="k">def</span> <span class="nf">join_check</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">elements</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">elements</span><span class="p">))</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-
-
-<span class="k">def</span> <span class="nf">filter_function</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">elements</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">elements</span><span class="p">))</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="n">value</span><span class="p">]</span>
-
-
-<span class="k">def</span> <span class="nf">warning_on_one_line</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">category</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
-
-
-<span class="n">warnings</span><span class="o">.</span><span class="n">formatwarning</span> <span class="o">=</span> <span class="n">warning_on_one_line</span>
-</pre></div>
-
-        </details>
-
-            </section>
-                <section id="open_files">
-                            <div class="attr function"><a class="headerlink" href="#open_files">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">open_files</span><span class="signature">(files: list)</span>:
-    </div>
-
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters:</span>
 <span class="sd">    * **files** *[list]*: List of files to open (text, &quot;.gz&quot;, &quot;.tar.gz&quot;, &quot;.tgz&quot;)</span>
@@ -292,6 +222,130 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">fhs</span><span class="p">[</span><span class="n">file</span><span class="p">]</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fhs</span>
+
+
+<span class="k">def</span> <span class="nf">reverse_dict</span><span class="p">(</span><span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="n">rd</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rd</span><span class="p">:</span>
+            <span class="n">rd</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rd</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rd</span>
+
+
+<span class="k">def</span> <span class="nf">save_urls</span><span class="p">(</span><span class="n">urls</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    * **urls** *[list]*: List of urls to download</span>
+<span class="sd">    * **output_prefix** *[str]*: Output directory to save files</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    * list of files saved</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+        <span class="n">outfile</span> <span class="o">=</span> <span class="n">output_prefix</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">check_no_file</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+        <span class="n">urlstream</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s1">&#39;b+w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">urlstream</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">urlstream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">files</span>
+
+
+<span class="k">def</span> <span class="nf">warning_on_one_line</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">category</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">formatwarning</span> <span class="o">=</span> <span class="n">warning_on_one_line</span>
+</pre></div>
+
+        </details>
+
+            </section>
+                <section id="check_dir">
+                            <div class="attr function"><a class="headerlink" href="#check_dir">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">check_dir</span><span class="signature">(prefix: str)</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_dir</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">abs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">prefix</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">abs_path</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">abs_path</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+    
+
+                </section>
+                <section id="check_file">
+                            <div class="attr function"><a class="headerlink" href="#check_file">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">check_file</span><span class="signature">(file: str)</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">file</span> <span class="o">+</span> <span class="s2">&quot; file do not exist&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">file</span> <span class="o">+</span> <span class="s2">&quot; file is empty&quot;</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+    
+
+                </section>
+                <section id="check_no_file">
+                            <div class="attr function"><a class="headerlink" href="#check_no_file">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">check_no_file</span><span class="signature">(file: str)</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_no_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</pre></div>
+
+        </details>
+
+    
+
+                </section>
+                <section id="close_files">
+                            <div class="attr function"><a class="headerlink" href="#close_files">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">close_files</span><span class="signature">(fhs: dict)</span>:
+    </div>
+
+            <details>
+            <summary>View Source</summary>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    * **fhs** *[dict]*: {file: file handler}</span>
+
+<span class="sd">    Returns: Nothing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">fhs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 
         </details>
@@ -299,14 +353,10 @@
             <div class="docstring"><p>Parameters:</p>
 
 <ul>
-<li><strong>files</strong> <em>[list]</em>: List of files to open (text, ".gz", ".tar.gz", ".tgz")</li>
+<li><strong>fhs</strong> <em>[dict]</em>: {file: file handler}</li>
 </ul>
 
-<p>Returns:</p>
-
-<ul>
-<li>OrderedDict {file: file handler} (same order as input)</li>
-</ul>
+<p>Returns: Nothing</p>
 </div>
 
 
@@ -388,87 +438,45 @@
 
 
                 </section>
-                <section id="close_files">
-                            <div class="attr function"><a class="headerlink" href="#close_files">#&nbsp;&nbsp</a>
+                <section id="filter_function">
+                            <div class="attr function"><a class="headerlink" href="#filter_function">#&nbsp;&nbsp</a>
 
         
             <span class="def">def</span>
-            <span class="name">close_files</span><span class="signature">(fhs: dict)</span>:
+            <span class="name">filter_function</span><span class="signature">(elements, function, value)</span>:
     </div>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parameters:</span>
-<span class="sd">    * **fhs** *[dict]*: {file: file handler}</span>
-
-<span class="sd">    Returns: Nothing</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">fhs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="n">fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">filter_function</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">elements</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">elements</span><span class="p">))</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="n">value</span><span class="p">]</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Parameters:</p>
-
-<ul>
-<li><strong>fhs</strong> <em>[dict]</em>: {file: file handler}</li>
-</ul>
-
-<p>Returns: Nothing</p>
-</div>
-
+    
 
                 </section>
-                <section id="save_urls">
-                            <div class="attr function"><a class="headerlink" href="#save_urls">#&nbsp;&nbsp</a>
+                <section id="join_check">
+                            <div class="attr function"><a class="headerlink" href="#join_check">#&nbsp;&nbsp</a>
 
         
             <span class="def">def</span>
-            <span class="name">save_urls</span><span class="signature">(urls: list, output_prefix: str)</span>:
+            <span class="name">join_check</span><span class="signature">(elements, sep: str)</span>:
     </div>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">save_urls</span><span class="p">(</span><span class="n">urls</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parameters:</span>
-<span class="sd">    * **urls** *[list]*: List of urls to download</span>
-<span class="sd">    * **output_prefix** *[str]*: Output directory to save files</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">    * list of files saved</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
-        <span class="n">outfile</span> <span class="o">=</span> <span class="n">output_prefix</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="n">check_no_file</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
-        <span class="n">urlstream</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s1">&#39;b+w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">urlstream</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-        <span class="n">urlstream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">files</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">join_check</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">elements</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">elements</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Parameters:</p>
-
-<ul>
-<li><strong>urls</strong> <em>[list]</em>: List of urls to download</li>
-<li><strong>output_prefix</strong> <em>[str]</em>: Output directory to save files</li>
-</ul>
-
-<p>Returns:</p>
-
-<ul>
-<li>list of files saved</li>
-</ul>
-</div>
-
+    
 
                 </section>
                 <section id="load_url_mem">
@@ -519,67 +527,51 @@
 
 
                 </section>
-                <section id="check_file">
-                            <div class="attr function"><a class="headerlink" href="#check_file">#&nbsp;&nbsp</a>
+                <section id="open_files">
+                            <div class="attr function"><a class="headerlink" href="#open_files">#&nbsp;&nbsp</a>
 
         
             <span class="def">def</span>
-            <span class="name">check_file</span><span class="signature">(file: str)</span>:
+            <span class="name">open_files</span><span class="signature">(files: list)</span>:
     </div>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">file</span> <span class="o">+</span> <span class="s2">&quot; file do not exist&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">file</span> <span class="o">+</span> <span class="s2">&quot; file is empty&quot;</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">open_files</span><span class="p">(</span><span class="n">files</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    * **files** *[list]*: List of files to open (text, &quot;.gz&quot;, &quot;.tar.gz&quot;, &quot;.tgz&quot;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    * OrderedDict {file: file handler} (same order as input)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fhs</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tar.gz&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tgz&quot;</span><span class="p">):</span>
+            <span class="n">fhs</span><span class="p">[</span><span class="n">file</span><span class="p">]</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r:gz&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">):</span>
+            <span class="n">fhs</span><span class="p">[</span><span class="n">file</span><span class="p">]</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fhs</span><span class="p">[</span><span class="n">file</span><span class="p">]</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fhs</span>
 </pre></div>
 
         </details>
 
-    
+            <div class="docstring"><p>Parameters:</p>
 
-                </section>
-                <section id="check_no_file">
-                            <div class="attr function"><a class="headerlink" href="#check_no_file">#&nbsp;&nbsp</a>
+<ul>
+<li><strong>files</strong> <em>[list]</em>: List of files to open (text, ".gz", ".tar.gz", ".tgz")</li>
+</ul>
 
-        
-            <span class="def">def</span>
-            <span class="name">check_no_file</span><span class="signature">(file: str)</span>:
-    </div>
+<p>Returns:</p>
 
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_no_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-</pre></div>
+<ul>
+<li>OrderedDict {file: file handler} (same order as input)</li>
+</ul>
+</div>
 
-        </details>
-
-    
-
-                </section>
-                <section id="check_dir">
-                            <div class="attr function"><a class="headerlink" href="#check_dir">#&nbsp;&nbsp</a>
-
-        
-            <span class="def">def</span>
-            <span class="name">check_dir</span><span class="signature">(prefix: str)</span>:
-    </div>
-
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">check_dir</span><span class="p">(</span><span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="n">abs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">prefix</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">abs_path</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">abs_path</span><span class="p">)</span>
-</pre></div>
-
-        </details>
-
-    
 
                 </section>
                 <section id="reverse_dict">
@@ -606,45 +598,53 @@
     
 
                 </section>
-                <section id="join_check">
-                            <div class="attr function"><a class="headerlink" href="#join_check">#&nbsp;&nbsp</a>
+                <section id="save_urls">
+                            <div class="attr function"><a class="headerlink" href="#save_urls">#&nbsp;&nbsp</a>
 
         
             <span class="def">def</span>
-            <span class="name">join_check</span><span class="signature">(elements, sep: str)</span>:
+            <span class="name">save_urls</span><span class="signature">(urls: list, output_prefix: str)</span>:
     </div>
 
             <details>
             <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">join_check</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">elements</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">elements</span><span class="p">))</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">save_urls</span><span class="p">(</span><span class="n">urls</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    * **urls** *[list]*: List of urls to download</span>
+<span class="sd">    * **output_prefix** *[str]*: Output directory to save files</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    * list of files saved</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+        <span class="n">outfile</span> <span class="o">=</span> <span class="n">output_prefix</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">check_no_file</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+        <span class="n">urlstream</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s1">&#39;b+w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">urlstream</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">urlstream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">files</span>
 </pre></div>
 
         </details>
 
-    
+            <div class="docstring"><p>Parameters:</p>
 
-                </section>
-                <section id="filter_function">
-                            <div class="attr function"><a class="headerlink" href="#filter_function">#&nbsp;&nbsp</a>
+<ul>
+<li><strong>urls</strong> <em>[list]</em>: List of urls to download</li>
+<li><strong>output_prefix</strong> <em>[str]</em>: Output directory to save files</li>
+</ul>
 
-        
-            <span class="def">def</span>
-            <span class="name">filter_function</span><span class="signature">(elements, function, value)</span>:
-    </div>
+<p>Returns:</p>
 
-            <details>
-            <summary>View Source</summary>
-            <div class="pdoc-code codehilite"><pre><span></span><span class="k">def</span> <span class="nf">filter_function</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">elements</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="n">elements</span><span class="p">))</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="n">value</span><span class="p">]</span>
-</pre></div>
+<ul>
+<li>list of files saved</li>
+</ul>
+</div>
 
-        </details>
-
-    
 
                 </section>
                 <section id="warning_on_one_line">

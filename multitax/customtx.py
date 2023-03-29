@@ -1,4 +1,5 @@
 from .multitax import MultiTax
+import warnings
 
 
 class CustomTx(MultiTax):
@@ -28,6 +29,11 @@ class CustomTx(MultiTax):
     def __repr__(self):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
         return 'CustomTx({})'.format(', '.join(args))
+
+    def _build_translation(self, target_tax, files: list = None, urls: list = None):
+        warnings.warn("Translation between taxonomies [" + self.__class__.__name__ +
+                      "," + target_tax.__class__.__name__ + "] not yet implemented.")
+        return {}
 
     def _parse(self, fhs, **kwargs):
         nodes = {}

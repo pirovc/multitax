@@ -1,5 +1,6 @@
 from .multitax import MultiTax
 from .utils import filter_function
+import warnings
 
 
 class OttTx(MultiTax):
@@ -14,6 +15,11 @@ class OttTx(MultiTax):
     def __repr__(self):
         args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
         return 'OttTx({})'.format(', '.join(args))
+
+    def _build_translation(self, target_tax, files: list = None, urls: list = None):
+        warnings.warn("Translation between taxonomies [" + self.__class__.__name__ +
+                      "," + target_tax.__class__.__name__ + "] not yet implemented.")
+        return {}
 
     def _parse(self, fhs, **kwargs):
         fhs_list = list(fhs.values())
@@ -30,6 +36,18 @@ class OttTx(MultiTax):
                 self._extended_name_nodes = self._parse_synonyms(fhs_list[2])
 
         return nodes, ranks, names
+
+    def _parse_forwards(self, fh):
+        forwards = {}
+        # skip first line header
+        next(fh)
+        for line in fh:
+            try:
+                old_taxid, new_taxid = line.rstrip().split('\t')
+            except:
+                old_taxid, new_taxid = line.decode().rstrip().split('\t')
+            forwards[old_taxid] = new_taxid
+        return forwards
 
     def _parse_ott(self, fh_taxdump, extended_names):
         # Get files inside folder by name
@@ -50,6 +68,21 @@ class OttTx(MultiTax):
                 self._extended_name_nodes = self._parse_synonyms(fh_synonyms)
         return nodes, ranks, names
 
+    def _parse_synonyms(self, fh):
+        synonyms = {}
+        # skip first line header
+        next(fh)
+        for line in fh:
+            try:
+                name, taxid, _ = line.split('\t|\t', 2)
+            except:
+                name, taxid, _ = line.decode().split('\t|\t', 2)
+            if name not in synonyms:
+                synonyms[name] = []
+            synonyms[name].append(taxid)
+
+        return synonyms
+
     def _parse_taxonomy(self, fh):
         nodes = {}
         ranks = {}
@@ -66,33 +99,6 @@ class OttTx(MultiTax):
             names[taxid] = name
         return nodes, ranks, names
 
-    def _parse_forwards(self, fh):
-        forwards = {}
-        # skip first line header
-        next(fh)
-        for line in fh:
-            try:
-                old_taxid, new_taxid = line.rstrip().split('\t')
-            except:
-                old_taxid, new_taxid = line.decode().rstrip().split('\t')
-            forwards[old_taxid] = new_taxid
-        return forwards
-
-    def _parse_synonyms(self, fh):
-        synonyms = {}
-        # skip first line header
-        next(fh)
-        for line in fh:
-            try:
-                name, taxid, _ = line.split('\t|\t', 2)
-            except:
-                name, taxid, _ = line.decode().split('\t|\t', 2)
-            if name not in synonyms:
-                synonyms[name] = []
-            synonyms[name].append(taxid)
-
-        return synonyms
-
     def forwards(self, node: str):
         """
         Returns relative entry from the forwards.tsv file of a given node.
@@ -107,14 +113,6 @@ class OttTx(MultiTax):
         if n == self.undefined_node:
             n = self.forwards(node)
         return n
-
-    def stats(self):
-        s = super().stats()
-        if self._forwards:
-            s["forwards"] = len(self._forwards)
-        if self._extended_name_nodes:
-            s["extended_names"] = len(self._extended_name_nodes)
-        return s
 
     def search_name(self, text: str, rank: str = None, exact: bool = True, force_extended: bool = False):
         """
@@ -148,3 +146,11 @@ class OttTx(MultiTax):
                 ret = filter_function(ret, self.rank, rank)
 
             return list(set(n + ret))
+
+    def stats(self):
+        s = super().stats()
+        if self._forwards:
+            s["forwards"] = len(self._forwards)
+        if self._extended_name_nodes:
+            s["extended_names"] = len(self._extended_name_nodes)
+        return s
