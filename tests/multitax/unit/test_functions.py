@@ -502,9 +502,11 @@ class TestFunctions(unittest.TestCase):
         # No filter for root
         tax = CustomTx(files=self.test_file)
         self.assertEqual(tax.stats()["nodes"], 14)
-        tax.filter(tax.root_node)
-        self.assertEqual(tax.stats()["nodes"], 14)
-        tax.filter(tax.root_node, desc=True)
+        with self.assertRaises(ValueError):
+            tax.filter(tax.root_node)
+            tax.filter(["2.2", tax.root_node])
+            tax.filter(tax.root_node, desc=True)
+            tax.filter(["2.2", tax.root_node], desc=True)
         self.assertEqual(tax.stats()["nodes"], 14)
 
         tax = CustomTx(files=self.test_file)

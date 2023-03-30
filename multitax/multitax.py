@@ -225,11 +225,11 @@ class MultiTax(object):
             raise ValueError("Parent node [" + parent + "] not found.")
         elif node in self._nodes:
             raise ValueError("Node [" + node + "] already present.")
-        else:
-            self._nodes[node] = parent
-            self._names[node] = name if name is not None else self.undefined_name
-            self._ranks[node] = rank if rank is not None else self.undefined_rank
-            self._reset_aux_data()
+        
+        self._nodes[node] = parent
+        self._names[node] = name if name is not None else self.undefined_name
+        self._ranks[node] = rank if rank is not None else self.undefined_rank
+        self._reset_aux_data()
 
     def build_lineages(self, root_node: str = None, ranks: list = None):
         """
@@ -347,8 +347,6 @@ class MultiTax(object):
         If desc=True, keep all descendants instead.
         Deletes built lineages and translations.
 
-        Returns: None
-
         Example:
 
             from multitax import GtdbTx
@@ -369,7 +367,7 @@ class MultiTax(object):
 
         # Cannot filter root node
         if self.root_node in nodes:
-            return None
+            raise ValueError("Root node [" + self.root_node + "] cannot be filtered.")
 
         # Keep track of nodes to be filtered out
         filtered_nodes = set(self._nodes)

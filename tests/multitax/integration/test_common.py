@@ -172,13 +172,15 @@ class TestCommon(unittest.TestCase):
         for t in self.taxonomies:
             # Delete root
             tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
-            tax._remove(tax.root_node)
-            self.assertRaises(AssertionError, tax.check_consistency)
+            tax.remove(tax.root_node)
+            with self.assertRaises(ValueError):
+                tax.check_consistency()
 
             # Delete random node (parent from random leaf)
             tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
-            tax._remove(tax.parent(random.choice(tax.leaves())))
-            self.assertRaises(AssertionError, tax.check_consistency)
+            tax.remove(tax.parent(random.choice(tax.leaves())))
+            with self.assertRaises(ValueError):
+                tax.check_consistency()
 
             # Delete random leaf (do not generate inconsistency)
             tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
