@@ -264,7 +264,8 @@ lca("s__Escherichia dysenteriae", "s__Pseudomonas aeruginosa")
 ```
 
 ## Details
- 
+
+ - After downloading/parsing the desired taxonomies, MultiTax works fully offline.
  - Taxonomies are parsed into `nodes`. Each node is annotated with a `name` and a `rank`.
  - Some taxonomies have a numeric taxonomic identifier (e.g. NCBI) and other use the rank + name as an identifier (e.g. GTDB). In MultiTax all identifiers are treated as strings.
  - A single root node is defined by default for each taxonomy (or `1` when not defined). This can be changed with `root_node` when loading the taxonomy (as well as annotations `root_parent`, `root_name`, `root_rank`). If the `root_node` already exists, the tree will be filtered.
@@ -297,10 +298,13 @@ Legend:
    - GTDB is a subset of the NCBI repository, so the translation from NCBI to GTDB can be only partial
    - Translation in both ways is based on: https://data.gtdb.ecogenomic.org/releases/latest/ar53_metadata.tar.gz and https://data.gtdb.ecogenomic.org/releases/latest/bac120_metadata.tar.gz
 
-## Further ideas
+--- 
 
-- Add/remove/update nodes
+## Further ideas to be implemented
+
+- More translations
 - Conversion between taxonomies (write on specific format)
+
 
 ## Similar projects
 

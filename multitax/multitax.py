@@ -1,10 +1,10 @@
 from .utils import *
 from collections import Counter
-
+from . import __version__
 
 class MultiTax(object):
 
-    version = "1.3.0"
+    version = __version__
 
     _default_urls = []
     _default_root_node = "1"
