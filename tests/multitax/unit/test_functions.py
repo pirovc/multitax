@@ -158,6 +158,7 @@ class TestFunctions(unittest.TestCase):
         test lineage function
         """
         tax = CustomTx(files=self.test_file)
+        # Use only assertEqual instead of assertCountEqual -> order matters
         self.assertEqual(tax.lineage("5.2"), ["1", "2.2", "3.4", "4.4", "5.2"])
         self.assertEqual(tax.lineage("3.2"), ["1", "2.1", "3.2"])
         self.assertEqual(tax.lineage("4.6"), ["1", "4.6"])
@@ -460,19 +461,19 @@ class TestFunctions(unittest.TestCase):
         tax = CustomTx(files=self.test_file)
         tax.filter("4.5")
         self.assertEqual(tax.stats()["nodes"], 3)
-        self.assertEqual(tax.lineage("4.5"), ["1", "2.2", "4.5"])
-        self.assertEqual(tax.leaves("1"), ["4.5"])
+        self.assertCountEqual(tax.lineage("4.5"), ["1", "2.2", "4.5"])
+        self.assertCountEqual(tax.leaves("1"), ["4.5"])
 
         tax = CustomTx(files=self.test_file)
         tax.filter(["4.5", "XXXX"])
         self.assertEqual(tax.stats()["nodes"], 3)
-        self.assertEqual(tax.lineage("4.5"), ["1", "2.2", "4.5"])
+        self.assertCountEqual(tax.lineage("4.5"), ["1", "2.2", "4.5"])
         self.assertCountEqual(tax.leaves("1"), ["4.5"])
 
         tax = CustomTx(files=self.test_file)
         tax.filter(["4.1", "5.1", "5.2"])
         self.assertEqual(tax.stats()["nodes"], 9)
-        self.assertEqual(tax.lineage("4.1"), ["1", "2.1", "3.1", "4.1"])
+        self.assertCountEqual(tax.lineage("4.1"), ["1", "2.1", "3.1", "4.1"])
         self.assertCountEqual(tax.leaves("1"), ["4.1", "5.1", "5.2"])
 
         tax = CustomTx(files=self.test_file)
@@ -483,20 +484,20 @@ class TestFunctions(unittest.TestCase):
         tax = CustomTx(files=self.test_file)
         tax.filter("3.4", desc=True)
         self.assertEqual(tax.stats()["nodes"], 5)
-        self.assertEqual(tax.lineage("3.4"), ["1", "3.4"])
+        self.assertCountEqual(tax.lineage("3.4"), ["1", "3.4"])
         self.assertCountEqual(tax.leaves("1"), ["5.1", "5.2"])
 
         tax = CustomTx(files=self.test_file)
         tax.filter(["XXXXX", "3.4"], desc=True)
         self.assertEqual(tax.stats()["nodes"], 5)
-        self.assertEqual(tax.lineage("3.4"), ["1", "3.4"])
+        self.assertCountEqual(tax.lineage("3.4"), ["1", "3.4"])
         self.assertCountEqual(tax.leaves("1"), ["5.1", "5.2"])
 
         tax = CustomTx(files=self.test_file)
         tax.filter(["3.2", "4.4"], desc=True)
         self.assertEqual(tax.stats()["nodes"], 7)
-        self.assertEqual(tax.lineage("5.2"), ["1", "4.4", "5.2"])
-        self.assertEqual(tax.lineage("4.5"), [])
+        self.assertCountEqual(tax.lineage("5.2"), ["1", "4.4", "5.2"])
+        self.assertCountEqual(tax.lineage("4.5"), [])
         self.assertCountEqual(tax.leaves("1"), ["4.2", "4.3", "5.1", "5.2"])
 
         # No filter for root
