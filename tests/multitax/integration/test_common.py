@@ -4,6 +4,8 @@ import unittest
 import os
 import sys
 import random
+import io
+
 
 sys.path.append("tests/multitax/")
 
@@ -41,6 +43,18 @@ class TestCommon(unittest.TestCase):
         for t in self.taxonomies:
             tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
             self.assertGreater(tax.stats()["nodes"], 0, t + " failed")
+
+    def test_print(self):
+        """
+        Test output of printing tax object instance
+        """
+        for t in self.taxonomies:
+            tax = self.taxonomies[t]["class"](**self.taxonomies[t]["params"])
+            out = io.StringIO()
+            sys.stdout = out
+            print(tax)
+            sys.stdout = sys.__stdout__
+            self.assertEqual(out.getvalue().lower().startswith(t), True)
 
     def test_urls(self):
         """
