@@ -432,7 +432,7 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(tax.check_consistency(), None)
         # delete node
         del tax._nodes["3.4"]
-        self.assertRaises(AssertionError, tax.check_consistency)
+        self.assertRaises(ValueError, tax.check_consistency)
 
         tax = CustomTx(files=self.test_file)
         # delete leaf node
@@ -443,7 +443,7 @@ class TestFunctions(unittest.TestCase):
         # delete root
         del tax._nodes["1"]
         # should raise error
-        self.assertRaises(AssertionError, tax.check_consistency)
+        self.assertRaises(ValueError, tax.check_consistency)
 
     def test_filter(self):
         """
