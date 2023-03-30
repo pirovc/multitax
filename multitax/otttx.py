@@ -4,7 +4,7 @@ import warnings
 
 
 class OttTx(MultiTax):
-    _default_urls = ["http://files.opentreeoflife.org/ott/ott3.2/ott3.2.tgz"]
+    _default_urls = ["http://files.opentreeoflife.org/ott/ott3.4/ott3.4.tgz"]
     _default_root_node = "805080"
 
     def __init__(self, **kwargs):
@@ -13,8 +13,8 @@ class OttTx(MultiTax):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
-        return 'OttTx({})'.format(', '.join(args))
+        stats = ['{}={}'.format(k, repr(v)) for (k, v) in self.stats().items()]
+        return 'OttTx({})'.format(', '.join(stats))
 
     def _build_translation(self, target_tax, files: list = None, urls: list = None):
         warnings.warn("Translation between taxonomies [" + self.__class__.__name__ +

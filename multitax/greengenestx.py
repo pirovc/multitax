@@ -19,8 +19,8 @@ class GreengenesTx(MultiTax):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
-        return 'GreengenesTx({})'.format(', '.join(args))
+        stats = ['{}={}'.format(k, repr(v)) for (k, v) in self.stats().items()]
+        return 'GreengenesTx({})'.format(', '.join(stats))
 
     def _build_translation(self, target_tax, files: list = None, urls: list = None):
         warnings.warn("Translation between taxonomies [" + self.__class__.__name__ +

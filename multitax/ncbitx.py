@@ -15,8 +15,8 @@ class NcbiTx(MultiTax):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
-        return 'NcbiTx({})'.format(', '.join(args))
+        stats = ['{}={}'.format(k, repr(v)) for (k, v) in self.stats().items()]
+        return 'NcbiTx({})'.format(', '.join(stats))
 
     def _build_translation(self, target_tax, files: list = None, urls: list = None):
         translated_nodes = {}
