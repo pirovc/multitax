@@ -522,22 +522,23 @@ class MultiTax(object):
 
     def prune(self, nodes: list):
         """
-        Prunes a branch of the tree.
+        Prunes branches of the tree under the given nodes.
         Deletes built lineages and translations.
         """
 
         if isinstance(nodes, str):
             nodes = [nodes]
 
+        del_nodes = set()
         for node in nodes:
-            branch = set()
-
+            if node not in self._nodes:
+                raise ValueError("Node [" + node + "] not found.")
             for leaf in self.leaves(node):
                 for n in self.lineage(leaf, root_node=node)[1:]:
-                    branch.add(n)
+                    del_nodes.add(n)
 
-            for b in branch:
-                self._remove(b)
+        for n in del_nodes:
+            self._remove(n)
 
         self._reset_aux_data()
 
@@ -565,6 +566,8 @@ class MultiTax(object):
         Running check consistency after removing a node is recommended.
         Deletes built lineages and translations.
         """
+        if node not in self._nodes:
+            raise ValueError("Node [" + node + "] not found.")
         self._remove(node)
         self._reset_aux_data()
         if check_consistency:
