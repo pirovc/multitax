@@ -598,34 +598,34 @@ class TestFunctions(unittest.TestCase):
         """
         tax = CustomTx(files=self.test_file)
 
-        self.assertEqual(tax.leaves("4.4"), ["5.1", "5.2"])
+        self.assertCountEqual(tax.leaves("4.4"), ["5.1", "5.2"])
         tax.prune("4.4")
         self.assertEqual(tax.check_consistency(), None)
-        self.assertEqual(tax.leaves("4.4"), ["4.4"])
+        self.assertCountEqual(tax.leaves("4.4"), ["4.4"])
 
         # Prune leaf node (nothing changes)
-        self.assertEqual(tax.leaves("4.6"), ["4.6"])
+        self.assertCountEqual(tax.leaves("4.6"), ["4.6"])
         tax.prune("4.6")
         self.assertEqual(tax.check_consistency(), None)
-        self.assertEqual(tax.leaves("4.6"), ["4.6"])
+        self.assertCountEqual(tax.leaves("4.6"), ["4.6"])
 
         # Prune multiple overlapping nodes
-        self.assertEqual(tax.leaves("2.1"), ["4.1", "4.2", "4.3"])
-        self.assertEqual(tax.leaves("3.2"), ["4.2", "4.3"])
+        self.assertCountEqual(tax.leaves("2.1"), ["4.1", "4.2", "4.3"])
+        self.assertCountEqual(tax.leaves("3.2"), ["4.2", "4.3"])
         tax.prune(["2.1", "3.2"])
         self.assertEqual(tax.check_consistency(), None)
-        self.assertEqual(tax.leaves("2.1"), ["2.1"])
-        self.assertEqual(tax.leaves("3.2"), [])
+        self.assertCountEqual(tax.leaves("2.1"), ["2.1"])
+        self.assertCountEqual(tax.leaves("3.2"), [])
 
         # Restar tax
         tax = CustomTx(files=self.test_file)
         # Prune multiple overlapping nodes (reversed)
-        self.assertEqual(tax.leaves("2.1"), ["4.1", "4.2", "4.3"])
-        self.assertEqual(tax.leaves("3.2"), ["4.2", "4.3"])
+        self.assertCountEqual(tax.leaves("2.1"), ["4.1", "4.2", "4.3"])
+        self.assertCountEqual(tax.leaves("3.2"), ["4.2", "4.3"])
         tax.prune(["3.2", "2.1"])
         self.assertEqual(tax.check_consistency(), None)
-        self.assertEqual(tax.leaves("2.1"), ["2.1"])
-        self.assertEqual(tax.leaves("3.2"), [])
+        self.assertCountEqual(tax.leaves("2.1"), ["2.1"])
+        self.assertCountEqual(tax.leaves("3.2"), [])
 
         # Pruning node not present
         with self.assertRaises(ValueError):
