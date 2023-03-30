@@ -1,10 +1,10 @@
 from .utils import *
 from collections import Counter
-
+from . import __version__
 
 class MultiTax(object):
 
-    version = "1.2.1"
+    version = __version__
 
     _default_urls = []
     _default_root_node = "1"
@@ -64,10 +64,14 @@ class MultiTax(object):
         self._nodes = {}
         self._ranks = {}
         self._names = {}
+        # Aux. structures
         self._lineages = {}
         self._name_nodes = {}
         self._node_children = {}
         self._rank_nodes = {}
+        self._translated_nodes = {}
+
+        # Store source of tax files (url or file)
         self.sources = []
 
         # Open/Download/Write files
@@ -106,6 +110,15 @@ class MultiTax(object):
 
         self.check_consistency()
 
+    def _exact_name(self, text: str, names: dict):
+        """
+        Returns list of nodes of a given exact name (case sensitive).
+        """
+        if text in names:
+            return names[text]
+        else:
+            return []
+
     def _parse(self, fhs: dict):
         """
         main function to be overloaded
@@ -113,6 +126,48 @@ class MultiTax(object):
         return nodes, ranks and names dicts
         """
         return {}, {}, {}
+
+    def _partial_name(self, text: str, names: dict):
+        """
+        Searches names containing a certain text (case sensitive) and return their respective nodes.
+        """
+        matching_nodes = set()
+        for name in names:
+            if text in name:
+                matching_nodes.update(names[name])
+        return list(matching_nodes)
+
+    def _recurse_leaves(self, node: str):
+        """
+        Recursive function returning leaf nodes
+        """
+        children = self.children(node)
+        if not children:
+            return [node]
+        leaves = []
+        for child in children:
+            leaves.extend(self._recurse_leaves(child))
+        return leaves
+
+    def _remove(self, node: str):
+        """
+        Removes node from taxonomy, no checking, for internal use
+        """
+        del self._nodes[node]
+        if node in self._names:
+            del self._names[node]
+        if node in self._ranks:
+            del self._ranks[node]
+
+    def _reset_aux_data(self):
+        """
+        Reset aux. data structures
+        """
+        self._lineages = {}
+        self._name_nodes = {}
+        self._node_children = {}
+        self._rank_nodes = {}
+        self._translated_nodes = {}
 
     def _set_root_node(self, root: str, parent: str, name: str, rank: str):
         """
@@ -161,15 +216,67 @@ class MultiTax(object):
         # Set static rank
         self.root_rank = self._ranks[self.root_node]
 
-    def _remove(self, node: str):
+    def add(self, node: str, parent: str, name: str = None, rank: str = None):
         """
-        Removes node from _nodes, _ranks and _names
+        Add node to taxonomy.
+        Deletes built lineages and translations.
         """
-        del self._nodes[node]
-        if node in self._names:
-            del self._names[node]
-        if node in self._ranks:
-            del self._ranks[node]
+        if parent not in self._nodes:
+            raise ValueError("Parent node [" + parent + "] not found.")
+        elif node in self._nodes:
+            raise ValueError("Node [" + node + "] already present.")
+        
+        self._nodes[node] = parent
+        self._names[node] = name if name is not None else self.undefined_name
+        self._ranks[node] = rank if rank is not None else self.undefined_rank
+        self._reset_aux_data()
+
+    def build_lineages(self, root_node: str = None, ranks: list = None):
+        """
+        Stores lineages in memory for faster access.
+        It is valid for lineage(), rank_lineage() and name_lineage().
+        If keyword arguments (root_node, ranks) are used in those functions stored lineages are not used.
+
+        Returns: None
+        """
+        self.clear_lineages()
+        for node in self._nodes:
+            self._lineages[node] = self.lineage(
+                node=node, root_node=root_node, ranks=ranks)
+
+    def build_translation(self, tax, files: list = None, urls: list = None):
+        """
+        Create a translation of current taxonomy to another
+
+        Parameters:
+
+        * **tax** [MultiTax]: A target taxonomy to be translated to.
+        * **files** *[str, list]*: One or more local files to parse.
+        * **urls** *[str, list]*: One or more urls to download and parse.
+
+        Example:
+
+            from multitax import GtdbTx, NcbiTx
+            gtdb_tax = GtdbTx()
+            ncbi_tax = NcbiTx()
+
+            # Automatically download translation files
+            gtdb_tax.build_translation(ncbi_tax)
+            gtdb_tax.translate("g__Escherichia")
+                {'1301', '547', '561', '570', '590', '620'}
+
+            # Using local files (NCBI <-> GTDB)
+            ncbi_tax.build_translation(gtdb_tax, files=["ar53_metadata.tar.gz", "bac120_metadata.tar.gz"])
+            ncbi_tax.translate("620")
+                {'g__Escherichia', 'g__Proteus', 'g__Serratia'}
+        """
+        if files:
+            if isinstance(files, str):
+                files = [files]
+            for file in files:
+                check_file(file)
+
+        self._translated_nodes = self._build_translation(tax, files, urls)
 
     def children(self, node: str):
         """
@@ -183,89 +290,119 @@ class MultiTax(object):
         else:
             return []
 
-    def search_name(self, text: str, rank: str = None, exact: bool = True):
+    def check_consistency(self):
         """
-        Search node by exact or partial name
+        Checks consistency of the tree
 
-        Parameters:
-        * **text** *[str]*: Text to search.
-        * **rank** *[str]*: Filter results by rank.
-        * **exact** *[bool]*: Exact or partial name search (both case sensitive).
-
-        Returns: list of matching nodes
+        Returns: raise an Exception otherwise None
         """
-        # Setup on first use
-        if not self._name_nodes:
-            self._name_nodes = reverse_dict(self._names)
+        if self.root_node not in self._nodes:
+            raise ValueError("Root node [" + self.root_node + "] not found.")
+        if self.root_parent in self._nodes:
+            raise ValueError(
+                "Root parent [" + self.root_parent + "] found but should not be on tree.")
+        if self.undefined_node in self._nodes:
+            raise ValueError(
+                "Undefined node [" + self.undefined_node + "] found but should not be on tree.")
 
-        if exact:
-            ret = self._exact_name(text, self._name_nodes)
+        # Difference between values and keys should be only root_parent
+        lost_nodes = set(self._nodes.values()).difference(self._nodes)
+        if self.root_parent not in lost_nodes:
+            raise ValueError(
+                "Root parent [" + self.root_parent + "] not properly defined.")
+        # Remove root_parent from lost nodes to report only missing
+        lost_nodes.remove(self.root_parent)
+        if len(lost_nodes) > 0:
+            raise ValueError("Parent nodes missing: " + ",".join(lost_nodes))
+
+        return None
+
+    def clear_lineages(self):
+        """
+        Clear built lineages.
+
+        Returns: None
+        """
+        self._lineages = {}
+
+    def closest_parent(self, node: str, ranks: str):
+        """
+        Returns the closest parent node based on a defined list of ranks
+        """
+        # Rank of node is already on the list
+        if self.rank(node) in ranks:
+            return node
         else:
-            ret = self._partial_name(text, self._name_nodes)
+            # check lineage from back to front until find a valid node
+            for n in self.lineage(node, ranks=ranks)[::-1]:
+                if n != self.undefined_node:
+                    return n
+        # nothing found
+        return self.undefined_node
 
-        # Only return nodes of chosen rank
-        if rank:
-            return filter_function(ret, self.rank, rank)
+    def filter(self, nodes: list, desc: bool = False):
+        """
+        Filters taxonomy given a list of nodes.
+        By default keep all the ancestors of the given nodes.
+        If desc=True, keep all descendants instead.
+        Deletes built lineages and translations.
+
+        Example:
+
+            from multitax import GtdbTx
+            tax = GtdbTx()
+
+            tax.lineage('s__Enterovibrio marina')
+            # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Vibrionaceae', 'g__Enterovibrio', 's__Enterovibrio marina']
+            # Keep only ancestors of 'g__Enterovibrio'
+            tax.filter('g__Enterovibrio')
+
+            # Reload taxonomy
+            tax = GtdbTx()
+            # Keep only descendants of 'g__Enterovibrio'
+            tax.filter('g__Enterovibrio', desc=True)
+        """
+        if isinstance(nodes, str):
+            nodes = [nodes]
+
+        # Cannot filter root node
+        if self.root_node in nodes:
+            raise ValueError("Root node [" + self.root_node + "] cannot be filtered.")
+
+        # Keep track of nodes to be filtered out
+        filtered_nodes = set(self._nodes)
+        # Always keep root
+        filtered_nodes.discard(self.root_node)
+
+        if desc:
+            # Keep descendants of the given nodes
+            for node in nodes:
+                # Check if node exists
+                if node in filtered_nodes:
+                    # For each leaf of the selected nodes
+                    for leaf in self.leaves(node):
+                        # Build lineage of each leaf up-to node itself
+                        for n in self.lineage(leaf, root_node=node):
+                            # Discard nodes from set to be kept
+                            filtered_nodes.discard(n)
+                    # Link node to root
+                    self._nodes[node] = self.root_node
         else:
-            return ret
+            # Keep ancestors of the given nodes (full lineage up-to root)
+            for node in nodes:
+                # ranks=[] in case build_lineages() was used with specific ranks
+                for n in self.lineage(node, ranks=[]):
+                    # Discard nodes from set to be kept
+                    filtered_nodes.discard(n)
 
-    def _partial_name(self, text: str, names: dict):
-        """
-        Searches names containing a certain text (case sensitive) and return their respective nodes.
-        """
-        matching_nodes = set()
-        for name in names:
-            if text in name:
-                matching_nodes.update(names[name])
-        return list(matching_nodes)
+        # Delete filtered nodes
+        for node in filtered_nodes:
+            self._remove(node)
 
-    def _exact_name(self, text: str, names: dict):
-        """
-        Returns list of nodes of a given exact name (case sensitive).
-        """
-        if text in names:
-            return names[text]
-        else:
-            return []
+        # Delete aux. data structures
+        self._reset_aux_data()
 
-    def nodes_rank(self, rank: str):
-        """
-        Returns list of nodes of a given rank.
-        """
-        # Setup on first use
-        if not self._rank_nodes:
-            self._rank_nodes = reverse_dict(self._ranks)
-        if rank in self._rank_nodes:
-            return self._rank_nodes[rank]
-        else:
-            return []
-
-    def parent(self, node: str):
-        """
-        Returns the direct parent node of a given node.
-        """
-        if node in self._nodes:
-            return self._nodes[node]
-        else:
-            return self.undefined_node
-
-    def rank(self, node: str):
-        """
-        Returns the rank of a given node.
-        """
-        if node in self._ranks:
-            return self._ranks[node]
-        else:
-            return self.undefined_rank
-
-    def name(self, node: str):
-        """
-        Returns name of a given node.
-        """
-        if node in self._names:
-            return self._names[node]
-        else:
-            return self.undefined_name
+        self.check_consistency()
 
     def latest(self, node: str):
         """
@@ -289,18 +426,6 @@ class MultiTax(object):
             return self._recurse_leaves(node)
         else:
             return []
-
-    def _recurse_leaves(self, node: str):
-        """
-        Recursive function returning leaf nodes
-        """
-        children = self.children(node)
-        if not children:
-            return [node]
-        leaves = []
-        for child in children:
-            leaves.extend(self.leaves(child))
-        return leaves
 
     def lineage(self, node: str, root_node: str = None, ranks: list = None):
         """
@@ -347,14 +472,14 @@ class MultiTax(object):
             else:
                 return lin
 
-    def rank_lineage(self, node: str, root_node: str = None, ranks: list = None):
+    def name(self, node: str):
         """
-        Returns a list with the rank lineage of a given node.
+        Returns name of a given node.
         """
-        return list(map(self.rank,
-                        self.lineage(node=node,
-                                     root_node=root_node,
-                                     ranks=ranks)))
+        if node in self._names:
+            return self._names[node]
+        else:
+            return self.undefined_name
 
     def name_lineage(self, node: str, root_node: str = None, ranks: list = None):
         """
@@ -365,6 +490,27 @@ class MultiTax(object):
                                      root_node=root_node,
                                      ranks=ranks)))
 
+    def nodes_rank(self, rank: str):
+        """
+        Returns list of nodes of a given rank.
+        """
+        # Setup on first use
+        if not self._rank_nodes:
+            self._rank_nodes = reverse_dict(self._ranks)
+        if rank in self._rank_nodes:
+            return self._rank_nodes[rank]
+        else:
+            return []
+
+    def parent(self, node: str):
+        """
+        Returns the direct parent node of a given node.
+        """
+        if node in self._nodes:
+            return self._nodes[node]
+        else:
+            return self.undefined_node
+
     def parent_rank(self, node: str, rank: str):
         """
         Returns the parent node of a given rank in the specified rank.
@@ -372,20 +518,84 @@ class MultiTax(object):
         parent = self.lineage(node=node, ranks=[rank])
         return parent[0] if parent else self.undefined_node
 
-    def closest_parent(self, node: str, ranks: str):
+    def prune(self, nodes: list):
         """
-        Returns the closest parent node based on a defined list of ranks
+        Prunes branches of the tree under the given nodes.
+        Deletes built lineages and translations.
         """
-        # Rank of node is already on the list
-        if self.rank(node) in ranks:
-            return node
+
+        if isinstance(nodes, str):
+            nodes = [nodes]
+
+        del_nodes = set()
+        for node in nodes:
+            if node not in self._nodes:
+                raise ValueError("Node [" + node + "] not found.")
+            for leaf in self.leaves(node):
+                for n in self.lineage(leaf, root_node=node)[1:]:
+                    del_nodes.add(n)
+
+        for n in del_nodes:
+            self._remove(n)
+
+        self._reset_aux_data()
+
+    def rank(self, node: str):
+        """
+        Returns the rank of a given node.
+        """
+        if node in self._ranks:
+            return self._ranks[node]
         else:
-            # check lineage from back to front until find a valid node
-            for n in self.lineage(node, ranks=ranks)[::-1]:
-                if n != self.undefined_node:
-                    return n
-        # nothing found
-        return self.undefined_node
+            return self.undefined_rank
+
+    def rank_lineage(self, node: str, root_node: str = None, ranks: list = None):
+        """
+        Returns a list with the rank lineage of a given node.
+        """
+        return list(map(self.rank,
+                        self.lineage(node=node,
+                                     root_node=root_node,
+                                     ranks=ranks)))
+
+    def remove(self, node: str, check_consistency: bool = False):
+        """
+        Removes node from taxonomy. Can break the tree if a parent node is removed. To remove a certain branch, use prune.
+        Running check consistency after removing a node is recommended.
+        Deletes built lineages and translations.
+        """
+        if node not in self._nodes:
+            raise ValueError("Node [" + node + "] not found.")
+        self._remove(node)
+        self._reset_aux_data()
+        if check_consistency:
+            self.check_consistency()
+
+    def search_name(self, text: str, rank: str = None, exact: bool = True):
+        """
+        Search node by exact or partial name
+
+        Parameters:
+        * **text** *[str]*: Text to search.
+        * **rank** *[str]*: Filter results by rank.
+        * **exact** *[bool]*: Exact or partial name search (both case sensitive).
+
+        Returns: list of matching nodes
+        """
+        # Setup on first use
+        if not self._name_nodes:
+            self._name_nodes = reverse_dict(self._names)
+
+        if exact:
+            ret = self._exact_name(text, self._name_nodes)
+        else:
+            ret = self._partial_name(text, self._name_nodes)
+
+        # Only return nodes of chosen rank
+        if rank:
+            return filter_function(ret, self.rank, rank)
+        else:
+            return ret
 
     def stats(self):
         """
@@ -423,111 +633,14 @@ class MultiTax(object):
 
         return s
 
-    def build_lineages(self, root_node: str = None, ranks: list = None):
+    def translate(self, node: str):
         """
-        Stores lineages in memory for faster access.
-        It is valid for lineage(), rank_lineage() and name_lineage().
-        If keyword arguments (root_node, ranks) are used in those functions stored lineages are not used.
-
-        Returns: None
+        Returns the translated node from another taxonomy. Translated nodes are generated with the build_translation function.
         """
-        self.clear_lineages()
-        for node in self._nodes:
-            self._lineages[node] = self.lineage(
-                node=node, root_node=root_node, ranks=ranks)
-
-    def clear_lineages(self):
-        """
-        Clear built lineages.
-
-        Returns: None
-        """
-        self._lineages = {}
-
-    def check_consistency(self):
-        """
-        Checks consistency of the tree
-
-        Returns: raise an AssertionError otherwise None
-        """
-        assert self.root_node in self._nodes, "root_node not found on _nodes"
-        assert self.root_parent not in self._nodes, "root_parent found on _nodes"
-        assert self.undefined_node not in self._nodes, "undefined_node found on _nodes"
-        # Difference between values and keys should be only root_parent
-        lost_nodes = set(self._nodes.values()).difference(self._nodes)
-        assert self.root_parent in lost_nodes, "root_parent not defined"
-        assert len(lost_nodes) == 1, "parent nodes missing: " + \
-            ",".join(lost_nodes)
-        return None
-
-    def filter(self, nodes: list, desc: bool = False):
-        """
-        Filters taxonomy given a list of nodes.
-        By default keep all the ancestors of the given nodes.
-        If desc=True, keep all descendants instead.
-        Deletes built lineages.
-
-        Returns: None
-
-        Example:
-
-            from multitax import GtdbTx
-            tax = GtdbTx()
-
-            tax.lineage('s__Enterovibrio marina')
-            # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Vibrionaceae', 'g__Enterovibrio', 's__Enterovibrio marina']
-            # Keep only ancestors of 'g__Enterovibrio'
-            tax.filter('g__Enterovibrio')
-
-            # Reload taxonomy
-            tax = GtdbTx()
-            # Keep only descendants of 'g__Enterovibrio'
-            tax.filter('g__Enterovibrio', desc=True)
-        """
-        if isinstance(nodes, str):
-            nodes = [nodes]
-
-        # Cannot filter root node
-        if self.root_node in nodes:
-            return None
-
-        # Keep track of nodes to be filtered out
-        filtered_nodes = set(self._nodes)
-        # Always keep root
-        filtered_nodes.discard(self.root_node)
-
-        if desc:
-            # Keep descendants of the given nodes
-            for node in nodes:
-                # Check if node exists
-                if node in filtered_nodes:
-                    # For each leaf of the selected nodes
-                    for leaf in self.leaves(node):
-                        # Build lineage of each leaf up-to node itself
-                        for n in self.lineage(leaf, root_node=node):
-                            # Discard nodes from set to be kept
-                            filtered_nodes.discard(n)
-                    # Link node to root
-                    self._nodes[node] = self.root_node
+        if node in self._translated_nodes:
+            return self._translated_nodes[node]
         else:
-            # Keep ancestors of the given nodes (full lineage up-to root)
-            for node in nodes:
-                # ranks=[] in case build_lineages() was used with specific ranks
-                for n in self.lineage(node, ranks=[]):
-                    # Discard nodes from set to be kept
-                    filtered_nodes.discard(n)
-
-        # Delete filtered nodes
-        for node in filtered_nodes:
-            self._remove(node)
-
-        # Reset data structures
-        self._lineages = {}
-        self._node_children = {}
-        self._name_nodes = {}
-        self._rank_nodes = {}
-
-        self.check_consistency()
+            return []
 
     def write(self,
               output_file: str,
@@ -572,7 +685,7 @@ class MultiTax(object):
         for c in cols:
             if c not in write_field:
                 raise ValueError(
-                    c + " is not a a valid field: " + ",".join(write_field))
+                    "Field [" + c + "] is not valid. Options: " + ",".join(write_field))
 
         if ranks:
             for rank in ranks:

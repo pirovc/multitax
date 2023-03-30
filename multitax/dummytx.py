@@ -14,5 +14,5 @@ class DummyTx(MultiTax):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        args = ['{}={}'.format(k, repr(v)) for (k, v) in vars(self).items()]
-        return 'DummyTx({})'.format(', '.join(args))
+        stats = ['{}={}'.format(k, repr(v)) for (k, v) in self.stats().items()]
+        return 'DummyTx({})'.format(', '.join(stats))

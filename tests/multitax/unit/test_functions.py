@@ -1,5 +1,5 @@
 from multitax.utils import check_file
-from multitax import CustomTx, OttTx, NcbiTx
+from multitax import *
 from tests.multitax.utils import setup_dir
 import unittest
 
@@ -158,6 +158,7 @@ class TestFunctions(unittest.TestCase):
         test lineage function
         """
         tax = CustomTx(files=self.test_file)
+        # Use only assertEqual instead of assertCountEqual -> order matters
         self.assertEqual(tax.lineage("5.2"), ["1", "2.2", "3.4", "4.4", "5.2"])
         self.assertEqual(tax.lineage("3.2"), ["1", "2.1", "3.2"])
         self.assertEqual(tax.lineage("4.6"), ["1", "4.6"])
@@ -385,6 +386,50 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(tax.lineage("5.2"), ["1", "2.2", "3.4", "4.4", "5.2"])
         self.assertEqual(tax.lineage("XXX"), [])
 
+    def test_translation(self):
+        """
+        test build_translation and tranlate functions (GTDB<->NCBI)
+        """
+        gtdb_tax = GtdbTx(files=["tests/multitax/data_minimal/gtdb_ar.tsv.gz",
+                                 "tests/multitax/data_minimal/gtdb_bac.tsv.gz"])
+        ncbi_tax = NcbiTx(files="tests/multitax/data_minimal/ncbi.tar.gz")
+
+        # GTDB->NCBI
+        # Should be no translation yet (g__Paenibacillus is contained in both test sets)
+        self.assertCountEqual(gtdb_tax.translate("g__Paenibacillus"), [])
+        gtdb_tax.build_translation(ncbi_tax, files=[
+                                   "tests/multitax/data_minimal/gtdb_ar_metadata.tar.gz", "tests/multitax/data_minimal/gtdb_bac_metadata.tar.gz"])
+        self.assertCountEqual(gtdb_tax.translate(
+            "g__Paenibacillus"), ["44249"])
+
+        # NCBI->GTDB
+        # Should be no translation yet (g__Paenibacillus is contained in both test sets)
+        self.assertCountEqual(ncbi_tax.translate("44249"), [])
+        ncbi_tax.build_translation(gtdb_tax, files=[
+                                   "tests/multitax/data_minimal/gtdb_ar_metadata.tar.gz", "tests/multitax/data_minimal/gtdb_bac_metadata.tar.gz"])
+        self.assertCountEqual(ncbi_tax.translate(
+            "44249"), ["g__Paenibacillus"])
+
+        # Other translations not yet implemented
+        ott_tax = OttTx(files="tests/multitax/data_minimal/ott.tgz")
+        silva_tax = SilvaTx(files="tests/multitax/data_minimal/silva.txt.gz")
+        gg_tax = GreengenesTx(files="tests/multitax/data_minimal/gg.txt.gz")
+        with self.assertWarns(UserWarning):
+            ncbi_tax.build_translation(ott_tax)
+            ncbi_tax.build_translation(silva_tax)
+            ncbi_tax.build_translation(gg_tax)
+            gtdb_tax.build_translation(ott_tax)
+            gtdb_tax.build_translation(silva_tax)
+            gtdb_tax.build_translation(gg_tax)
+            ott_tax.build_translation(silva_tax)
+            ott_tax.build_translation(gg_tax)
+            ott_tax.build_translation(gtdb_tax)
+            ott_tax.build_translation(ncbi_tax)
+            gg_tax.build_translation(ott_tax)
+            gg_tax.build_translation(silva_tax)
+            gg_tax.build_translation(gtdb_tax)
+            gg_tax.build_translation(ncbi_tax)
+
     def test_check_consistency(self):
         """
         test check_consistency function
@@ -393,7 +438,8 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(tax.check_consistency(), None)
         # delete node
         del tax._nodes["3.4"]
-        self.assertRaises(AssertionError, tax.check_consistency)
+        with self.assertRaises(ValueError):
+            tax.check_consistency()
 
         tax = CustomTx(files=self.test_file)
         # delete leaf node
@@ -404,7 +450,8 @@ class TestFunctions(unittest.TestCase):
         # delete root
         del tax._nodes["1"]
         # should raise error
-        self.assertRaises(AssertionError, tax.check_consistency)
+        with self.assertRaises(ValueError):
+            tax.check_consistency()
 
     def test_filter(self):
         """
@@ -414,19 +461,19 @@ class TestFunctions(unittest.TestCase):
         tax = CustomTx(files=self.test_file)
         tax.filter("4.5")
         self.assertEqual(tax.stats()["nodes"], 3)
-        self.assertEqual(tax.lineage("4.5"), ["1", "2.2", "4.5"])
-        self.assertEqual(tax.leaves("1"), ["4.5"])
+        self.assertCountEqual(tax.lineage("4.5"), ["1", "2.2", "4.5"])
+        self.assertCountEqual(tax.leaves("1"), ["4.5"])
 
         tax = CustomTx(files=self.test_file)
         tax.filter(["4.5", "XXXX"])
         self.assertEqual(tax.stats()["nodes"], 3)
-        self.assertEqual(tax.lineage("4.5"), ["1", "2.2", "4.5"])
+        self.assertCountEqual(tax.lineage("4.5"), ["1", "2.2", "4.5"])
         self.assertCountEqual(tax.leaves("1"), ["4.5"])
 
         tax = CustomTx(files=self.test_file)
         tax.filter(["4.1", "5.1", "5.2"])
         self.assertEqual(tax.stats()["nodes"], 9)
-        self.assertEqual(tax.lineage("4.1"), ["1", "2.1", "3.1", "4.1"])
+        self.assertCountEqual(tax.lineage("4.1"), ["1", "2.1", "3.1", "4.1"])
         self.assertCountEqual(tax.leaves("1"), ["4.1", "5.1", "5.2"])
 
         tax = CustomTx(files=self.test_file)
@@ -437,34 +484,156 @@ class TestFunctions(unittest.TestCase):
         tax = CustomTx(files=self.test_file)
         tax.filter("3.4", desc=True)
         self.assertEqual(tax.stats()["nodes"], 5)
-        self.assertEqual(tax.lineage("3.4"), ["1", "3.4"])
+        self.assertCountEqual(tax.lineage("3.4"), ["1", "3.4"])
         self.assertCountEqual(tax.leaves("1"), ["5.1", "5.2"])
 
         tax = CustomTx(files=self.test_file)
         tax.filter(["XXXXX", "3.4"], desc=True)
         self.assertEqual(tax.stats()["nodes"], 5)
-        self.assertEqual(tax.lineage("3.4"), ["1", "3.4"])
+        self.assertCountEqual(tax.lineage("3.4"), ["1", "3.4"])
         self.assertCountEqual(tax.leaves("1"), ["5.1", "5.2"])
 
         tax = CustomTx(files=self.test_file)
         tax.filter(["3.2", "4.4"], desc=True)
         self.assertEqual(tax.stats()["nodes"], 7)
-        self.assertEqual(tax.lineage("5.2"), ["1", "4.4", "5.2"])
-        self.assertEqual(tax.lineage("4.5"), [])
+        self.assertCountEqual(tax.lineage("5.2"), ["1", "4.4", "5.2"])
+        self.assertCountEqual(tax.lineage("4.5"), [])
         self.assertCountEqual(tax.leaves("1"), ["4.2", "4.3", "5.1", "5.2"])
 
         # No filter for root
         tax = CustomTx(files=self.test_file)
         self.assertEqual(tax.stats()["nodes"], 14)
-        tax.filter(tax.root_node)
-        self.assertEqual(tax.stats()["nodes"], 14)
-        tax.filter(tax.root_node, desc=True)
+        with self.assertRaises(ValueError):
+            tax.filter(tax.root_node)
+            tax.filter(["2.2", tax.root_node])
+            tax.filter(tax.root_node, desc=True)
+            tax.filter(["2.2", tax.root_node], desc=True)
         self.assertEqual(tax.stats()["nodes"], 14)
 
         tax = CustomTx(files=self.test_file)
         self.assertEqual(tax.stats()["nodes"], 14)
         tax.filter("XXXXX", desc=True)
         self.assertEqual(tax.stats()["nodes"], 1)
+
+    def test_add(self):
+        """
+        test add function
+        """
+        tax = CustomTx(files=self.test_file)
+        # Add leaf node 5.3 to parent 4.4
+        tax.add("5.3", "4.4")
+        self.assertEqual(tax.check_consistency(), None)
+        self.assertEqual(tax.parent("5.3"), "4.4")
+        self.assertEqual(tax.name("5.3"), tax.undefined_name)
+        self.assertEqual(tax.rank("5.3"), tax.undefined_rank)
+
+        # Add another leaf on the 5.3 with name and rank
+        tax.add("6.1", "5.3", name="Node6.1", rank="rank-6")
+        self.assertEqual(tax.check_consistency(), None)
+        self.assertEqual(tax.parent("6.1"), "5.3")
+        self.assertEqual(tax.name("6.1"), "Node6.1")
+        self.assertEqual(tax.rank("6.1"), "rank-6")
+        self.assertEqual(tax.lineage("6.1"), [
+                         "1", "2.2", "3.4", "4.4", "5.3", "6.1"])
+
+        # Add node without valid parent, raises ValueError
+        with self.assertRaises(ValueError):
+            tax.add("6.2", "XXX")
+
+        # Add already existing node
+        with self.assertRaises(ValueError):
+            tax.add("5.1", "4.4")
+
+    def test_remove(self):
+        """
+        test remove function
+        """
+        tax = CustomTx(files=self.test_file)
+        tax.remove("5.2")
+        self.assertEqual(tax.latest("5.2"), tax.undefined_node)
+        self.assertEqual(tax.parent("5.2"), tax.undefined_node)
+        self.assertEqual(tax.name("5.2"), tax.undefined_node)
+        self.assertEqual(tax.rank("5.2"), tax.undefined_node)
+        self.assertEqual(tax.lineage("5.2"), [])
+
+        # Initialize aux structures and clear them after removing node
+        tax = CustomTx(files=self.test_file, build_name_nodes=True,
+                       build_node_children=True, build_rank_nodes=True)
+        self.assertNotEqual(len(tax._name_nodes), 0)
+        self.assertNotEqual(len(tax._node_children), 0)
+        self.assertNotEqual(len(tax._rank_nodes), 0)
+        tax.remove("5.2")
+        self.assertEqual(len(tax._name_nodes), 0)
+        self.assertEqual(len(tax._node_children), 0)
+        self.assertEqual(len(tax._rank_nodes), 0)
+
+        # with check_consistency
+        tax.remove("5.1", check_consistency=True)
+
+        # Removing node that breaks the tree (allowed)
+        tax.remove("3.1")
+        # node is removed anyway
+        self.assertEqual(tax.latest("3.1"), tax.undefined_node)
+        with self.assertRaises(ValueError):
+            tax.check_consistency()
+
+        # Removing and raising execption
+        with self.assertRaises(ValueError):
+            tax.remove("3.2", check_consistency=True)
+        # node is removed anyway
+        self.assertEqual(tax.latest("3.2"), tax.undefined_node)
+
+        # Removing root
+        tax.remove("1")
+        with self.assertRaises(ValueError):
+            tax.check_consistency()
+
+        # Removing node not present
+        with self.assertRaises(ValueError):
+            tax.remove("XXX")
+
+    def test_prune(self):
+        """
+        test prune function
+        """
+        tax = CustomTx(files=self.test_file)
+
+        self.assertCountEqual(tax.leaves("4.4"), ["5.1", "5.2"])
+        tax.prune("4.4")
+        self.assertEqual(tax.check_consistency(), None)
+        self.assertCountEqual(tax.leaves("4.4"), ["4.4"])
+
+        # Prune leaf node (nothing changes)
+        self.assertCountEqual(tax.leaves("4.6"), ["4.6"])
+        tax.prune("4.6")
+        self.assertEqual(tax.check_consistency(), None)
+        self.assertCountEqual(tax.leaves("4.6"), ["4.6"])
+
+        # Prune multiple overlapping nodes
+        self.assertCountEqual(tax.leaves("2.1"), ["4.1", "4.2", "4.3"])
+        self.assertCountEqual(tax.leaves("3.2"), ["4.2", "4.3"])
+        tax.prune(["2.1", "3.2"])
+        self.assertEqual(tax.check_consistency(), None)
+        self.assertCountEqual(tax.leaves("2.1"), ["2.1"])
+        self.assertCountEqual(tax.leaves("3.2"), [])
+
+        # Restar tax
+        tax = CustomTx(files=self.test_file)
+        # Prune multiple overlapping nodes (reversed)
+        self.assertCountEqual(tax.leaves("2.1"), ["4.1", "4.2", "4.3"])
+        self.assertCountEqual(tax.leaves("3.2"), ["4.2", "4.3"])
+        tax.prune(["3.2", "2.1"])
+        self.assertEqual(tax.check_consistency(), None)
+        self.assertCountEqual(tax.leaves("2.1"), ["2.1"])
+        self.assertCountEqual(tax.leaves("3.2"), [])
+
+        # Pruning node not present
+        with self.assertRaises(ValueError):
+            tax.prune("XXX")
+
+        # Prunning root node
+        tax.prune(tax.root_node)
+        self.assertEqual(len(tax._nodes), 1)
 
     def test_write(self):
         """
