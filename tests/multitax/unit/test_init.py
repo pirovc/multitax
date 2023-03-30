@@ -40,6 +40,7 @@ class TestInit(unittest.TestCase):
         self.assertEqual(tax._name_nodes, {})
         self.assertEqual(tax._node_children, {})
         self.assertEqual(tax._rank_nodes, {})
+        self.assertEqual(tax._translated_nodes, {})
 
         self.assertEqual(tax.undefined_node, None)
         self.assertEqual(tax.undefined_name, None)
@@ -61,6 +62,7 @@ class TestInit(unittest.TestCase):
         self.assertEqual(tax._name_nodes, {})
         self.assertEqual(tax._node_children, {})
         self.assertEqual(tax._rank_nodes, {})
+        self.assertEqual(tax._translated_nodes, {})
 
         self.assertEqual(tax.undefined_node, None)
         self.assertEqual(tax.undefined_name, None)

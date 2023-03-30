@@ -1,4 +1,4 @@
-# MultiTax  [![Build Status](https://travis-ci.org/pirovc/multitax.svg?branch=main)](https://travis-ci.org/pirovc/multitax) [![codecov](https://codecov.io/gh/pirovc/multitax/branch/main/graph/badge.svg)](https://codecov.io/gh/pirovc/multitax) [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/multitax/README.html)
+# MultiTax  [![Build Status](https://travis-ci.com/pirovc/multitax.svg?branch=main)](https://travis-ci.com/pirovc/multitax) [![codecov](https://codecov.io/gh/pirovc/multitax/branch/main/graph/badge.svg)](https://codecov.io/gh/pirovc/multitax) [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/multitax/README.html)
 
 Python package to obtain, parse and explore biological taxonomies
 
@@ -12,7 +12,7 @@ MultiTax is a Python package that provides a common and generalized set of funct
  - Translate taxonomies (partially implemented)
  - Convert taxonomies (not yet implemented)
 
-MultiTax does not link sequence identifiers to taxonomic nodes, it just handles the taxonomy alone. Some kind of integration to work with sequence or external identifiers is planned, but not yet implemented.
+MultiTax does not link sequence identifiers to taxonomic nodes, it just handles the taxonomy alone. Some integration to work with sequence or external identifiers is planned, but not yet implemented.
 
 ## API Documentation
 
@@ -84,7 +84,16 @@ tax.parent("g__Escherichia")
 
 # List children nodes
 tax.children("g__Escherichia")
-# ['s__Escherichia flexneri', 's__Escherichia coli', 's__Escherichia dysenteriae', 's__Escherichia coli_D', 's__Escherichia albertii', 's__Escherichia marmotae', 's__Escherichia coli_C', 's__Escherichia sp005843885', 's__Escherichia sp000208585', 's__Escherichia fergusonii', 's__Escherichia sp001660175', 's__Escherichia sp004211955', 's__Escherichia sp002965065']
+# ['s__Escherichia coli',
+# 's__Escherichia albertii',
+# 's__Escherichia marmotae',
+# 's__Escherichia fergusonii',
+# 's__Escherichia sp005843885',
+# 's__Escherichia ruysiae',
+# 's__Escherichia sp001660175',
+# 's__Escherichia sp004211955',
+# 's__Escherichia sp002965065',
+# 's__Escherichia coli_E']
 
 # Get parent node from a defined rank
 tax.parent_rank("s__Lentisphaera araneosa", "phylum")
@@ -142,7 +151,7 @@ tax.stats()
 
 ```python
 # Filter ancestors (desc=True for descendants)
-tax.filter(['g__Escherichia', 's__Pseudomonas aeruginosa'])
+tax.filter(["g__Escherichia", "s__Pseudomonas aeruginosa"])
 tax.stats()
 #{'leaves': 2,
 # 'names': 11,
@@ -159,6 +168,21 @@ tax.stats()
 # 'ranks': 11}
 ```
 
+### Add, remove, prune
+
+```python
+# Add node to the tree
+tax.add("my_custom_node", "g__Escherichia", name="my custom name", rank="strain")
+tax.lineage("my_custom_node")
+# ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia', 'my_custom_node']
+
+# Remove node from tree (warning: removing parent nodes may break tree -> use check_consistency)
+tax.remove("s__Pseudomonas aeruginosa", check_consistency=True)
+
+# Prune (remove) full branches of the tree under a certain node
+tax.prune("g__Escherichia")
+```
+
 ### Translate
 
 ```python
@@ -166,7 +190,11 @@ tax.stats()
 from multitax import GtdbTx, NcbiTx
 ncbi_tax = NcbiTx()
 gtdb_tax = GtdbTx()
+
+# Build translation
 gtdb_tax.build_translation(ncbi_tax)
+
+# Check translated nodes
 gtdb_tax.translate("g__Escherichia")
 # {'1301', '547', '561', '570', '590', '620'}
 ```
@@ -228,15 +256,16 @@ from multitax import GtdbTx
 tax = GtdbTx()
 
 # Build LCA structure
-L = LCA(tax._nodes)
+lca = LCA(tax._nodes)
 
 # Get LCA
-L("s__Escherichia dysenteriae", "s__Pseudomonas aeruginosa")
+lca("s__Escherichia dysenteriae", "s__Pseudomonas aeruginosa")
 # 'c__Gammaproteobacteria'
 ```
 
 ## Details
- 
+
+ - After downloading/parsing the desired taxonomies, MultiTax works fully offline.
  - Taxonomies are parsed into `nodes`. Each node is annotated with a `name` and a `rank`.
  - Some taxonomies have a numeric taxonomic identifier (e.g. NCBI) and other use the rank + name as an identifier (e.g. GTDB). In MultiTax all identifiers are treated as strings.
  - A single root node is defined by default for each taxonomy (or `1` when not defined). This can be changed with `root_node` when loading the taxonomy (as well as annotations `root_parent`, `root_name`, `root_rank`). If the `root_node` already exists, the tree will be filtered.
@@ -269,10 +298,13 @@ Legend:
    - GTDB is a subset of the NCBI repository, so the translation from NCBI to GTDB can be only partial
    - Translation in both ways is based on: https://data.gtdb.ecogenomic.org/releases/latest/ar53_metadata.tar.gz and https://data.gtdb.ecogenomic.org/releases/latest/bac120_metadata.tar.gz
 
-## Further ideas
+--- 
 
-- Add/remove/update nodes
+## Further ideas to be implemented
+
+- More translations
 - Conversion between taxonomies (write on specific format)
+
 
 ## Similar projects
 
@@ -281,3 +313,5 @@ Legend:
 - https://github.com/bioforensics/pytaxonkit
 - https://github.com/chanzuckerberg/taxoniq
 - https://github.com/sherrillmix/taxonomizr
+- https://github.com/etetoolkit/ete
+- https://github.com/apcamargo/taxopy

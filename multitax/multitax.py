@@ -1,10 +1,10 @@
 from .utils import *
 from collections import Counter
-
+from . import __version__
 
 class MultiTax(object):
 
-    version = "1.3.0"
+    version = __version__
 
     _default_urls = []
     _default_root_node = "1"
@@ -64,11 +64,14 @@ class MultiTax(object):
         self._nodes = {}
         self._ranks = {}
         self._names = {}
+        # Aux. structures
         self._lineages = {}
         self._name_nodes = {}
         self._node_children = {}
         self._rank_nodes = {}
         self._translated_nodes = {}
+
+        # Store source of tax files (url or file)
         self.sources = []
 
         # Open/Download/Write files
@@ -143,18 +146,28 @@ class MultiTax(object):
             return [node]
         leaves = []
         for child in children:
-            leaves.extend(self.leaves(child))
+            leaves.extend(self._recurse_leaves(child))
         return leaves
 
     def _remove(self, node: str):
         """
-        Removes node from _nodes, _ranks and _names
+        Removes node from taxonomy, no checking, for internal use
         """
         del self._nodes[node]
         if node in self._names:
             del self._names[node]
         if node in self._ranks:
             del self._ranks[node]
+
+    def _reset_aux_data(self):
+        """
+        Reset aux. data structures
+        """
+        self._lineages = {}
+        self._name_nodes = {}
+        self._node_children = {}
+        self._rank_nodes = {}
+        self._translated_nodes = {}
 
     def _set_root_node(self, root: str, parent: str, name: str, rank: str):
         """
@@ -202,6 +215,21 @@ class MultiTax(object):
             self._ranks[self.root_node] = "root"
         # Set static rank
         self.root_rank = self._ranks[self.root_node]
+
+    def add(self, node: str, parent: str, name: str = None, rank: str = None):
+        """
+        Add node to taxonomy.
+        Deletes built lineages and translations.
+        """
+        if parent not in self._nodes:
+            raise ValueError("Parent node [" + parent + "] not found.")
+        elif node in self._nodes:
+            raise ValueError("Node [" + node + "] already present.")
+        
+        self._nodes[node] = parent
+        self._names[node] = name if name is not None else self.undefined_name
+        self._ranks[node] = rank if rank is not None else self.undefined_rank
+        self._reset_aux_data()
 
     def build_lineages(self, root_node: str = None, ranks: list = None):
         """
@@ -266,16 +294,27 @@ class MultiTax(object):
         """
         Checks consistency of the tree
 
-        Returns: raise an AssertionError otherwise None
+        Returns: raise an Exception otherwise None
         """
-        assert self.root_node in self._nodes, "root_node not found on _nodes"
-        assert self.root_parent not in self._nodes, "root_parent found on _nodes"
-        assert self.undefined_node not in self._nodes, "undefined_node found on _nodes"
+        if self.root_node not in self._nodes:
+            raise ValueError("Root node [" + self.root_node + "] not found.")
+        if self.root_parent in self._nodes:
+            raise ValueError(
+                "Root parent [" + self.root_parent + "] found but should not be on tree.")
+        if self.undefined_node in self._nodes:
+            raise ValueError(
+                "Undefined node [" + self.undefined_node + "] found but should not be on tree.")
+
         # Difference between values and keys should be only root_parent
         lost_nodes = set(self._nodes.values()).difference(self._nodes)
-        assert self.root_parent in lost_nodes, "root_parent not defined"
-        assert len(lost_nodes) == 1, "parent nodes missing: " + \
-            ",".join(lost_nodes)
+        if self.root_parent not in lost_nodes:
+            raise ValueError(
+                "Root parent [" + self.root_parent + "] not properly defined.")
+        # Remove root_parent from lost nodes to report only missing
+        lost_nodes.remove(self.root_parent)
+        if len(lost_nodes) > 0:
+            raise ValueError("Parent nodes missing: " + ",".join(lost_nodes))
+
         return None
 
     def clear_lineages(self):
@@ -306,9 +345,7 @@ class MultiTax(object):
         Filters taxonomy given a list of nodes.
         By default keep all the ancestors of the given nodes.
         If desc=True, keep all descendants instead.
-        Deletes built lineages.
-
-        Returns: None
+        Deletes built lineages and translations.
 
         Example:
 
@@ -330,7 +367,7 @@ class MultiTax(object):
 
         # Cannot filter root node
         if self.root_node in nodes:
-            return None
+            raise ValueError("Root node [" + self.root_node + "] cannot be filtered.")
 
         # Keep track of nodes to be filtered out
         filtered_nodes = set(self._nodes)
@@ -362,11 +399,8 @@ class MultiTax(object):
         for node in filtered_nodes:
             self._remove(node)
 
-        # Reset data structures
-        self._lineages = {}
-        self._node_children = {}
-        self._name_nodes = {}
-        self._rank_nodes = {}
+        # Delete aux. data structures
+        self._reset_aux_data()
 
         self.check_consistency()
 
@@ -484,6 +518,28 @@ class MultiTax(object):
         parent = self.lineage(node=node, ranks=[rank])
         return parent[0] if parent else self.undefined_node
 
+    def prune(self, nodes: list):
+        """
+        Prunes branches of the tree under the given nodes.
+        Deletes built lineages and translations.
+        """
+
+        if isinstance(nodes, str):
+            nodes = [nodes]
+
+        del_nodes = set()
+        for node in nodes:
+            if node not in self._nodes:
+                raise ValueError("Node [" + node + "] not found.")
+            for leaf in self.leaves(node):
+                for n in self.lineage(leaf, root_node=node)[1:]:
+                    del_nodes.add(n)
+
+        for n in del_nodes:
+            self._remove(n)
+
+        self._reset_aux_data()
+
     def rank(self, node: str):
         """
         Returns the rank of a given node.
@@ -501,6 +557,19 @@ class MultiTax(object):
                         self.lineage(node=node,
                                      root_node=root_node,
                                      ranks=ranks)))
+
+    def remove(self, node: str, check_consistency: bool = False):
+        """
+        Removes node from taxonomy. Can break the tree if a parent node is removed. To remove a certain branch, use prune.
+        Running check consistency after removing a node is recommended.
+        Deletes built lineages and translations.
+        """
+        if node not in self._nodes:
+            raise ValueError("Node [" + node + "] not found.")
+        self._remove(node)
+        self._reset_aux_data()
+        if check_consistency:
+            self.check_consistency()
 
     def search_name(self, text: str, rank: str = None, exact: bool = True):
         """
@@ -616,7 +685,7 @@ class MultiTax(object):
         for c in cols:
             if c not in write_field:
                 raise ValueError(
-                    c + " is not a a valid field: " + ",".join(write_field))
+                    "Field [" + c + "] is not valid. Options: " + ",".join(write_field))
 
         if ranks:
             for rank in ranks:
