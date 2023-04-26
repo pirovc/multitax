@@ -365,10 +365,6 @@ class MultiTax(object):
         if isinstance(nodes, str):
             nodes = [nodes]
 
-        # Cannot filter root node
-        if self.root_node in nodes:
-            raise ValueError("Root node [" + self.root_node + "] cannot be filtered.")
-
         # Keep track of nodes to be filtered out
         filtered_nodes = set(self._nodes)
         # Always keep root
@@ -377,7 +373,7 @@ class MultiTax(object):
         if desc:
             # Keep descendants of the given nodes
             for node in nodes:
-                # Check if node exists
+                # Check if node exists (skips root)
                 if node in filtered_nodes:
                     # For each leaf of the selected nodes
                     for leaf in self.leaves(node):
@@ -401,7 +397,6 @@ class MultiTax(object):
 
         # Delete aux. data structures
         self._reset_aux_data()
-
         self.check_consistency()
 
     def latest(self, node: str):

@@ -500,16 +500,6 @@ class TestFunctions(unittest.TestCase):
         self.assertCountEqual(tax.lineage("4.5"), [])
         self.assertCountEqual(tax.leaves("1"), ["4.2", "4.3", "5.1", "5.2"])
 
-        # No filter for root
-        tax = CustomTx(files=self.test_file)
-        self.assertEqual(tax.stats()["nodes"], 14)
-        with self.assertRaises(ValueError):
-            tax.filter(tax.root_node)
-            tax.filter(["2.2", tax.root_node])
-            tax.filter(tax.root_node, desc=True)
-            tax.filter(["2.2", tax.root_node], desc=True)
-        self.assertEqual(tax.stats()["nodes"], 14)
-
         tax = CustomTx(files=self.test_file)
         self.assertEqual(tax.stats()["nodes"], 14)
         tax.filter("XXXXX", desc=True)
