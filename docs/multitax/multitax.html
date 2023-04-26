@@ -500,10 +500,6 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">nodes</span><span class="p">]</span>
 
-        <span class="c1"># Cannot filter root node</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Root node [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">+</span> <span class="s2">&quot;] cannot be filtered.&quot;</span><span class="p">)</span>
-
         <span class="c1"># Keep track of nodes to be filtered out</span>
         <span class="n">filtered_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
         <span class="c1"># Always keep root</span>
@@ -512,7 +508,7 @@
         <span class="k">if</span> <span class="n">desc</span><span class="p">:</span>
             <span class="c1"># Keep descendants of the given nodes</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="c1"># Check if node exists</span>
+                <span class="c1"># Check if node exists (skips root)</span>
                 <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">filtered_nodes</span><span class="p">:</span>
                     <span class="c1"># For each leaf of the selected nodes</span>
                     <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
@@ -536,7 +532,6 @@
 
         <span class="c1"># Delete aux. data structures</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_aux_data</span><span class="p">()</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -1212,10 +1207,6 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">nodes</span><span class="p">]</span>
 
-        <span class="c1"># Cannot filter root node</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Root node [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">+</span> <span class="s2">&quot;] cannot be filtered.&quot;</span><span class="p">)</span>
-
         <span class="c1"># Keep track of nodes to be filtered out</span>
         <span class="n">filtered_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
         <span class="c1"># Always keep root</span>
@@ -1224,7 +1215,7 @@
         <span class="k">if</span> <span class="n">desc</span><span class="p">:</span>
             <span class="c1"># Keep descendants of the given nodes</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="c1"># Check if node exists</span>
+                <span class="c1"># Check if node exists (skips root)</span>
                 <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">filtered_nodes</span><span class="p">:</span>
                     <span class="c1"># For each leaf of the selected nodes</span>
                     <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
@@ -1248,7 +1239,6 @@
 
         <span class="c1"># Delete aux. data structures</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_aux_data</span><span class="p">()</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -1715,7 +1705,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
                             <div id="MultiTax.version" class="classattr">
                                             <div class="attr variable"><a class="headerlink" href="#MultiTax.version">#&nbsp;&nbsp</a>
 
-        <span class="name">version</span><span class="default_value"> = &#39;1.3.0&#39;</span>
+        <span class="name">version</span><span class="default_value"> = &#39;1.3.1&#39;</span>
     </div>
 
     
@@ -2041,10 +2031,6 @@ ncbi_tax.translate("620")
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">nodes</span><span class="p">]</span>
 
-        <span class="c1"># Cannot filter root node</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Root node [&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_node</span> <span class="o">+</span> <span class="s2">&quot;] cannot be filtered.&quot;</span><span class="p">)</span>
-
         <span class="c1"># Keep track of nodes to be filtered out</span>
         <span class="n">filtered_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">)</span>
         <span class="c1"># Always keep root</span>
@@ -2053,7 +2039,7 @@ ncbi_tax.translate("620")
         <span class="k">if</span> <span class="n">desc</span><span class="p">:</span>
             <span class="c1"># Keep descendants of the given nodes</span>
             <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-                <span class="c1"># Check if node exists</span>
+                <span class="c1"># Check if node exists (skips root)</span>
                 <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">filtered_nodes</span><span class="p">:</span>
                     <span class="c1"># For each leaf of the selected nodes</span>
                     <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
@@ -2077,7 +2063,6 @@ ncbi_tax.translate("620")
 
         <span class="c1"># Delete aux. data structures</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_aux_data</span><span class="p">()</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">check_consistency</span><span class="p">()</span>
 </pre></div>
 
