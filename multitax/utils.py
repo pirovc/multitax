@@ -3,10 +3,13 @@ import io
 import os
 import tarfile
 import urllib.request
+import urllib.parse
 import zlib
 import warnings
+import re
 from collections import OrderedDict
 from urllib.error import HTTPError
+from bs4 import BeautifulSoup
 
 
 def check_dir(prefix: str):
@@ -97,7 +100,7 @@ def join_check(elements, sep: str):
 
 
 def load_url_mem(url: str):
-    """
+    """import
     Parameters:
     * **url** *[str]*: URL to load into memory
 
@@ -171,4 +174,21 @@ def warning_on_one_line(message, category, filename, lineno, file=None, line=Non
     return '%s:%s: %s: %s\n' % (filename, lineno, category.__name__, message)
 
 
+def fuzzy_find_download_links(url: str, regex_pattern: str):
+    """
+    Parameters:
+    * **url** *[str]*: URL to load into memory
+    * **pattern** *[str]*: Link pattern to search for in the page
+    """
+    page = urllib.request.urlopen(url)
+    o = urllib.parse.urlparse(url)
+    soup = BeautifulSoup(page, 'html.parser')
+    domain = url.split('/')
+    return [f'{o.scheme}://{o.netloc}/{a.attrs['href']}' for a in soup.find_all('a', attrs={'href' : re.compile(regex_pattern)})]
+
 warnings.formatwarning = warning_on_one_line
+
+
+if __name__ == "__main__":
+    links = fuzzy_find_download_links("https://www.arb-silva.de/no_cache/download/archive/current/Exports/taxonomy/", ".*tax_slv_ssu_.*.txt.gz$")
+    print(links)
