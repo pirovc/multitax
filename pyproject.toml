@@ -1,7 +1,6 @@
 [build-system]
 requires = [
     "setuptools>=42",
-    "beautifulsoup4==4.12.3",
     "wheel"
 ]
 build-backend = "setuptools.build_meta"

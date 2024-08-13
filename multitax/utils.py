@@ -174,13 +174,15 @@ def warning_on_one_line(message, category, filename, lineno, file=None, line=Non
     return '%s:%s: %s: %s\n' % (filename, lineno, category.__name__, message)
 
 
-def fuzzy_find_download_links(url: str, regex_pattern: str):
+def fuzzy_find_download_links(url: str, regex_pattern: str, page=None):
     """
     Parameters:
     * **url** *[str]*: URL to load into memory
     * **pattern** *[str]*: Link pattern to search for in the page
+    * **page** *[str]*: Optional page content to parse, primarily for unit testing
     """
-    page = urllib.request.urlopen(url)
+    if page is None:
+        page = urllib.request.urlopen(url)
     o = urllib.parse.urlparse(url)
     soup = BeautifulSoup(page, 'html.parser')
     domain = url.split('/')
