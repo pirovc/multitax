@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 lib_folder = os.path.dirname(os.path.realpath(__file__))
 install_requires = []
-with open(f"{lib_folder}/requirements.txt") as f:
+with open("{0}/requirements.txt".format(lib_folder)) as f:
     install_requires = f.read().splitlines()
 
 setup(
