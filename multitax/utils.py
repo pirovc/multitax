@@ -186,7 +186,7 @@ def fuzzy_find_download_links(url: str, regex_pattern: str, page=None):
     o = urllib.parse.urlparse(url)
     soup = BeautifulSoup(page, 'html.parser')
     domain = url.split('/')
-    return [f'{o.scheme}://{o.netloc}/{a.attrs['href']}' for a in soup.find_all('a', attrs={'href' : re.compile(regex_pattern)})]
+    return ['{0}://{1}/{2}'.format(o.scheme, o.netloc, a.attrs['href']) for a in soup.find_all('a', attrs={'href' : re.compile(regex_pattern)})]
 
 warnings.formatwarning = warning_on_one_line
 
