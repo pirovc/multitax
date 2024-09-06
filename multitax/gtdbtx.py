@@ -42,7 +42,10 @@ class GtdbTx(MultiTax):
 
             for source, fh in fhs.items():
                 for line in fh:
-                    fields = line.rstrip().split('\t')
+                    try:
+                        fields = line.rstrip().split('\t')
+                    except:
+                        fields = line.decode().rstrip().split('\t')
 
                     # skip header
                     if fields[accession_col] == "accession":
