@@ -266,7 +266,7 @@ class MultiTax(object):
                 {'1301', '547', '561', '570', '590', '620'}
 
             # Using local files (NCBI <-> GTDB)
-            ncbi_tax.build_translation(gtdb_tax, files=["ar53_metadata.tar.gz", "bac120_metadata.tar.gz"])
+            ncbi_tax.build_translation(gtdb_tax, files=["ar53_metadata.tsv.gz", "bac120_metadata.tsv.gz"])
             ncbi_tax.translate("620")
                 {'g__Escherichia', 'g__Proteus', 'g__Serratia'}
         """

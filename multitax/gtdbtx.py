@@ -7,8 +7,8 @@ import warnings
 
 class GtdbTx(MultiTax):
 
-    _default_urls = ["https://data.gtdb.ecogenomic.org/releases/latest/ar53_taxonomy.tsv.gz",
-                     "https://data.gtdb.ecogenomic.org/releases/latest/bac120_taxonomy.tsv.gz"]
+    _default_urls = ["https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/ar53_taxonomy.tsv.gz",
+                     "https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/bac120_taxonomy.tsv.gz"]
     _rank_codes = [("d__", "domain"),
                    ("p__", "phylum"),
                    ("c__", "class"),
@@ -31,56 +31,51 @@ class GtdbTx(MultiTax):
             if files:
                 fhs = open_files(files)
             else:
-                _urls = ["https://data.gtdb.ecogenomic.org/releases/latest/ar53_metadata.tar.gz",
-                         "https://data.gtdb.ecogenomic.org/releases/latest/bac120_metadata.tar.gz"]
+                _urls = ["https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/ar53_metadata.tsv.gz",
+                         "https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/bac120_metadata.tsv.gz"]
                 fhs = download_files(
                     urls=urls if urls else _urls, retry_attempts=3)
 
+            accession_col = 0
+            gtdb_taxonomy_col = 19
+            ncbi_taxid_col = 80
+
             for source, fh in fhs.items():
-                for file in fh.getmembers():
-                    with fh.extractfile(file) as ext:
-                        for line in ext:
-                            try:
-                                fields = line.rstrip().split('\t')
-                            except:
-                                fields = line.decode().rstrip().split('\t')
+                for line in fh:
+                    try:
+                        fields = line.rstrip().split('\t')
+                    except:
+                        fields = line.decode().rstrip().split('\t')
 
-                            # skip header
-                            if fields[0] == "accession":
-                                continue
+                    # skip header
+                    if fields[accession_col] == "accession":
+                        continue
 
-                            # 0 accession
-                            # 16 gtdb_taxonomy
-                            # 77 ncbi_taxid
-                            # 78 ncbi_taxonomy
-                            # 79 ncbi_taxonomy_unfiltered
+                    print(fields)
+                    ncbi_leaf_node = target_tax.latest(fields[ncbi_taxid_col])
+                    if ncbi_leaf_node != target_tax.undefined_node:
+                        ncbi_nodes = target_tax.lineage(ncbi_leaf_node, ranks=[
+                                                        "superkingdom", "phylum", "class",
+                                                        "order", "family", "genus", "species"])
+                    else:
+                        continue
 
-                            # Create lineage from leaf node based on target tax (instead of using field 78)
-                            # to accomodate changes in newest versions of the NCBI tax
-                            ncbi_leaf_node = target_tax.latest(fields[77])
-                            if ncbi_leaf_node != target_tax.undefined_node:
-                                ncbi_nodes = target_tax.lineage(ncbi_leaf_node, ranks=[
-                                                                "superkingdom", "phylum", "class",
-                                                                "order", "family", "genus", "species"])
-                            else:
-                                continue
+                    # Build GTDB lineage from leaf (species on given lineage)
+                    # to accomodate possible changes in the loaded tax
+                    gtdb_leaf_node = fields[gtdb_taxonomy_col].split(";")[-1]
+                    if gtdb_leaf_node != self.undefined_node:
+                        gtdb_nodes = self.lineage(gtdb_leaf_node, ranks=[
+                            "domain", "phylum", "class", "order",
+                            "family", "genus", "species"])
+                    else:
+                        continue
 
-                            # Build GTDB lineage from leaf (species on given lineage)
-                            # to accomodate possible changes in the loaded tax
-                            gtdb_leaf_node = fields[16].split(";")[-1]
-                            if gtdb_leaf_node != self.undefined_node:
-                                gtdb_nodes = self.lineage(gtdb_leaf_node, ranks=[
-                                    "domain", "phylum", "class", "order",
-                                    "family", "genus", "species"])
-                            else:
-                                continue
-
-                            # Match ranks
-                            for i, gtdb_n in enumerate(gtdb_nodes):
-                                if ncbi_nodes[i] != target_tax.undefined_node and gtdb_n != self.undefined_node:
-                                    if gtdb_n not in translated_nodes:
-                                        translated_nodes[gtdb_n] = set()
-                                    translated_nodes[gtdb_n].add(ncbi_nodes[i])
+                    # Match ranks
+                    for i, gtdb_n in enumerate(gtdb_nodes):
+                        if ncbi_nodes[i] != target_tax.undefined_node and gtdb_n != self.undefined_node:
+                            if gtdb_n not in translated_nodes:
+                                translated_nodes[gtdb_n] = set()
+                            translated_nodes[gtdb_n].add(ncbi_nodes[i])
 
         else:
             warnings.warn("Translation between taxonomies [" + self.__class__.__name__ +

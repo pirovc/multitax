@@ -398,7 +398,7 @@ class TestFunctions(unittest.TestCase):
         # Should be no translation yet (g__Paenibacillus is contained in both test sets)
         self.assertCountEqual(gtdb_tax.translate("g__Paenibacillus"), [])
         gtdb_tax.build_translation(ncbi_tax, files=[
-                                   "tests/multitax/data_minimal/gtdb_ar_metadata.tar.gz", "tests/multitax/data_minimal/gtdb_bac_metadata.tar.gz"])
+                                   "tests/multitax/data_minimal/gtdb_ar_metadata.tsv.gz", "tests/multitax/data_minimal/gtdb_bac_metadata.tsv.gz"])
         self.assertCountEqual(gtdb_tax.translate(
             "g__Paenibacillus"), ["44249"])
 
@@ -406,9 +406,8 @@ class TestFunctions(unittest.TestCase):
         # Should be no translation yet (g__Paenibacillus is contained in both test sets)
         self.assertCountEqual(ncbi_tax.translate("44249"), [])
         ncbi_tax.build_translation(gtdb_tax, files=[
-                                   "tests/multitax/data_minimal/gtdb_ar_metadata.tar.gz", "tests/multitax/data_minimal/gtdb_bac_metadata.tar.gz"])
-        self.assertCountEqual(ncbi_tax.translate(
-            "44249"), ["g__Paenibacillus"])
+                                   "tests/multitax/data_minimal/gtdb_ar_metadata.tsv.gz", "tests/multitax/data_minimal/gtdb_bac_metadata.tsv.gz"])
+        self.assertCountEqual(ncbi_tax.translate("44249"), ["g__Paenibacillus"])
 
         # Other translations not yet implemented
         ott_tax = OttTx(files="tests/multitax/data_minimal/ott.tgz")

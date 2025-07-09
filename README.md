@@ -296,7 +296,7 @@ Legend:
 
  - NCBI <-> GTDB
    - GTDB is a subset of the NCBI repository, so the translation from NCBI to GTDB can be only partial
-   - Translation in both ways is based on: https://data.gtdb.ecogenomic.org/releases/latest/ar53_metadata.tar.gz and https://data.gtdb.ecogenomic.org/releases/latest/bac120_metadata.tar.gz
+   - Translation in both ways is based on: https://data.gtdb.ecogenomic.org/releases/latest/ar53_metadata.tsv.gz and https://data.gtdb.ecogenomic.org/releases/latest/bac120_metadata.tsv.gz
 
 --- 
 
