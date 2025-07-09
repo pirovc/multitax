@@ -8,7 +8,7 @@ import random
 sys.path.append("tests/multitax/")
 
 
-#@unittest.skip('Skip online by default')
+@unittest.skip('Skip online by default')
 class TestOnline(unittest.TestCase):
 
     tmp_dir = "tests/multitax/integration/tmp_online/"
