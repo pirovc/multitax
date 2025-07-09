@@ -1,4 +1,4 @@
-# MultiTax  [![Build Status](https://travis-ci.com/pirovc/multitax.svg?branch=main)](https://travis-ci.com/pirovc/multitax) [![codecov](https://codecov.io/gh/pirovc/multitax/branch/main/graph/badge.svg)](https://codecov.io/gh/pirovc/multitax) [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/multitax/README.html)
+# MultiTax  [![Build Status](https://app.travis-ci.com/pirovc/multitax.svg?token=q6Nfx8pLHh8hV3hLz3Pq&branch=main)](https://app.travis-ci.com/pirovc/multitax) [![codecov](https://codecov.io/gh/pirovc/multitax/branch/main/graph/badge.svg)](https://codecov.io/gh/pirovc/multitax) [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/multitax/README.html)
 
 Python package to obtain, parse and explore biological taxonomies
 
