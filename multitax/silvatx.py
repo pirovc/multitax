@@ -1,10 +1,10 @@
 from .multitax import MultiTax
+from .utils import fuzzy_find_download_links
 import warnings
 
 
 class SilvaTx(MultiTax):
-    _default_urls = [
-        "https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.1.txt.gz"]
+    _default_urls = fuzzy_find_download_links("https://www.arb-silva.de/no_cache/download/archive/current/Exports/taxonomy/", ".*tax_slv_ssu_.*.txt.gz$")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
