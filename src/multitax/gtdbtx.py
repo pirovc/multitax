@@ -1,7 +1,7 @@
 from .multitax import MultiTax
-from .utils import check_file
-from .utils import open_files
-from .utils import download_files
+from multitax.utils import check_file
+from multitax.utils import open_files
+from multitax.utils import download_files
 import warnings
 
 

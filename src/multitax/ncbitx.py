@@ -1,8 +1,8 @@
 from .multitax import MultiTax
-from .utils import filter_function
-from .utils import check_file
-from .utils import open_files
-from .utils import download_files
+from multitax.utils import filter_function
+from multitax.utils import check_file
+from multitax.utils import open_files
+from multitax.utils import download_files
 import warnings
 
 
@@ -66,7 +66,7 @@ class NcbiTx(MultiTax):
                         translated_nodes[ncbi_leaf_node].add(
                             gtdb_leaf_node)
                         ncbi_nodes = self.lineage(ncbi_leaf_node, ranks=[
-                                                    "superkingdom", "phylum", "class", "order",
+                                                    "domain", "phylum", "class", "order",
                                                     "family", "genus", "species"])
                     else:
                         continue

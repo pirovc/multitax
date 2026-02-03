@@ -1,17 +1,16 @@
 language: python
 python:
-  - "3.9"
   - "3.10"
   - "3.11"
   - "3.12"
   - "3.13"
+  - "3.14"
 
 before_install:
   - python -m pip install coverage
-  - python -m pip install setuptools importlib-metadata --upgrade  # fix bug setuptools py37
 
 install:
-  - python setup.py install
+  - pip install .
 
 script:
   - python -m unittest discover -s tests/multitax/unit/ -v

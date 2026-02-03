@@ -1,5 +1,5 @@
 from .multitax import MultiTax
-from .utils import filter_function
+from multitax.utils import filter_function
 import warnings
 
 

@@ -1,4 +1,4 @@
-from .utils import *
+from multitax.utils import *
 from collections import Counter
 from . import __version__
 
