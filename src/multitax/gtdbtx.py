@@ -7,8 +7,8 @@ import warnings
 
 class GtdbTx(MultiTax):
 
-    _default_urls = ["https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/ar53_taxonomy.tsv.gz",
-                     "https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/bac120_taxonomy.tsv.gz"]
+    _default_urls = ["https://data.gtdb.aau.ecogenomic.org/releases/latest/ar53_taxonomy.tsv.gz",
+                     "https://data.gtdb.aau.ecogenomic.org/releases/latest/bac120_taxonomy.tsv.gz"]
     _rank_codes = [("d__", "domain"),
                    ("p__", "phylum"),
                    ("c__", "class"),
@@ -31,8 +31,8 @@ class GtdbTx(MultiTax):
             if files:
                 fhs = open_files(files)
             else:
-                _urls = ["https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/ar53_metadata.tsv.gz",
-                         "https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/bac120_metadata.tsv.gz"]
+                _urls = ["https://data.gtdb.aau.ecogenomic.org/releases/latest/ar53_metadata.tsv.gz",
+                         "https://data.gtdb.aau.ecogenomic.org/releases/latest/bac120_metadata.tsv.gz"]
                 fhs = download_files(
                     urls=urls if urls else _urls, retry_attempts=3)
 
@@ -51,11 +51,10 @@ class GtdbTx(MultiTax):
                     if fields[accession_col] == "accession":
                         continue
 
-                    print(fields)
                     ncbi_leaf_node = target_tax.latest(fields[ncbi_taxid_col])
                     if ncbi_leaf_node != target_tax.undefined_node:
                         ncbi_nodes = target_tax.lineage(ncbi_leaf_node, ranks=[
-                                                        "superkingdom", "phylum", "class",
+                                                        "domain", "phylum", "class",
                                                         "order", "family", "genus", "species"])
                     else:
                         continue
