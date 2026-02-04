@@ -67,11 +67,9 @@ def download_files(urls: list, output_prefix: str = None, retry_attempts: int = 
                     if url.endswith(".tar.gz") or url.endswith(".tgz"):
                         # tar files have mixed headers and content
                         # whole file should be loaded in memory first and not streamed
-                        fhs[url] = tarfile.open(
-                            fileobj=load_url_mem(url), mode='r:gz')
+                        fhs[url] = tarfile.open(fileobj=load_url_mem(url), mode="r:gz")
                     elif url.endswith(".gz"):
-                        fhs[url] = gzip.open(
-                            urllib.request.urlopen(url), mode="rb")
+                        fhs[url] = gzip.open(urllib.request.urlopen(url), mode="rb")
                         fhs[url].peek(1)  # peek into file to check if is valid
                     else:
                         fhs[url] = urllib.request.urlopen(url)
@@ -79,10 +77,15 @@ def download_files(urls: list, output_prefix: str = None, retry_attempts: int = 
                 return fhs
         except (HTTPError, zlib.error, tarfile.TarError):
             warnings.warn(
-                "Download failed, trying again (" + str(att) + "/" + str(retry_attempts) + ")", UserWarning)
+                "Download failed, trying again ("
+                + str(att)
+                + "/"
+                + str(retry_attempts)
+                + ")",
+                UserWarning,
+            )
 
-    raise Exception("One or more files could not be downloaded: " +
-                    ", ".join(urls))
+    raise Exception("One or more files could not be downloaded: " + ", ".join(urls))
 
 
 def filter_function(elements, function, value):
@@ -129,7 +132,7 @@ def open_files(files: list):
     fhs = OrderedDict()
     for file in files:
         if file.endswith(".tar.gz") or file.endswith(".tgz"):
-            fhs[file] = tarfile.open(file, mode='r:gz')
+            fhs[file] = tarfile.open(file, mode="r:gz")
         elif file.endswith(".gz"):
             fhs[file] = gzip.open(file, "rt")
         else:
@@ -160,7 +163,7 @@ def save_urls(urls: list, output_prefix: str):
         outfile = output_prefix + os.path.basename(url)
         check_no_file(outfile)
         urlstream = urllib.request.urlopen(url)
-        with open(outfile, 'b+w') as f:
+        with open(outfile, "b+w") as f:
             f.write(urlstream.read())
         urlstream.close()
         files.append(outfile)
@@ -168,7 +171,7 @@ def save_urls(urls: list, output_prefix: str):
 
 
 def warning_on_one_line(message, category, filename, lineno, file=None, line=None):
-    return '%s:%s: %s: %s\n' % (filename, lineno, category.__name__, message)
+    return "%s:%s: %s: %s\n" % (filename, lineno, category.__name__, message)
 
 
 warnings.formatwarning = warning_on_one_line

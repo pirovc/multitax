@@ -1,29 +1,41 @@
-from .utils import *
+from multitax.utils import (
+    join_check,
+    check_no_file,
+    filter_function,
+    reverse_dict,
+    check_file,
+    close_files,
+    download_files,
+    open_files,
+    check_dir,
+)
 from collections import Counter
 from . import __version__
 
-class MultiTax(object):
 
+class MultiTax(object):
     version = __version__
 
     _default_urls = []
     _default_root_node = "1"
 
-    def __init__(self,
-                 files: list = None,
-                 urls: list = None,
-                 output_prefix: str = None,
-                 root_node: str = None,
-                 root_parent: str = "0",
-                 root_name: str = None,
-                 root_rank: str = None,
-                 undefined_node: str = None,
-                 undefined_name: str = None,
-                 undefined_rank: str = None,
-                 build_name_nodes: bool = False,
-                 build_node_children: bool = False,
-                 build_rank_nodes: bool = False,
-                 extended_names: bool = False):
+    def __init__(
+        self,
+        files: list = None,
+        urls: list = None,
+        output_prefix: str = None,
+        root_node: str = None,
+        root_parent: str = "0",
+        root_name: str = None,
+        root_rank: str = None,
+        undefined_node: str = None,
+        undefined_name: str = None,
+        undefined_rank: str = None,
+        build_name_nodes: bool = False,
+        build_node_children: bool = False,
+        build_rank_nodes: bool = False,
+        extended_names: bool = False,
+    ):
         """
         Main constructor of MultiTax and sub-classes
 
@@ -79,14 +91,17 @@ class MultiTax(object):
         if files:
             fhs = open_files(files)
         elif urls or self._default_urls:
-            fhs = download_files(urls=urls if urls else self._default_urls,
-                                 output_prefix=output_prefix,
-                                 retry_attempts=3)
+            fhs = download_files(
+                urls=urls if urls else self._default_urls,
+                output_prefix=output_prefix,
+                retry_attempts=3,
+            )
 
         if fhs:
             # Parse taxonomy
             self._nodes, self._ranks, self._names = self._parse(
-                fhs, extended_names=extended_names)
+                fhs, extended_names=extended_names
+            )
             close_files(fhs)
             # Save sources for stats (files or urls)
             self.sources = list(fhs.keys())
@@ -97,8 +112,12 @@ class MultiTax(object):
         self.undefined_rank = undefined_rank
 
         # Set root values
-        self._set_root_node(root=root_node if root_node else self._default_root_node,
-                            parent=root_parent, name=root_name, rank=root_rank)
+        self._set_root_node(
+            root=root_node if root_node else self._default_root_node,
+            parent=root_parent,
+            name=root_name,
+            rank=root_rank,
+        )
 
         # build auxiliary structures
         if build_node_children:
@@ -225,7 +244,7 @@ class MultiTax(object):
             raise ValueError("Parent node [" + parent + "] not found.")
         elif node in self._nodes:
             raise ValueError("Node [" + node + "] already present.")
-        
+
         self._nodes[node] = parent
         self._names[node] = name if name is not None else self.undefined_name
         self._ranks[node] = rank if rank is not None else self.undefined_rank
@@ -242,7 +261,8 @@ class MultiTax(object):
         self.clear_lineages()
         for node in self._nodes:
             self._lineages[node] = self.lineage(
-                node=node, root_node=root_node, ranks=ranks)
+                node=node, root_node=root_node, ranks=ranks
+            )
 
     def build_translation(self, tax, files: list = None, urls: list = None):
         """
@@ -300,16 +320,23 @@ class MultiTax(object):
             raise ValueError("Root node [" + self.root_node + "] not found.")
         if self.root_parent in self._nodes:
             raise ValueError(
-                "Root parent [" + self.root_parent + "] found but should not be on tree.")
+                "Root parent ["
+                + self.root_parent
+                + "] found but should not be on tree."
+            )
         if self.undefined_node in self._nodes:
             raise ValueError(
-                "Undefined node [" + self.undefined_node + "] found but should not be on tree.")
+                "Undefined node ["
+                + self.undefined_node
+                + "] found but should not be on tree."
+            )
 
         # Difference between values and keys should be only root_parent
         lost_nodes = set(self._nodes.values()).difference(self._nodes)
         if self.root_parent not in lost_nodes:
             raise ValueError(
-                "Root parent [" + self.root_parent + "] not properly defined.")
+                "Root parent [" + self.root_parent + "] not properly defined."
+            )
         # Remove root_parent from lost nodes to report only missing
         lost_nodes.remove(self.root_parent)
         if len(lost_nodes) > 0:
@@ -480,10 +507,9 @@ class MultiTax(object):
         """
         Returns a list with the name lineage of a given node.
         """
-        return list(map(self.name,
-                        self.lineage(node=node,
-                                     root_node=root_node,
-                                     ranks=ranks)))
+        return list(
+            map(self.name, self.lineage(node=node, root_node=root_node, ranks=ranks))
+        )
 
     def nodes_rank(self, rank: str):
         """
@@ -548,10 +574,9 @@ class MultiTax(object):
         """
         Returns a list with the rank lineage of a given node.
         """
-        return list(map(self.rank,
-                        self.lineage(node=node,
-                                     root_node=root_node,
-                                     ranks=ranks)))
+        return list(
+            map(self.rank, self.lineage(node=node, root_node=root_node, ranks=ranks))
+        )
 
     def remove(self, node: str, check_consistency: bool = False):
         """
@@ -637,13 +662,15 @@ class MultiTax(object):
         else:
             return []
 
-    def write(self,
-              output_file: str,
-              cols: list = ["node", "parent", "rank", "name"],
-              sep: str = "\t",
-              sep_multi: str = "|",
-              ranks: list = None,
-              gz: bool = False):
+    def write(
+        self,
+        output_file: str,
+        cols: list = ["node", "parent", "rank", "name"],
+        sep: str = "\t",
+        sep_multi: str = "|",
+        ranks: list = None,
+        gz: bool = False,
+    ):
         """
         Writes loaded taxonomy to a file.
 
@@ -657,39 +684,55 @@ class MultiTax(object):
         Returns: None
         """
         import gzip
+
         if gz:
-            output_file = output_file if output_file.endswith(
-                ".gz") else output_file + ".gz"
+            output_file = (
+                output_file if output_file.endswith(".gz") else output_file + ".gz"
+            )
             check_no_file(output_file)
             outf = gzip.open(output_file, "wt")
         else:
             check_no_file(output_file)
             outf = open(output_file, "w")
 
-        write_field = {"node": lambda node: node,
-                       "latest": self.latest,
-                       "parent": self.parent,
-                       "rank": self.rank,
-                       "name": self.name,
-                       "leaves": lambda node: join_check(self.leaves(node), sep_multi),
-                       "children": lambda node: join_check(self.children(node), sep_multi),
-                       "lineage": lambda node: join_check(self.lineage(node, ranks=ranks), sep_multi),
-                       "rank_lineage": lambda node: join_check(self.rank_lineage(node, ranks=ranks), sep_multi),
-                       "name_lineage": lambda node: join_check(self.name_lineage(node, ranks=ranks), sep_multi)}
+        write_field = {
+            "node": lambda node: node,
+            "latest": self.latest,
+            "parent": self.parent,
+            "rank": self.rank,
+            "name": self.name,
+            "leaves": lambda node: join_check(self.leaves(node), sep_multi),
+            "children": lambda node: join_check(self.children(node), sep_multi),
+            "lineage": lambda node: join_check(
+                self.lineage(node, ranks=ranks), sep_multi
+            ),
+            "rank_lineage": lambda node: join_check(
+                self.rank_lineage(node, ranks=ranks), sep_multi
+            ),
+            "name_lineage": lambda node: join_check(
+                self.name_lineage(node, ranks=ranks), sep_multi
+            ),
+        }
 
         for c in cols:
             if c not in write_field:
                 raise ValueError(
-                    "Field [" + c + "] is not valid. Options: " + ",".join(write_field))
+                    "Field [" + c + "] is not valid. Options: " + ",".join(write_field)
+                )
 
         if ranks:
             for rank in ranks:
                 for node in self.nodes_rank(rank):
-                    print(*[write_field[c](node)
-                            for c in cols], sep=sep, end="\n", file=outf)
+                    print(
+                        *[write_field[c](node) for c in cols],
+                        sep=sep,
+                        end="\n",
+                        file=outf,
+                    )
         else:
             for node in self._nodes:
-                print(*[write_field[c](node)
-                        for c in cols], sep=sep, end="\n", file=outf)
+                print(
+                    *[write_field[c](node) for c in cols], sep=sep, end="\n", file=outf
+                )
 
         outf.close()

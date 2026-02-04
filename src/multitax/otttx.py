@@ -1,10 +1,10 @@
 from .multitax import MultiTax
-from .utils import filter_function
+from multitax.utils import filter_function
 import warnings
 
 
 class OttTx(MultiTax):
-    _default_urls = ["http://files.opentreeoflife.org/ott/ott3.4/ott3.4.tgz"]
+    _default_urls = ["https://files.opentreeoflife.org/ott/ott3.7.3/ott3.7.3.tgz"]
     _default_root_node = "805080"
 
     def __init__(self, **kwargs):
@@ -13,19 +13,25 @@ class OttTx(MultiTax):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        stats = ['{}={}'.format(k, repr(v)) for (k, v) in self.stats().items()]
-        return 'OttTx({})'.format(', '.join(stats))
+        stats = ["{}={}".format(k, repr(v)) for (k, v) in self.stats().items()]
+        return "OttTx({})".format(", ".join(stats))
 
     def _build_translation(self, target_tax, files: list = None, urls: list = None):
-        warnings.warn("Translation between taxonomies [" + self.__class__.__name__ +
-                      "," + target_tax.__class__.__name__ + "] not yet implemented.")
+        warnings.warn(
+            "Translation between taxonomies ["
+            + self.__class__.__name__
+            + ","
+            + target_tax.__class__.__name__
+            + "] not yet implemented."
+        )
         return {}
 
     def _parse(self, fhs, **kwargs):
         fhs_list = list(fhs.values())
         if len(fhs_list) == 1 and list(fhs)[0].endswith(".tgz"):
             nodes, ranks, names = self._parse_ott(
-                fhs_list[0], extended_names=kwargs["extended_names"])
+                fhs_list[0], extended_names=kwargs["extended_names"]
+            )
         else:
             # nodes.dmp
             nodes, ranks, names = self._parse_taxonomy(fhs_list[0])
@@ -43,9 +49,9 @@ class OttTx(MultiTax):
         next(fh)
         for line in fh:
             try:
-                old_taxid, new_taxid = line.rstrip().split('\t')
-            except:
-                old_taxid, new_taxid = line.decode().rstrip().split('\t')
+                old_taxid, new_taxid = line.rstrip().split("\t")
+            except TypeError:
+                old_taxid, new_taxid = line.decode().rstrip().split("\t")
             forwards[old_taxid] = new_taxid
         return forwards
 
@@ -74,9 +80,9 @@ class OttTx(MultiTax):
         next(fh)
         for line in fh:
             try:
-                name, taxid, _ = line.split('\t|\t', 2)
-            except:
-                name, taxid, _ = line.decode().split('\t|\t', 2)
+                name, taxid, _ = line.split("\t|\t", 2)
+            except TypeError:
+                name, taxid, _ = line.decode().split("\t|\t", 2)
             if name not in synonyms:
                 synonyms[name] = []
             synonyms[name].append(taxid)
@@ -91,9 +97,9 @@ class OttTx(MultiTax):
         next(fh)
         for line in fh:
             try:
-                taxid, parent_taxid, name, rank, _ = line.split('\t|\t', 4)
-            except:
-                taxid, parent_taxid, name, rank, _ = line.decode().split('\t|\t', 4)
+                taxid, parent_taxid, name, rank, _ = line.split("\t|\t", 4)
+            except TypeError:
+                taxid, parent_taxid, name, rank, _ = line.decode().split("\t|\t", 4)
             ranks[taxid] = rank
             nodes[taxid] = parent_taxid
             names[taxid] = name
@@ -114,7 +120,13 @@ class OttTx(MultiTax):
             n = self.forwards(node)
         return n
 
-    def search_name(self, text: str, rank: str = None, exact: bool = True, force_extended: bool = False):
+    def search_name(
+        self,
+        text: str,
+        rank: str = None,
+        exact: bool = True,
+        force_extended: bool = False,
+    ):
         """
         Search node by exact or partial name.
 
