@@ -44,7 +44,7 @@ class GreengenesTx(MultiTax):
             for line in fh:
                 try:
                     _, lineage = line.rstrip().split("\t")
-                except Exception:
+                except TypeError:
                     _, lineage = line.decode().rstrip().split("\t")
                 lin = lineage.split("; ")
                 for i in range(len(lin))[::-1]:

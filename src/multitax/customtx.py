@@ -49,7 +49,7 @@ class CustomTx(MultiTax):
             for line in fh:
                 try:
                     fields = line.rstrip().split(self._sep)
-                except Exception:
+                except TypeError:
                     fields = line.decode().rstrip().split(self._sep)
 
                 node = fields[self._cols["node"]]

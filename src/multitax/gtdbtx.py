@@ -46,7 +46,7 @@ class GtdbTx(MultiTax):
                 for line in fh:
                     try:
                         fields = line.rstrip().split("\t")
-                    except Exception:
+                    except TypeError:
                         fields = line.decode().rstrip().split("\t")
 
                     # skip header
@@ -118,7 +118,7 @@ class GtdbTx(MultiTax):
             for line in fh:
                 try:
                     _, lineage = line.rstrip().split("\t")
-                except Exception:
+                except TypeError:
                     _, lineage = line.decode().rstrip().split("\t")
                 lin = lineage.split(";")
                 for i in range(len(lin))[::-1]:

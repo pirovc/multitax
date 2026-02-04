@@ -50,7 +50,7 @@ class OttTx(MultiTax):
         for line in fh:
             try:
                 old_taxid, new_taxid = line.rstrip().split("\t")
-            except Exception:
+            except TypeError:
                 old_taxid, new_taxid = line.decode().rstrip().split("\t")
             forwards[old_taxid] = new_taxid
         return forwards
@@ -81,7 +81,7 @@ class OttTx(MultiTax):
         for line in fh:
             try:
                 name, taxid, _ = line.split("\t|\t", 2)
-            except Exception:
+            except TypeError:
                 name, taxid, _ = line.decode().split("\t|\t", 2)
             if name not in synonyms:
                 synonyms[name] = []
@@ -98,7 +98,7 @@ class OttTx(MultiTax):
         for line in fh:
             try:
                 taxid, parent_taxid, name, rank, _ = line.split("\t|\t", 4)
-            except Exception:
+            except TypeError:
                 taxid, parent_taxid, name, rank, _ = line.decode().split("\t|\t", 4)
             ranks[taxid] = rank
             nodes[taxid] = parent_taxid

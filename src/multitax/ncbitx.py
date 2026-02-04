@@ -37,7 +37,7 @@ class NcbiTx(MultiTax):
                 for line in fh:
                     try:
                         fields = line.rstrip().split("\t")
-                    except Exception:
+                    except TypeError:
                         fields = line.decode().rstrip().split("\t")
 
                     # skip header
@@ -136,7 +136,7 @@ class NcbiTx(MultiTax):
         for line in fh:
             try:
                 old_taxid, _, new_taxid, _ = line.split("\t", 3)
-            except Exception:
+            except TypeError:
                 old_taxid, _, new_taxid, _ = line.decode().split("\t", 3)
             merged[old_taxid] = new_taxid
         return merged
@@ -146,7 +146,7 @@ class NcbiTx(MultiTax):
         for line in fh:
             try:
                 node, name, _, name_class = line.split("\t|\t")
-            except Exception:
+            except TypeError:
                 node, name, _, name_class = line.decode().split("\t|\t")
             if name_class.replace("\t|\n", "") == "scientific name":
                 names[node] = name
@@ -163,7 +163,7 @@ class NcbiTx(MultiTax):
         for line in fh:
             try:
                 taxid, parent_taxid, rank, _ = line.split("\t|\t", 3)
-            except Exception:
+            except TypeError:
                 taxid, parent_taxid, rank, _ = line.decode().split("\t|\t", 3)
             ranks[taxid] = rank
             nodes[taxid] = parent_taxid

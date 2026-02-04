@@ -34,7 +34,7 @@ class SilvaTx(MultiTax):
             for line in fh:
                 try:
                     name_lineage, taxid, rank, _ = line.split("\t", 3)
-                except Exception:
+                except TypeError:
                     name_lineage, taxid, rank, _ = line.decode().split("\t", 3)
                 # Remove last char ";"
                 lineage = name_lineage[:-1]
