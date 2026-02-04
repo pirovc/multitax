@@ -4,7 +4,7 @@ import warnings
 
 
 class OttTx(MultiTax):
-    _default_urls = ["http://files.opentreeoflife.org/ott/ott3.4/ott3.4.tgz"]
+    _default_urls = ["https://files.opentreeoflife.org/ott/ott3.7.3/ott3.7.3.tgz"]
     _default_root_node = "805080"
 
     def __init__(self, **kwargs):

@@ -13,8 +13,8 @@ install:
   - pip install .
 
 script:
-  - python -m unittest discover -s tests/multitax/unit/ -v
-  - python -m unittest discover -s tests/multitax/integration/ -v
+#  - python -m unittest discover -s tests/multitax/unit/ -v
+#  - python -m unittest discover -s tests/multitax/integration/ -v
   - python -m coverage run --omit="/usr/*,tests/*" -m unittest discover -s tests/multitax/unit/ -v
   - python -m coverage run --append --omit="/usr/*,tests/*" -m unittest discover -s tests/multitax/integration/ -v
 

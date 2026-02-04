@@ -4,10 +4,10 @@ import warnings
 
 class GreengenesTx(MultiTax):
     _default_urls = [
-        "https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz"
+        "https://ftp.microbio.me/greengenes_release/current/2024.09.taxonomy.id.tsv.gz"
     ]
     _rank_codes = [
-        ("k__", "kingdom"),
+        ("d__", "domain"),
         ("p__", "phylum"),
         ("c__", "class"),
         ("o__", "order"),
@@ -40,29 +40,41 @@ class GreengenesTx(MultiTax):
         ranks = {}
         names = {}
 
+        lineages = set()
         for source, fh in fhs.items():
             for line in fh:
                 try:
-                    _, lineage = line.rstrip().split("\t")
+                    fields = line.rstrip().split("\t")
                 except TypeError:
-                    _, lineage = line.decode().rstrip().split("\t")
-                lin = lineage.split("; ")
-                for i in range(len(lin))[::-1]:
-                    # assert rank
-                    assert lin[i][:3] == self._rank_codes[i][0]
-                    # taxid = "c__Deinococci", rank = "class", name = "Deinococci"
-                    taxid = lin[i]
-                    name = lin[i][3:]
-                    if not name:
-                        continue  # empty entry "s__"
-                    rank = self._rank_codes[i][1]
-                    if i == 0:
-                        parent_taxid = self._default_root_node
-                    else:
-                        parent_taxid = lin[i - 1]
-                    if taxid not in nodes:
-                        nodes[taxid] = parent_taxid
-                        names[taxid] = name
-                        ranks[taxid] = rank
+                    fields = line.decode().rstrip().split("\t")
+
+                # skip header
+                if fields[0] == "Feature ID":
+                    continue
+
+                lineages.add(fields[1])
+
+        for lineage in lineages:
+            last_taxid = None
+            lin = lineage.split("; ")
+            for i in range(len(lin))[::-1]:
+                # assert rank
+                assert lin[i][:3] == self._rank_codes[i][0]
+
+                name = lin[i][3:]
+                if not name:
+                    continue  # empty entry "s__"
+
+                # taxid = "c__Deinococci", rank = "class", name = "Deinococci"
+                taxid = lin[i]
+                rank = self._rank_codes[i][1]
+
+                if taxid not in nodes:
+                    names[taxid] = name
+                    ranks[taxid] = rank
+                if last_taxid:
+                    nodes[last_taxid] = taxid
+                last_taxid = taxid
+            nodes[last_taxid] = self._default_root_node
 
         return nodes, ranks, names
