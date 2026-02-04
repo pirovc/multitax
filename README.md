@@ -1,22 +1,17 @@
 # MultiTax  [![Build Status](https://app.travis-ci.com/pirovc/multitax.svg?token=q6Nfx8pLHh8hV3hLz3Pq&branch=main)](https://app.travis-ci.com/pirovc/multitax) [![codecov](https://codecov.io/gh/pirovc/multitax/branch/main/graph/badge.svg)](https://codecov.io/gh/pirovc/multitax) [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/multitax/README.html)
 
-Python package to obtain, parse and explore biological taxonomies
+A Python package for obtaining, parsing and exploring biological taxonomies.
 
 ## Description
 
-MultiTax is a Python package that provides a common and generalized set of functions to download, parse, filter, explore, translate, convert and write multiple biological taxonomies (**GTDB, NCBI, Silva, Greengenes, Open Tree taxonomy**) and custom formatted taxonomies. Main goals are:
+MultiTax is a Python package that provides a standardised set of functions for downloading, parsing, filtering, exploring, translating, converting and writing multiple taxonomies, including GTDB, NCBI, Silva, Greengenes and Open Tree Taxonomy, as well as custom-formatted taxonomies. The main goals are:
 
- - Be fast, intuitive, generalized and easy to use
- - Explore different taxonomies with same set of commands
- - Enable integration and compatibility with multiple taxonomies
- - Translate taxonomies (partially implemented)
- - Convert taxonomies (not yet implemented)
+ - to be fast, intuitive, generalised and easy to use
+ - explore different taxonomies using the same set of commands.
+ - enable integration and compatibility with multiple taxonomies
+ - translate taxonomies (only partially implemented between NCBI and GTDB).
 
-MultiTax does not link sequence identifiers to taxonomic nodes, it just handles the taxonomy alone. Some integration to work with sequence or external identifiers is planned, but not yet implemented.
-
-## API Documentation
-
-https://pirovc.github.io/multitax/
+MultiTax does not link sequence identifiers to taxonomic nodes; it only handles the taxonomy. 
 
 ## Installation
 
@@ -37,10 +32,14 @@ conda install -c bioconda multitax
 ```bash
 git clone https://github.com/pirovc/multitax.git
 cd multitax
-python setup.py install --record files.txt
+pip install .
 ```
 
-## Basic usage with GTDB
+## API Documentation
+
+https://pirovc.github.io/multitax/
+
+## Basic usage examples with GTDB
 
 ```python
 from multitax import GtdbTx
@@ -52,10 +51,6 @@ tax = GtdbTx()
 tax.lineage("g__Escherichia")
 # ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
 ```
-
-## Examples
-
- - [List of functions](https://pirovc.github.io/multitax/multitax/multitax.html)
 
 ### Load
 
@@ -265,16 +260,16 @@ lca("s__Escherichia dysenteriae", "s__Pseudomonas aeruginosa")
 
 ## Details
 
- - After downloading/parsing the desired taxonomies, MultiTax works fully offline.
- - Taxonomies are parsed into `nodes`. Each node is annotated with a `name` and a `rank`.
- - Some taxonomies have a numeric taxonomic identifier (e.g. NCBI) and other use the rank + name as an identifier (e.g. GTDB). In MultiTax all identifiers are treated as strings.
- - A single root node is defined by default for each taxonomy (or `1` when not defined). This can be changed with `root_node` when loading the taxonomy (as well as annotations `root_parent`, `root_name`, `root_rank`). If the `root_node` already exists, the tree will be filtered.
- - Standard values for unknown/undefined nodes can be configured with `undefined_node`,`undefined_name` and `undefined_rank`. Those are default values returned when nodes/names/ranks are not found.
- - Taxonomy files are automatically downloaded or can be loaded from disk (`files` parameter). Alternative `urls` can be provided. When downloaded, files are handled in memory. It is possible to save the downloaded file to disk with `output_prefix`.
+- After downloading and parsing the desired taxonomies, MultiTax works fully offline.
+- Taxonomies are parsed into `nodes`. Each node is annotated with a `name` and a `rank`.
+- Some taxonomies have a numeric taxonomic identifier (e.g. NCBI), while others use the rank and name as an identifier (e.g. GTDB). In MultiTax, all identifiers are treated as strings.
+- A single root node is defined by default for each taxonomy (or `1` when not defined). This can be changed using the `root_node` parameter when loading the taxonomy, as well as the `root_parent`, `root_name` and `root_rank` parameters. If the `root_node` already exists, the tree will be filtered.
+- Standard values for unknown or undefined nodes can be configured using the `undefined_node`, `undefined_name` and `undefined_rank` parameters. These are the default values returned when nodes, names or ranks are not found.
+- Taxonomy files are automatically downloaded or can be loaded from disk using the `files` parameter. Alternative `urls` can be provided. When downloaded, files are handled in memory. It is possible to save the downloaded file to disk using the `output_prefix`.
 
 ## Translation between taxonomies
 
-Partially implemented. The goal is to map different taxonomies if the linkage data is available. That's what is currently availble.
+This functionality is only partially implemented. The goal is to map different taxonomies if the linkage data is available. That's what is currently availble.
 
 
  |from/to |NCBI     |GTDB   |SILVA     |OTT     |GG    |
@@ -304,7 +299,7 @@ Legend:
 
 - More translations
 - Conversion between taxonomies (write on specific format)
-
+- Sequence indetifier integration
 
 ## Similar projects
 
