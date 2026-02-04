@@ -232,7 +232,7 @@ tax.lineage("474503")
 from multitax import GreengenesTx
 tax = GreengenesTx()
 tax.lineage("f__Enterobacteriaceae")
-# ['1', 'k__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacteriales', 'f__Enterobacteriaceae']
+# ['1', 'd__Bacteria', 'p__Proteobacteria', 'c__Gammaproteobacteria', 'o__Enterobacteriales', 'f__Enterobacteriaceae']
 ```
 
 ## LCA integration
