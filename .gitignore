@@ -1,9 +1,6 @@
 # Build
 /build/
 
-# User temp
-**/CMakeLists.txt.user
-
 # Python folder
 **/__pycache__
 

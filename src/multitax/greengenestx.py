@@ -4,14 +4,17 @@ import warnings
 
 class GreengenesTx(MultiTax):
     _default_urls = [
-        "https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz"]
-    _rank_codes = [("k__", "kingdom"),
-                   ("p__", "phylum"),
-                   ("c__", "class"),
-                   ("o__", "order"),
-                   ("f__", "family"),
-                   ("g__", "genus"),
-                   ("s__", "species")]
+        "https://gg-sg-web.s3-us-west-2.amazonaws.com/downloads/greengenes_database/gg_13_5/gg_13_5_taxonomy.txt.gz"
+    ]
+    _rank_codes = [
+        ("k__", "kingdom"),
+        ("p__", "phylum"),
+        ("c__", "class"),
+        ("o__", "order"),
+        ("f__", "family"),
+        ("g__", "genus"),
+        ("s__", "species"),
+    ]
 
     def __init__(self, **kwargs):
         # forwards.tsv
@@ -19,12 +22,17 @@ class GreengenesTx(MultiTax):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        stats = ['{}={}'.format(k, repr(v)) for (k, v) in self.stats().items()]
-        return 'GreengenesTx({})'.format(', '.join(stats))
+        stats = ["{}={}".format(k, repr(v)) for (k, v) in self.stats().items()]
+        return "GreengenesTx({})".format(", ".join(stats))
 
     def _build_translation(self, target_tax, files: list = None, urls: list = None):
-        warnings.warn("Translation between taxonomies [" + self.__class__.__name__ +
-                      "," + target_tax.__class__.__name__ + "] not yet implemented.")
+        warnings.warn(
+            "Translation between taxonomies ["
+            + self.__class__.__name__
+            + ","
+            + target_tax.__class__.__name__
+            + "] not yet implemented."
+        )
         return {}
 
     def _parse(self, fhs, **kwargs):
@@ -35,9 +43,9 @@ class GreengenesTx(MultiTax):
         for source, fh in fhs.items():
             for line in fh:
                 try:
-                    _, lineage = line.rstrip().split('\t')
-                except:
-                    _, lineage = line.decode().rstrip().split('\t')
+                    _, lineage = line.rstrip().split("\t")
+                except Exception:
+                    _, lineage = line.decode().rstrip().split("\t")
                 lin = lineage.split("; ")
                 for i in range(len(lin))[::-1]:
                     # assert rank
@@ -51,7 +59,7 @@ class GreengenesTx(MultiTax):
                     if i == 0:
                         parent_taxid = self._default_root_node
                     else:
-                        parent_taxid = lin[i-1]
+                        parent_taxid = lin[i - 1]
                     if taxid not in nodes:
                         nodes[taxid] = parent_taxid
                         names[taxid] = name

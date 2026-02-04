@@ -3,13 +3,13 @@ import importlib.metadata
 __version__ = importlib.metadata.version(__name__)
 
 __all__ = (
-    'CustomTx',
-    'DummyTx',
-    'GreengenesTx',
-    'GtdbTx',
-    'NcbiTx',
-    'OttTx',
-    'SilvaTx',
+    "CustomTx",
+    "DummyTx",
+    "GreengenesTx",
+    "GtdbTx",
+    "NcbiTx",
+    "OttTx",
+    "SilvaTx",
 )
 
 from .customtx import CustomTx

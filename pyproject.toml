@@ -26,4 +26,4 @@ build-backend = "setuptools.build_meta"
 write_to = "VERSION.txt"
 
 [tool.ruff]
-include = [ "pyproject.toml", "multitax/*.py" ]
+include = [ "pyproject.toml", "src/multitax/*.py" ]

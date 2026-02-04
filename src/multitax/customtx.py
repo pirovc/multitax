@@ -3,11 +3,12 @@ import warnings
 
 
 class CustomTx(MultiTax):
-
     _required_cols = ["node", "parent"]
     _possible_cols = ["node", "parent", "rank", "name"]
 
-    def __init__(self, cols: list = ["node", "parent", "rank", "name"], sep: str = "\t", **kwargs):
+    def __init__(
+        self, cols: list = ["node", "parent", "rank", "name"], sep: str = "\t", **kwargs
+    ):
         """
         CustomTx()
 
@@ -27,12 +28,17 @@ class CustomTx(MultiTax):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        stats = ['{}={}'.format(k, repr(v)) for (k, v) in self.stats().items()]
-        return 'CustomTx({})'.format(', '.join(stats))
+        stats = ["{}={}".format(k, repr(v)) for (k, v) in self.stats().items()]
+        return "CustomTx({})".format(", ".join(stats))
 
     def _build_translation(self, target_tax, files: list = None, urls: list = None):
-        warnings.warn("Translation between taxonomies [" + self.__class__.__name__ +
-                      "," + target_tax.__class__.__name__ + "] not yet implemented.")
+        warnings.warn(
+            "Translation between taxonomies ["
+            + self.__class__.__name__
+            + ","
+            + target_tax.__class__.__name__
+            + "] not yet implemented."
+        )
         return {}
 
     def _parse(self, fhs, **kwargs):
@@ -43,7 +49,7 @@ class CustomTx(MultiTax):
             for line in fh:
                 try:
                     fields = line.rstrip().split(self._sep)
-                except:
+                except Exception:
                     fields = line.decode().rstrip().split(self._sep)
 
                 node = fields[self._cols["node"]]
@@ -65,7 +71,8 @@ class CustomTx(MultiTax):
 
         for c in cols:
             if c not in self._possible_cols:
-                raise ValueError(c + " is not a valid column: " +
-                                 ",".join(self._possible_cols))
+                raise ValueError(
+                    c + " is not a valid column: " + ",".join(self._possible_cols)
+                )
 
         return cols
