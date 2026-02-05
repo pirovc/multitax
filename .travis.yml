@@ -13,14 +13,13 @@ install:
   - pip install .
 
 script:
-#  - python -m unittest discover -s tests/multitax/unit/ -v
-#  - python -m unittest discover -s tests/multitax/integration/ -v
-  - python3 -m coverage run --omit="/usr/*,tests/*" -m unittest discover -s tests/multitax/unit/ -v
-  - python3 -m coverage run --append --omit="/usr/*,tests/*" -m unittest discover -s tests/multitax/integration/ -v
+  - python3 -m unittest discover -s tests/multitax/unit/ -v
+  - python3 -m unittest discover -s tests/multitax/integration/ -v
 
 after_success:
-  - echo "${TRAVIS_PYTHON_VERSION}"
   - if [ "${TRAVIS_PYTHON_VERSION}" == "3.14" ]; then 
+      python3 -m coverage run --source=multitax --omit="/usr/*,tests/*" -m unittest discover -s tests/multitax/unit/ -v &&
+      python3 -m coverage run --source=multitax --omit="/usr/*,tests/*" -m unittest discover -s tests/multitax/integration/ -v &&
       python3 -m coverage xml -o coverage_py.xml &&
       curl -Os https://uploader.codecov.io/latest/linux/codecov &&
       chmod +x codecov &&
