@@ -16,3 +16,6 @@ docs/
 
 # tests results
 tests/multitax/*/tmp_*
+
+# Versioning from setuptools_scm
+/VERSION.txt
