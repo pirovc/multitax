@@ -1,7 +1,5 @@
 from .multitax import MultiTax
-from multitax.utils import filter_function
-from multitax.utils import open_files
-from multitax.utils import download_files
+from multitax.utils import close_files, filter_function, open_files, download_files
 import warnings
 
 
@@ -95,7 +93,7 @@ class NcbiTx(MultiTax):
                             if ncbi_n not in translated_nodes:
                                 translated_nodes[ncbi_n] = set()
                             translated_nodes[ncbi_n].add(gtdb_nodes[i])
-
+            close_files(fhs)
         else:
             warnings.warn(
                 "Translation between taxonomies ["

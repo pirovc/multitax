@@ -8,7 +8,7 @@ class DummyTx(MultiTax):
 
         Parameters:
 
-        * \*\*kwargs defined at `multitax.multitax.MultiTax`
+        * \\*\\*kwargs defined at `multitax.multitax.MultiTax`
         """
         super().__init__(**kwargs)
 

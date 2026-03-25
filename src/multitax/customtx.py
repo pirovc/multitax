@@ -15,7 +15,7 @@ class CustomTx(MultiTax):
         Parameters:
         * **cols** *[list, dict]*: List of fields to be parsed or a dictionary with {field: column index}. Options: "node", "parent", "rank", "name"
         * **sep** *[str]*: Separator of fields
-        * **\*\*kwargs** defined at `multitax.multitax.MultiTax`
+        * **\\*\\*kwargs** defined at `multitax.multitax.MultiTax`
 
         Example:
 

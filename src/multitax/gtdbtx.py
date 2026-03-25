@@ -1,6 +1,5 @@
 from .multitax import MultiTax
-from multitax.utils import open_files
-from multitax.utils import download_files
+from multitax.utils import close_files, open_files, download_files
 import warnings
 
 
@@ -99,6 +98,7 @@ class GtdbTx(MultiTax):
                                 translated_nodes[gtdb_n] = set()
                             translated_nodes[gtdb_n].add(ncbi_nodes[i])
 
+            close_files(fhs)
         else:
             warnings.warn(
                 "Translation between taxonomies ["
