@@ -31,7 +31,7 @@ class TestInit(unittest.TestCase):
         self.assertEqual(tax.root_name, "root")
         self.assertEqual(tax.root_rank, "root")
 
-        self.assertEqual(tax._default_urls, [])
+        self.assertEqual(tax._default_urls, {})
         self.assertEqual(tax._default_root_node, "1")
         self.assertEqual(tax._nodes, {tax.root_node: '0'})
         self.assertEqual(tax._names, {tax.root_node: 'root'})
@@ -53,7 +53,7 @@ class TestInit(unittest.TestCase):
         self.assertEqual(tax.root_name, "Node1")
         self.assertEqual(tax.root_rank, "rank-1")
 
-        self.assertEqual(tax._default_urls, [])
+        self.assertEqual(tax._default_urls, {})
         self.assertEqual(tax._default_root_node, "1")
         self.assertEqual(tax._nodes[tax.root_node], "0")
         self.assertEqual(tax._names[tax.root_node], "Node1")

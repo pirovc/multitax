@@ -105,12 +105,11 @@ class TestCommon(unittest.TestCase):
 
                 if uncompressed:
                     # Check if results are equal with compressed and uncompressed files
-                    tax_compressed = self.taxonomies[t]["class"](
-                        **self.taxonomies[t]["params"])
-                    tax_uncompressed = self.taxonomies[t]["class"](
-                        files=uncompressed)
-                    self.assertEqual(tax_compressed.stats(), tax_uncompressed.stats(
-                    ), t + " failed with uncompressed files")
+                    tax_compressed_stats = self.taxonomies[t]["class"](
+                        **self.taxonomies[t]["params"]).stats()
+                    tax_uncompressed_stats = self.taxonomies[t]["class"](
+                        files=uncompressed).stats()
+                    self.assertEqual(tax_compressed_stats, tax_uncompressed_stats, t + " failed with uncompressed files")
 
     def test_tar_gzip_uncompressed_ncbi(self):
         """

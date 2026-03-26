@@ -1,11 +1,15 @@
+from multitax.utils import format_repr
 from .multitax import MultiTax
 import warnings
 
 
 class GreengenesTx(MultiTax):
-    _default_urls = [
-        "https://ftp.microbio.me/greengenes_release/current/2024.09.taxonomy.id.tsv.gz"
-    ]
+    _default_version = "2024.09"
+    _supported_versions = ["2024.09"]
+    _default_urls = {
+        "2024.09": "https://ftp.microbio.me/greengenes_release/current/2024.09.taxonomy.id.tsv.gz"
+    }
+
     _rank_codes = [
         ("d__", "domain"),
         ("p__", "phylum"),
@@ -22,10 +26,9 @@ class GreengenesTx(MultiTax):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        stats = ["{}={}".format(k, repr(v)) for (k, v) in self.stats().items()]
-        return "GreengenesTx({})".format(", ".join(stats))
+        return format_repr(inst=self)
 
-    def _build_translation(self, target_tax, files: list = None, urls: list = None):
+    def _build_translation(self, target_tax, file: str = None, url: str = None):
         warnings.warn(
             "Translation between taxonomies ["
             + self.__class__.__name__

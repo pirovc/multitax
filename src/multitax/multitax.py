@@ -10,17 +10,18 @@ from multitax.utils import (
     check_dir,
 )
 from collections import Counter
-from . import __version__
+from datetime import datetime
 
 
 class MultiTax(object):
-    version = __version__
-
-    _default_urls = []
+    _default_version = "current"
+    _supported_versions = ["current"]
+    _default_urls = {}
     _default_root_node = "1"
 
     def __init__(
         self,
+        version: str = None,
         files: list = None,
         urls: list = None,
         output_prefix: str = None,
@@ -83,6 +84,20 @@ class MultiTax(object):
         self._rank_nodes = {}
         self._translated_nodes = {}
 
+        # Set datetime
+        self.datetime = datetime.now()
+
+        # Set version
+        self.version = None
+        if files or urls:
+            self.version = version
+        else:
+            self.version = self._default_version if not version else version
+            if self.version not in self._supported_versions:
+                raise ValueError(
+                    f"Version [{self.version}] not supported (possible versions: {', '.join(self._supported_versions)}). To set a custom version, use files or urls."
+                )
+
         # Store source of tax files (url or file)
         self.sources = []
 
@@ -90,9 +105,9 @@ class MultiTax(object):
         fhs = {}
         if files:
             fhs = open_files(files)
-        elif urls or self._default_urls:
+        elif urls or self._default_urls.get(self.version):
             fhs = download_files(
-                urls=urls if urls else self._default_urls,
+                urls=urls if urls else self._default_urls[self.version],
                 output_prefix=output_prefix,
                 retry_attempts=3,
             )
@@ -264,15 +279,15 @@ class MultiTax(object):
                 node=node, root_node=root_node, ranks=ranks
             )
 
-    def build_translation(self, tax, files: list = None, urls: list = None):
+    def build_translation(self, tax, file: str = None, url: str = None):
         """
         Create a translation of current taxonomy to another
 
         Parameters:
 
         * **tax** [MultiTax]: A target taxonomy to be translated to.
-        * **files** *[str, list]*: One or more local files to parse.
-        * **urls** *[str, list]*: One or more urls to download and parse.
+        * **file** *[str]*: Local file to parse.
+        * **url** *[str]*: Url to download and parse.
 
         Example:
 
@@ -285,18 +300,15 @@ class MultiTax(object):
             gtdb_tax.translate("g__Escherichia")
                 {'1301', '547', '561', '570', '590', '620'}
 
-            # Using local files (NCBI <-> GTDB)
-            ncbi_tax.build_translation(gtdb_tax, files=["ar53_metadata.tsv.gz", "bac120_metadata.tsv.gz"])
+            # Using local file
+            ncbi_tax.build_translation(gtdb_tax, file="226_acc_rep_lin_ncbi.tsv.gz")
             ncbi_tax.translate("620")
                 {'g__Escherichia', 'g__Proteus', 'g__Serratia'}
         """
-        if files:
-            if isinstance(files, str):
-                files = [files]
-            for file in files:
-                check_file(file)
+        if file:
+            check_file(file)
 
-        self._translated_nodes = self._build_translation(tax, files, urls)
+        self._translated_nodes = self._build_translation(tax, file, url)
 
     def children(self, node: str):
         """
@@ -650,7 +662,6 @@ class MultiTax(object):
         s["leaves"] = len(all_leaves)
         s["ranked_nodes"] = Counter(self._ranks.values())
         s["ranked_leaves"] = Counter(map(self.rank, all_leaves))
-
         return s
 
     def translate(self, node: str):

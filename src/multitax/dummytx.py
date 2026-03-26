@@ -1,3 +1,4 @@
+from multitax.utils import format_repr
 from .multitax import MultiTax
 
 
@@ -13,5 +14,4 @@ class DummyTx(MultiTax):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        stats = ["{}={}".format(k, repr(v)) for (k, v) in self.stats().items()]
-        return "DummyTx({})".format(", ".join(stats))
+        return format_repr(inst=self)
