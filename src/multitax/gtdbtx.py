@@ -216,7 +216,7 @@ class GtdbTx(MultiTax):
     def build_conversion(
         self,
         version: str,
-        files: [str, str] = ("", ""),
+        files: tuple[str, str] = ("", ""),
         urls: tuple[str, str] = ("", ""),
     ):
         """
