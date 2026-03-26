@@ -41,6 +41,7 @@ class MultiTax(object):
         Main constructor of MultiTax and sub-classes
 
         Parameters:
+        * **version** *[str]*: Version to download/parse or custom version name (with files/url).
         * **files** *[str, list]*: One or more local files to parse.
         * **urls** *[str, list]*: One or more urls to download and parse.
         * **output_prefix** *[str]*: Directory to write downloaded files.

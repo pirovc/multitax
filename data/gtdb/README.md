@@ -34,3 +34,5 @@ tax.convert('s__Ruminococcus_A sp003011855', version="226")
 tax.convert('s__Bact-08 sp003520315', version="226")
 tax.convert('g__JOSHI-001', version="226")
 ```
+
+More info about the conversion strategy: https://pirovc.github.io/multitax/multitax.html#GtdbTx.convert
