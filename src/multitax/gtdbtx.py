@@ -1,13 +1,61 @@
 from .multitax import MultiTax
-from multitax.utils import close_files, open_files, download_files
+from multitax.utils import close_files, open_files, download_files, format_repr
 import warnings
 
 
 class GtdbTx(MultiTax):
-    _default_urls = [
-        "https://data.gtdb.aau.ecogenomic.org/releases/latest/ar53_taxonomy.tsv.gz",
-        "https://data.gtdb.aau.ecogenomic.org/releases/latest/bac120_taxonomy.tsv.gz",
+    _default_version = "226"
+    _supported_versions = [
+        "80",
+        "83",
+        "86.2",
+        "89",
+        "95",
+        "202",
+        "207",
+        "214.1",
+        "220",
+        "226",
     ]
+
+    _url_prefix = "https://data.gtdb.ecogenomic.org/releases/"
+    _default_urls = {
+        "80": [f"{_url_prefix}release80/80.0/bac_taxonomy_r80.tsv"],
+        "83": [f"{_url_prefix}release83/83.0/bac_taxonomy_r83.tsv"],
+        "86.2": [
+            f"{_url_prefix}release86/86.2/ar122_taxonomy_r86.2.tsv",
+            f"{_url_prefix}release86/86.2/bac120_taxonomy_r86.2.tsv",
+        ],
+        "89": [
+            f"{_url_prefix}release89/89.0/ar122_taxonomy_r89.tsv",
+            f"{_url_prefix}release89/89.0/bac120_taxonomy_r89.tsv",
+        ],
+        "95": [
+            f"{_url_prefix}release95/95.0/ar122_taxonomy_r95.tsv.gz",
+            f"{_url_prefix}release95/95.0/bac120_taxonomy_r95.tsv.gz",
+        ],
+        "202": [
+            f"{_url_prefix}release202/202.0/ar122_taxonomy_r202.tsv.gz",
+            f"{_url_prefix}release202/202.0/bac120_taxonomy_r202.tsv.gz",
+        ],
+        "207": [
+            f"{_url_prefix}release207/207.0/ar53_taxonomy_r207.tsv.gz",
+            f"{_url_prefix}release207/207.0/bac120_taxonomy_r207.tsv.gz",
+        ],
+        "214.1": [
+            f"{_url_prefix}release214/214.1/ar53_taxonomy_r214.tsv.gz",
+            f"{_url_prefix}release214/214.1/bac120_taxonomy_r214.tsv.gz",
+        ],
+        "220": [
+            f"{_url_prefix}release220/220.0/ar53_taxonomy_r220.tsv.gz",
+            f"{_url_prefix}release220/220.0/bac120_taxonomy_r220.tsv.gz",
+        ],
+        "226": [
+            f"{_url_prefix}release226/226.0/ar53_taxonomy_r226.tsv.gz",
+            f"{_url_prefix}release226/226.0/bac120_taxonomy_r226.tsv.gz",
+        ],
+    }
+
     _rank_codes = [
         ("d__", "domain"),
         ("p__", "phylum"),
@@ -22,24 +70,21 @@ class GtdbTx(MultiTax):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        stats = ["{}={}".format(k, repr(v)) for (k, v) in self.stats().items()]
-        return "GtdbTx({})".format(", ".join(stats))
+        return format_repr(inst=self)
 
-    def _build_translation(self, target_tax, files: list = None, urls: list = None):
+    def _build_translation(self, target_tax, file: str = None, url: str = None):
         translated_nodes = {}
         if target_tax.__class__.__name__ == "NcbiTx":
-            if files:
-                fhs = open_files(files)
+            if file:
+                fhs = open_files([file])
             else:
-                _urls = [
-                    "https://data.gtdb.aau.ecogenomic.org/releases/latest/ar53_metadata.tsv.gz",
-                    "https://data.gtdb.aau.ecogenomic.org/releases/latest/bac120_metadata.tsv.gz",
-                ]
-                fhs = download_files(urls=urls if urls else _urls, retry_attempts=3)
+                if not url:
+                    url = f"https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/{self.version}_acc_rep_lin_ncbi.tsv.gz"
+                fhs = download_files(urls=[url], retry_attempts=3)
 
             accession_col = 0
-            gtdb_taxonomy_col = 19
-            ncbi_taxid_col = 80
+            gtdb_taxonomy_col = 2
+            ncbi_taxid_col = 3
 
             for source, fh in fhs.items():
                 for line in fh:

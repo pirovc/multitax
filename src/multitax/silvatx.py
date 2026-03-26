@@ -1,20 +1,22 @@
+from multitax.utils import format_repr
 from .multitax import MultiTax
 import warnings
 
 
 class SilvaTx(MultiTax):
-    _default_urls = [
-        "https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.2.txt.gz"
-    ]
+    _default_version = "ssu_138.2"
+    _supported_versions = ["ssu_138.2"]
+    _default_urls = {
+        "ssu_138.2": "https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.2.txt.gz"
+    }
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        stats = ["{}={}".format(k, repr(v)) for (k, v) in self.stats().items()]
-        return "SilvaTx({})".format(", ".join(stats))
+        return format_repr(inst=self)
 
-    def _build_translation(self, target_tax, files: list = None, urls: list = None):
+    def _build_translation(self, target_tax, file: str = None, url: str = None):
         warnings.warn(
             "Translation between taxonomies ["
             + self.__class__.__name__

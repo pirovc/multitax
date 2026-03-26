@@ -1,10 +1,18 @@
 from .multitax import MultiTax
-from multitax.utils import close_files, filter_function, open_files, download_files
+from multitax.utils import (
+    close_files,
+    filter_function,
+    format_repr,
+    open_files,
+    download_files,
+)
 import warnings
 
 
 class NcbiTx(MultiTax):
-    _default_urls = ["https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"]
+    _default_version = "current"
+    _supported_versions = ["current"]
+    _default_urls = {"current": "https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"}
 
     def __init__(self, **kwargs):
         self._merged = {}
@@ -12,24 +20,21 @@ class NcbiTx(MultiTax):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        stats = ["{}={}".format(k, repr(v)) for (k, v) in self.stats().items()]
-        return "NcbiTx({})".format(", ".join(stats))
+        return format_repr(inst=self)
 
-    def _build_translation(self, target_tax, files: list = None, urls: list = None):
+    def _build_translation(self, target_tax, file: str = None, url: str = None):
         translated_nodes = {}
         if target_tax.__class__.__name__ == "GtdbTx":
-            if files:
-                fhs = open_files(files)
+            if file:
+                fhs = open_files([file])
             else:
-                _urls = [
-                    "https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/ar53_metadata.tsv.gz",
-                    "https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/bac120_metadata.tsv.gz",
-                ]
-                fhs = download_files(urls=urls if urls else _urls, retry_attempts=3)
+                if not url:
+                    url = f"https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/{target_tax.version}_acc_rep_lin_ncbi.tsv.gz"
+                fhs = download_files(urls=[url], retry_attempts=3)
 
             accession_col = 0
-            gtdb_taxonomy_col = 19
-            ncbi_taxid_col = 80
+            gtdb_taxonomy_col = 2
+            ncbi_taxid_col = 3
 
             for source, fh in fhs.items():
                 for line in fh:
@@ -230,8 +235,8 @@ class NcbiTx(MultiTax):
 
             return list(set(n + ret))
 
-    def stats(self):
-        s = super().stats()
+    def stats(self, **kwargs):
+        s = super().stats(**kwargs)
         if self._merged:
             s["merged"] = len(self._merged)
         if self._extended_name_nodes:

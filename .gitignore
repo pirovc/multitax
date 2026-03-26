@@ -11,9 +11,6 @@
 *.egg-info/
 dist/
 
-# mkdocs
-docs/
-
 # tests results
 tests/multitax/*/tmp_*
 
