@@ -220,7 +220,7 @@ class GtdbTx(MultiTax):
         urls: tuple[str, str] = ("", ""),
     ):
         """
-        Download and build conversion table between two versions.
+        Download and build conversion table against another version.
         Optional function, conversion tables are automatically downloaded
         and built on first .convert() call.
         """

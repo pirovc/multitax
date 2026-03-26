@@ -11,7 +11,7 @@ G024295625	t	d__Bacteria;p__Bacillota;c__Bacilli;o__Lactobacillales;f__Streptoco
 G002562265	f	d__Bacteria;p__Bacillota;c__Bacilli;o__Bacillales;f__Bacillaceae_G;g__Bacillus_A;s__Bacillus_A cereus	1396
 ```
 
-Database and version numbers are removed from `accessions` as indicated by [GTDB taxon history](https://gtdb.ecogenomic.org/taxon-history page):
+Database and version numbers are removed from `accessions` as indicated by [GTDB taxon history page](https://gtdb.ecogenomic.org/taxon-history):
 
 - `GB_GCA_000023565.1` -> `G000023565`
 - `RS_GCF_000003135.1` -> `G000003135`
@@ -23,4 +23,14 @@ To test the taxa conversion, you can use the script `convert_gtdb_version.py`:
 ```sh
 Usage: ./convert_gtdb_version.py FROM TO taxa1 [taxa2 ...]
 Example: ./convert_gtdb_version.py 95 226 "s__Ruminococcus_A sp003011855" "s__Bact-08 sp003520315" "g__JOSHI-001"
+```
+
+Using the MultiTax package, the same can be achieved with:
+
+```py
+from multitax import GtdbTx
+tax = GtdbTx(version="95")
+tax.convert('s__Ruminococcus_A sp003011855', version="226")
+tax.convert('s__Bact-08 sp003520315', version="226")
+tax.convert('g__JOSHI-001', version="226")
 ```
