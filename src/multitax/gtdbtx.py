@@ -203,8 +203,7 @@ class GtdbTx(MultiTax):
             fhs = open_files(files=[file])
         else:
             if not url:
-                # url = f"https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/{version}_acc_rep_tax.tsv.gz"
-                url = f"file:///home/pirov/code/multitax/data/gtdb/{version}_acc_rep_lin_ncbi.tsv.gz"
+                url = f"https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/{version}_acc_rep_tax.tsv.gz"
             fhs = download_files(urls=[url], retry_attempts=3)
 
         for fh in fhs.values():
