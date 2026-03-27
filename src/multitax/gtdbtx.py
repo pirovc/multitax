@@ -67,6 +67,8 @@ class GtdbTx(MultiTax):
     ]
 
     def __init__(self, **kwargs):
+        self._convert_to = {}
+        self._convert_from = {}
         super().__init__(**kwargs)
 
     def __repr__(self):
@@ -186,3 +188,101 @@ class GtdbTx(MultiTax):
                         ranks[taxid] = rank
 
         return nodes, ranks, names
+
+    def _lookup_version_taxa(self, node, version: str):
+        res = set()
+        for acc in self._convert_from.get(node, ""):
+            for tx in self._convert_to[version].get(acc, "").split(";"):
+                # Return only rank of requested node
+                if tx.startswith(node[:1]):
+                    res.add(tx)
+        return res
+
+    def _download_parse_version_taxa(self, version, file, url):
+        if file:
+            fhs = open_files(files=[file])
+        else:
+            if not url:
+                url = f"https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/{self.version}_acc_rep_lin_ncbi.tsv.gz"
+            fhs = download_files(urls=[url], retry_attempts=3)
+
+        for fh in fhs.values():
+            for line in fh:
+                try:
+                    yield line.rstrip().split("\t")
+                except TypeError:
+                    yield line.decode().rstrip().split("\t")
+
+    def build_conversion(
+        self,
+        version: str,
+        files: tuple[str, str] = ("", ""),
+        urls: tuple[str, str] = ("", ""),
+    ):
+        """
+        Download and build conversion table against another version.
+        Optional function, conversion tables are automatically downloaded
+        and built on first .convert() call.
+        """
+        if version not in self._supported_versions:
+            raise ValueError(
+                f"Version [{version}] not supported for conversion: {', '.join(self._supported_versions)}"
+            )
+
+        if not self._convert_from:
+            # Collect the accessions of the representative entries for each taxa in the current version
+            tx_accs = {}
+            for acc, rep, lin, _ in self._download_parse_version_taxa(
+                version=self.version, file=files[0], url=urls[0]
+            ):
+                if rep == "t":
+                    for tx in lin.split(";"):
+                        if tx not in tx_accs:
+                            tx_accs[tx] = []
+                        tx_accs[tx].append(acc)
+            # Assign only at the end, in case of download/parse errors
+            self._convert_from = tx_accs
+
+        if version not in self._convert_to:
+            # Collect the lineage for each accession
+            acc_lin = {}
+            for acc, _, lin, _ in self._download_parse_version_taxa(
+                version=version, file=files[1], url=urls[1]
+            ):
+                acc_lin[acc] = lin
+            # Assign only at the end, in case of download/parse errors
+            self._convert_to[version] = acc_lin
+
+    def convert(self, node: str, version: str) -> set[str]:
+        """
+        Converts a taxonomic node from current version to another.
+        It uses a genomic centric strategy, based on the taxa of the representative
+        genome among versions.
+        It may return multiple nodes for ranks above species,
+        since multiple representatives can be split into more taxa.
+        It may return an empty set if node is not found in the current version
+        or if related representative is no longer available in the requested version.
+
+        Example:
+
+            from multitax import GtdbTx
+            tax = GtdbTx(version="95")
+
+            # Species - always one-to-one
+            tax.convert('s__Giesbergeria metamorpha', version="226")
+            {'s__Simplicispira metamorpha'}
+
+            # Other ranks - may be one-to-many
+            tax.convert('g__UBA6715', version="226")
+            {'g__Aquirufa', 'g__Sandaracinomonas'}
+        """
+
+        if version not in self._supported_versions:
+            raise ValueError(
+                f"Version [{version}] not supported: {', '.join(self._supported_versions)}"
+            )
+
+        if not self._convert_from or version not in self._convert_to:
+            self.build_conversion(version=version)
+
+        return self._lookup_version_taxa(node, version)

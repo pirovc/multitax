@@ -58,6 +58,12 @@
                         <li>
                                 <a class="function" href="#GtdbTx.__init__">GtdbTx</a>
                         </li>
+                        <li>
+                                <a class="function" href="#GtdbTx.build_conversion">build_conversion</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#GtdbTx.convert">convert</a>
+                        </li>
                 </ul>
 
             </li>
@@ -555,6 +561,7 @@ tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, 
 <p>Parameters:</p>
 
 <ul>
+<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/url).</li>
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
@@ -697,125 +704,225 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 </span><span id="GtdbTx-68"><a href="#GtdbTx-68"><span class="linenos"> 68</span></a>    <span class="p">]</span>
 </span><span id="GtdbTx-69"><a href="#GtdbTx-69"><span class="linenos"> 69</span></a>
 </span><span id="GtdbTx-70"><a href="#GtdbTx-70"><span class="linenos"> 70</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="GtdbTx-71"><a href="#GtdbTx-71"><span class="linenos"> 71</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span id="GtdbTx-72"><a href="#GtdbTx-72"><span class="linenos"> 72</span></a>
-</span><span id="GtdbTx-73"><a href="#GtdbTx-73"><span class="linenos"> 73</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="GtdbTx-74"><a href="#GtdbTx-74"><span class="linenos"> 74</span></a>        <span class="k">return</span> <span class="n">format_repr</span><span class="p">(</span><span class="n">inst</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-</span><span id="GtdbTx-75"><a href="#GtdbTx-75"><span class="linenos"> 75</span></a>
-</span><span id="GtdbTx-76"><a href="#GtdbTx-76"><span class="linenos"> 76</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_build_translation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_tax</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span id="GtdbTx-77"><a href="#GtdbTx-77"><span class="linenos"> 77</span></a>        <span class="n">translated_nodes</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="GtdbTx-78"><a href="#GtdbTx-78"><span class="linenos"> 78</span></a>        <span class="k">if</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;NcbiTx&quot;</span><span class="p">:</span>
-</span><span id="GtdbTx-79"><a href="#GtdbTx-79"><span class="linenos"> 79</span></a>            <span class="k">if</span> <span class="n">file</span><span class="p">:</span>
-</span><span id="GtdbTx-80"><a href="#GtdbTx-80"><span class="linenos"> 80</span></a>                <span class="n">fhs</span> <span class="o">=</span> <span class="n">open_files</span><span class="p">([</span><span class="n">file</span><span class="p">])</span>
-</span><span id="GtdbTx-81"><a href="#GtdbTx-81"><span class="linenos"> 81</span></a>            <span class="k">else</span><span class="p">:</span>
-</span><span id="GtdbTx-82"><a href="#GtdbTx-82"><span class="linenos"> 82</span></a>                <span class="k">if</span> <span class="ow">not</span> <span class="n">url</span><span class="p">:</span>
-</span><span id="GtdbTx-83"><a href="#GtdbTx-83"><span class="linenos"> 83</span></a>                    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">_acc_rep_lin_ncbi.tsv.gz&quot;</span>
-</span><span id="GtdbTx-84"><a href="#GtdbTx-84"><span class="linenos"> 84</span></a>                <span class="n">fhs</span> <span class="o">=</span> <span class="n">download_files</span><span class="p">(</span><span class="n">urls</span><span class="o">=</span><span class="p">[</span><span class="n">url</span><span class="p">],</span> <span class="n">retry_attempts</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-</span><span id="GtdbTx-85"><a href="#GtdbTx-85"><span class="linenos"> 85</span></a>
-</span><span id="GtdbTx-86"><a href="#GtdbTx-86"><span class="linenos"> 86</span></a>            <span class="n">accession_col</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="GtdbTx-87"><a href="#GtdbTx-87"><span class="linenos"> 87</span></a>            <span class="n">gtdb_taxonomy_col</span> <span class="o">=</span> <span class="mi">2</span>
-</span><span id="GtdbTx-88"><a href="#GtdbTx-88"><span class="linenos"> 88</span></a>            <span class="n">ncbi_taxid_col</span> <span class="o">=</span> <span class="mi">3</span>
-</span><span id="GtdbTx-89"><a href="#GtdbTx-89"><span class="linenos"> 89</span></a>
-</span><span id="GtdbTx-90"><a href="#GtdbTx-90"><span class="linenos"> 90</span></a>            <span class="k">for</span> <span class="n">source</span><span class="p">,</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">fhs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="GtdbTx-91"><a href="#GtdbTx-91"><span class="linenos"> 91</span></a>                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="p">:</span>
-</span><span id="GtdbTx-92"><a href="#GtdbTx-92"><span class="linenos"> 92</span></a>                    <span class="k">try</span><span class="p">:</span>
-</span><span id="GtdbTx-93"><a href="#GtdbTx-93"><span class="linenos"> 93</span></a>                        <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="GtdbTx-94"><a href="#GtdbTx-94"><span class="linenos"> 94</span></a>                    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-</span><span id="GtdbTx-95"><a href="#GtdbTx-95"><span class="linenos"> 95</span></a>                        <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="GtdbTx-96"><a href="#GtdbTx-96"><span class="linenos"> 96</span></a>
-</span><span id="GtdbTx-97"><a href="#GtdbTx-97"><span class="linenos"> 97</span></a>                    <span class="c1"># skip header</span>
-</span><span id="GtdbTx-98"><a href="#GtdbTx-98"><span class="linenos"> 98</span></a>                    <span class="k">if</span> <span class="n">fields</span><span class="p">[</span><span class="n">accession_col</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;accession&quot;</span><span class="p">:</span>
-</span><span id="GtdbTx-99"><a href="#GtdbTx-99"><span class="linenos"> 99</span></a>                        <span class="k">continue</span>
-</span><span id="GtdbTx-100"><a href="#GtdbTx-100"><span class="linenos">100</span></a>
-</span><span id="GtdbTx-101"><a href="#GtdbTx-101"><span class="linenos">101</span></a>                    <span class="n">ncbi_leaf_node</span> <span class="o">=</span> <span class="n">target_tax</span><span class="o">.</span><span class="n">latest</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="n">ncbi_taxid_col</span><span class="p">])</span>
-</span><span id="GtdbTx-102"><a href="#GtdbTx-102"><span class="linenos">102</span></a>                    <span class="k">if</span> <span class="n">ncbi_leaf_node</span> <span class="o">!=</span> <span class="n">target_tax</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
-</span><span id="GtdbTx-103"><a href="#GtdbTx-103"><span class="linenos">103</span></a>                        <span class="n">ncbi_nodes</span> <span class="o">=</span> <span class="n">target_tax</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span>
-</span><span id="GtdbTx-104"><a href="#GtdbTx-104"><span class="linenos">104</span></a>                            <span class="n">ncbi_leaf_node</span><span class="p">,</span>
-</span><span id="GtdbTx-105"><a href="#GtdbTx-105"><span class="linenos">105</span></a>                            <span class="n">ranks</span><span class="o">=</span><span class="p">[</span>
-</span><span id="GtdbTx-106"><a href="#GtdbTx-106"><span class="linenos">106</span></a>                                <span class="s2">&quot;domain&quot;</span><span class="p">,</span>
-</span><span id="GtdbTx-107"><a href="#GtdbTx-107"><span class="linenos">107</span></a>                                <span class="s2">&quot;phylum&quot;</span><span class="p">,</span>
-</span><span id="GtdbTx-108"><a href="#GtdbTx-108"><span class="linenos">108</span></a>                                <span class="s2">&quot;class&quot;</span><span class="p">,</span>
-</span><span id="GtdbTx-109"><a href="#GtdbTx-109"><span class="linenos">109</span></a>                                <span class="s2">&quot;order&quot;</span><span class="p">,</span>
-</span><span id="GtdbTx-110"><a href="#GtdbTx-110"><span class="linenos">110</span></a>                                <span class="s2">&quot;family&quot;</span><span class="p">,</span>
-</span><span id="GtdbTx-111"><a href="#GtdbTx-111"><span class="linenos">111</span></a>                                <span class="s2">&quot;genus&quot;</span><span class="p">,</span>
-</span><span id="GtdbTx-112"><a href="#GtdbTx-112"><span class="linenos">112</span></a>                                <span class="s2">&quot;species&quot;</span><span class="p">,</span>
-</span><span id="GtdbTx-113"><a href="#GtdbTx-113"><span class="linenos">113</span></a>                            <span class="p">],</span>
-</span><span id="GtdbTx-114"><a href="#GtdbTx-114"><span class="linenos">114</span></a>                        <span class="p">)</span>
-</span><span id="GtdbTx-115"><a href="#GtdbTx-115"><span class="linenos">115</span></a>                    <span class="k">else</span><span class="p">:</span>
-</span><span id="GtdbTx-116"><a href="#GtdbTx-116"><span class="linenos">116</span></a>                        <span class="k">continue</span>
-</span><span id="GtdbTx-117"><a href="#GtdbTx-117"><span class="linenos">117</span></a>
-</span><span id="GtdbTx-118"><a href="#GtdbTx-118"><span class="linenos">118</span></a>                    <span class="c1"># Build GTDB lineage from leaf (species on given lineage)</span>
-</span><span id="GtdbTx-119"><a href="#GtdbTx-119"><span class="linenos">119</span></a>                    <span class="c1"># to accomodate possible changes in the loaded tax</span>
-</span><span id="GtdbTx-120"><a href="#GtdbTx-120"><span class="linenos">120</span></a>                    <span class="n">gtdb_leaf_node</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="n">gtdb_taxonomy_col</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-</span><span id="GtdbTx-121"><a href="#GtdbTx-121"><span class="linenos">121</span></a>                    <span class="k">if</span> <span class="n">gtdb_leaf_node</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
-</span><span id="GtdbTx-122"><a href="#GtdbTx-122"><span class="linenos">122</span></a>                        <span class="n">gtdb_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span>
-</span><span id="GtdbTx-123"><a href="#GtdbTx-123"><span class="linenos">123</span></a>                            <span class="n">gtdb_leaf_node</span><span class="p">,</span>
-</span><span id="GtdbTx-124"><a href="#GtdbTx-124"><span class="linenos">124</span></a>                            <span class="n">ranks</span><span class="o">=</span><span class="p">[</span>
-</span><span id="GtdbTx-125"><a href="#GtdbTx-125"><span class="linenos">125</span></a>                                <span class="s2">&quot;domain&quot;</span><span class="p">,</span>
-</span><span id="GtdbTx-126"><a href="#GtdbTx-126"><span class="linenos">126</span></a>                                <span class="s2">&quot;phylum&quot;</span><span class="p">,</span>
-</span><span id="GtdbTx-127"><a href="#GtdbTx-127"><span class="linenos">127</span></a>                                <span class="s2">&quot;class&quot;</span><span class="p">,</span>
-</span><span id="GtdbTx-128"><a href="#GtdbTx-128"><span class="linenos">128</span></a>                                <span class="s2">&quot;order&quot;</span><span class="p">,</span>
-</span><span id="GtdbTx-129"><a href="#GtdbTx-129"><span class="linenos">129</span></a>                                <span class="s2">&quot;family&quot;</span><span class="p">,</span>
-</span><span id="GtdbTx-130"><a href="#GtdbTx-130"><span class="linenos">130</span></a>                                <span class="s2">&quot;genus&quot;</span><span class="p">,</span>
-</span><span id="GtdbTx-131"><a href="#GtdbTx-131"><span class="linenos">131</span></a>                                <span class="s2">&quot;species&quot;</span><span class="p">,</span>
-</span><span id="GtdbTx-132"><a href="#GtdbTx-132"><span class="linenos">132</span></a>                            <span class="p">],</span>
-</span><span id="GtdbTx-133"><a href="#GtdbTx-133"><span class="linenos">133</span></a>                        <span class="p">)</span>
-</span><span id="GtdbTx-134"><a href="#GtdbTx-134"><span class="linenos">134</span></a>                    <span class="k">else</span><span class="p">:</span>
-</span><span id="GtdbTx-135"><a href="#GtdbTx-135"><span class="linenos">135</span></a>                        <span class="k">continue</span>
-</span><span id="GtdbTx-136"><a href="#GtdbTx-136"><span class="linenos">136</span></a>
-</span><span id="GtdbTx-137"><a href="#GtdbTx-137"><span class="linenos">137</span></a>                    <span class="c1"># Match ranks</span>
-</span><span id="GtdbTx-138"><a href="#GtdbTx-138"><span class="linenos">138</span></a>                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">gtdb_n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gtdb_nodes</span><span class="p">):</span>
-</span><span id="GtdbTx-139"><a href="#GtdbTx-139"><span class="linenos">139</span></a>                        <span class="k">if</span> <span class="p">(</span>
-</span><span id="GtdbTx-140"><a href="#GtdbTx-140"><span class="linenos">140</span></a>                            <span class="n">ncbi_nodes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">target_tax</span><span class="o">.</span><span class="n">undefined_node</span>
-</span><span id="GtdbTx-141"><a href="#GtdbTx-141"><span class="linenos">141</span></a>                            <span class="ow">and</span> <span class="n">gtdb_n</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
-</span><span id="GtdbTx-142"><a href="#GtdbTx-142"><span class="linenos">142</span></a>                        <span class="p">):</span>
-</span><span id="GtdbTx-143"><a href="#GtdbTx-143"><span class="linenos">143</span></a>                            <span class="k">if</span> <span class="n">gtdb_n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">translated_nodes</span><span class="p">:</span>
-</span><span id="GtdbTx-144"><a href="#GtdbTx-144"><span class="linenos">144</span></a>                                <span class="n">translated_nodes</span><span class="p">[</span><span class="n">gtdb_n</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-</span><span id="GtdbTx-145"><a href="#GtdbTx-145"><span class="linenos">145</span></a>                            <span class="n">translated_nodes</span><span class="p">[</span><span class="n">gtdb_n</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ncbi_nodes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-</span><span id="GtdbTx-146"><a href="#GtdbTx-146"><span class="linenos">146</span></a>
-</span><span id="GtdbTx-147"><a href="#GtdbTx-147"><span class="linenos">147</span></a>            <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
-</span><span id="GtdbTx-148"><a href="#GtdbTx-148"><span class="linenos">148</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="GtdbTx-149"><a href="#GtdbTx-149"><span class="linenos">149</span></a>            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-</span><span id="GtdbTx-150"><a href="#GtdbTx-150"><span class="linenos">150</span></a>                <span class="s2">&quot;Translation between taxonomies [&quot;</span>
-</span><span id="GtdbTx-151"><a href="#GtdbTx-151"><span class="linenos">151</span></a>                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
-</span><span id="GtdbTx-152"><a href="#GtdbTx-152"><span class="linenos">152</span></a>                <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
-</span><span id="GtdbTx-153"><a href="#GtdbTx-153"><span class="linenos">153</span></a>                <span class="o">+</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
-</span><span id="GtdbTx-154"><a href="#GtdbTx-154"><span class="linenos">154</span></a>                <span class="o">+</span> <span class="s2">&quot;] not yet implemented.&quot;</span>
-</span><span id="GtdbTx-155"><a href="#GtdbTx-155"><span class="linenos">155</span></a>            <span class="p">)</span>
-</span><span id="GtdbTx-156"><a href="#GtdbTx-156"><span class="linenos">156</span></a>
-</span><span id="GtdbTx-157"><a href="#GtdbTx-157"><span class="linenos">157</span></a>        <span class="k">return</span> <span class="n">translated_nodes</span>
+</span><span id="GtdbTx-71"><a href="#GtdbTx-71"><span class="linenos"> 71</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_convert_to</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="GtdbTx-72"><a href="#GtdbTx-72"><span class="linenos"> 72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_convert_from</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="GtdbTx-73"><a href="#GtdbTx-73"><span class="linenos"> 73</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="GtdbTx-74"><a href="#GtdbTx-74"><span class="linenos"> 74</span></a>
+</span><span id="GtdbTx-75"><a href="#GtdbTx-75"><span class="linenos"> 75</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="GtdbTx-76"><a href="#GtdbTx-76"><span class="linenos"> 76</span></a>        <span class="k">return</span> <span class="n">format_repr</span><span class="p">(</span><span class="n">inst</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="GtdbTx-77"><a href="#GtdbTx-77"><span class="linenos"> 77</span></a>
+</span><span id="GtdbTx-78"><a href="#GtdbTx-78"><span class="linenos"> 78</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_build_translation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_tax</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="GtdbTx-79"><a href="#GtdbTx-79"><span class="linenos"> 79</span></a>        <span class="n">translated_nodes</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="GtdbTx-80"><a href="#GtdbTx-80"><span class="linenos"> 80</span></a>        <span class="k">if</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;NcbiTx&quot;</span><span class="p">:</span>
+</span><span id="GtdbTx-81"><a href="#GtdbTx-81"><span class="linenos"> 81</span></a>            <span class="k">if</span> <span class="n">file</span><span class="p">:</span>
+</span><span id="GtdbTx-82"><a href="#GtdbTx-82"><span class="linenos"> 82</span></a>                <span class="n">fhs</span> <span class="o">=</span> <span class="n">open_files</span><span class="p">([</span><span class="n">file</span><span class="p">])</span>
+</span><span id="GtdbTx-83"><a href="#GtdbTx-83"><span class="linenos"> 83</span></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="GtdbTx-84"><a href="#GtdbTx-84"><span class="linenos"> 84</span></a>                <span class="k">if</span> <span class="ow">not</span> <span class="n">url</span><span class="p">:</span>
+</span><span id="GtdbTx-85"><a href="#GtdbTx-85"><span class="linenos"> 85</span></a>                    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">_acc_rep_lin_ncbi.tsv.gz&quot;</span>
+</span><span id="GtdbTx-86"><a href="#GtdbTx-86"><span class="linenos"> 86</span></a>                <span class="n">fhs</span> <span class="o">=</span> <span class="n">download_files</span><span class="p">(</span><span class="n">urls</span><span class="o">=</span><span class="p">[</span><span class="n">url</span><span class="p">],</span> <span class="n">retry_attempts</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="GtdbTx-87"><a href="#GtdbTx-87"><span class="linenos"> 87</span></a>
+</span><span id="GtdbTx-88"><a href="#GtdbTx-88"><span class="linenos"> 88</span></a>            <span class="n">accession_col</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="GtdbTx-89"><a href="#GtdbTx-89"><span class="linenos"> 89</span></a>            <span class="n">gtdb_taxonomy_col</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span id="GtdbTx-90"><a href="#GtdbTx-90"><span class="linenos"> 90</span></a>            <span class="n">ncbi_taxid_col</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span id="GtdbTx-91"><a href="#GtdbTx-91"><span class="linenos"> 91</span></a>
+</span><span id="GtdbTx-92"><a href="#GtdbTx-92"><span class="linenos"> 92</span></a>            <span class="k">for</span> <span class="n">source</span><span class="p">,</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">fhs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="GtdbTx-93"><a href="#GtdbTx-93"><span class="linenos"> 93</span></a>                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="p">:</span>
+</span><span id="GtdbTx-94"><a href="#GtdbTx-94"><span class="linenos"> 94</span></a>                    <span class="k">try</span><span class="p">:</span>
+</span><span id="GtdbTx-95"><a href="#GtdbTx-95"><span class="linenos"> 95</span></a>                        <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="GtdbTx-96"><a href="#GtdbTx-96"><span class="linenos"> 96</span></a>                    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+</span><span id="GtdbTx-97"><a href="#GtdbTx-97"><span class="linenos"> 97</span></a>                        <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="GtdbTx-98"><a href="#GtdbTx-98"><span class="linenos"> 98</span></a>
+</span><span id="GtdbTx-99"><a href="#GtdbTx-99"><span class="linenos"> 99</span></a>                    <span class="c1"># skip header</span>
+</span><span id="GtdbTx-100"><a href="#GtdbTx-100"><span class="linenos">100</span></a>                    <span class="k">if</span> <span class="n">fields</span><span class="p">[</span><span class="n">accession_col</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;accession&quot;</span><span class="p">:</span>
+</span><span id="GtdbTx-101"><a href="#GtdbTx-101"><span class="linenos">101</span></a>                        <span class="k">continue</span>
+</span><span id="GtdbTx-102"><a href="#GtdbTx-102"><span class="linenos">102</span></a>
+</span><span id="GtdbTx-103"><a href="#GtdbTx-103"><span class="linenos">103</span></a>                    <span class="n">ncbi_leaf_node</span> <span class="o">=</span> <span class="n">target_tax</span><span class="o">.</span><span class="n">latest</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="n">ncbi_taxid_col</span><span class="p">])</span>
+</span><span id="GtdbTx-104"><a href="#GtdbTx-104"><span class="linenos">104</span></a>                    <span class="k">if</span> <span class="n">ncbi_leaf_node</span> <span class="o">!=</span> <span class="n">target_tax</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
+</span><span id="GtdbTx-105"><a href="#GtdbTx-105"><span class="linenos">105</span></a>                        <span class="n">ncbi_nodes</span> <span class="o">=</span> <span class="n">target_tax</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span>
+</span><span id="GtdbTx-106"><a href="#GtdbTx-106"><span class="linenos">106</span></a>                            <span class="n">ncbi_leaf_node</span><span class="p">,</span>
+</span><span id="GtdbTx-107"><a href="#GtdbTx-107"><span class="linenos">107</span></a>                            <span class="n">ranks</span><span class="o">=</span><span class="p">[</span>
+</span><span id="GtdbTx-108"><a href="#GtdbTx-108"><span class="linenos">108</span></a>                                <span class="s2">&quot;domain&quot;</span><span class="p">,</span>
+</span><span id="GtdbTx-109"><a href="#GtdbTx-109"><span class="linenos">109</span></a>                                <span class="s2">&quot;phylum&quot;</span><span class="p">,</span>
+</span><span id="GtdbTx-110"><a href="#GtdbTx-110"><span class="linenos">110</span></a>                                <span class="s2">&quot;class&quot;</span><span class="p">,</span>
+</span><span id="GtdbTx-111"><a href="#GtdbTx-111"><span class="linenos">111</span></a>                                <span class="s2">&quot;order&quot;</span><span class="p">,</span>
+</span><span id="GtdbTx-112"><a href="#GtdbTx-112"><span class="linenos">112</span></a>                                <span class="s2">&quot;family&quot;</span><span class="p">,</span>
+</span><span id="GtdbTx-113"><a href="#GtdbTx-113"><span class="linenos">113</span></a>                                <span class="s2">&quot;genus&quot;</span><span class="p">,</span>
+</span><span id="GtdbTx-114"><a href="#GtdbTx-114"><span class="linenos">114</span></a>                                <span class="s2">&quot;species&quot;</span><span class="p">,</span>
+</span><span id="GtdbTx-115"><a href="#GtdbTx-115"><span class="linenos">115</span></a>                            <span class="p">],</span>
+</span><span id="GtdbTx-116"><a href="#GtdbTx-116"><span class="linenos">116</span></a>                        <span class="p">)</span>
+</span><span id="GtdbTx-117"><a href="#GtdbTx-117"><span class="linenos">117</span></a>                    <span class="k">else</span><span class="p">:</span>
+</span><span id="GtdbTx-118"><a href="#GtdbTx-118"><span class="linenos">118</span></a>                        <span class="k">continue</span>
+</span><span id="GtdbTx-119"><a href="#GtdbTx-119"><span class="linenos">119</span></a>
+</span><span id="GtdbTx-120"><a href="#GtdbTx-120"><span class="linenos">120</span></a>                    <span class="c1"># Build GTDB lineage from leaf (species on given lineage)</span>
+</span><span id="GtdbTx-121"><a href="#GtdbTx-121"><span class="linenos">121</span></a>                    <span class="c1"># to accomodate possible changes in the loaded tax</span>
+</span><span id="GtdbTx-122"><a href="#GtdbTx-122"><span class="linenos">122</span></a>                    <span class="n">gtdb_leaf_node</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="n">gtdb_taxonomy_col</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span><span id="GtdbTx-123"><a href="#GtdbTx-123"><span class="linenos">123</span></a>                    <span class="k">if</span> <span class="n">gtdb_leaf_node</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span><span class="p">:</span>
+</span><span id="GtdbTx-124"><a href="#GtdbTx-124"><span class="linenos">124</span></a>                        <span class="n">gtdb_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="p">(</span>
+</span><span id="GtdbTx-125"><a href="#GtdbTx-125"><span class="linenos">125</span></a>                            <span class="n">gtdb_leaf_node</span><span class="p">,</span>
+</span><span id="GtdbTx-126"><a href="#GtdbTx-126"><span class="linenos">126</span></a>                            <span class="n">ranks</span><span class="o">=</span><span class="p">[</span>
+</span><span id="GtdbTx-127"><a href="#GtdbTx-127"><span class="linenos">127</span></a>                                <span class="s2">&quot;domain&quot;</span><span class="p">,</span>
+</span><span id="GtdbTx-128"><a href="#GtdbTx-128"><span class="linenos">128</span></a>                                <span class="s2">&quot;phylum&quot;</span><span class="p">,</span>
+</span><span id="GtdbTx-129"><a href="#GtdbTx-129"><span class="linenos">129</span></a>                                <span class="s2">&quot;class&quot;</span><span class="p">,</span>
+</span><span id="GtdbTx-130"><a href="#GtdbTx-130"><span class="linenos">130</span></a>                                <span class="s2">&quot;order&quot;</span><span class="p">,</span>
+</span><span id="GtdbTx-131"><a href="#GtdbTx-131"><span class="linenos">131</span></a>                                <span class="s2">&quot;family&quot;</span><span class="p">,</span>
+</span><span id="GtdbTx-132"><a href="#GtdbTx-132"><span class="linenos">132</span></a>                                <span class="s2">&quot;genus&quot;</span><span class="p">,</span>
+</span><span id="GtdbTx-133"><a href="#GtdbTx-133"><span class="linenos">133</span></a>                                <span class="s2">&quot;species&quot;</span><span class="p">,</span>
+</span><span id="GtdbTx-134"><a href="#GtdbTx-134"><span class="linenos">134</span></a>                            <span class="p">],</span>
+</span><span id="GtdbTx-135"><a href="#GtdbTx-135"><span class="linenos">135</span></a>                        <span class="p">)</span>
+</span><span id="GtdbTx-136"><a href="#GtdbTx-136"><span class="linenos">136</span></a>                    <span class="k">else</span><span class="p">:</span>
+</span><span id="GtdbTx-137"><a href="#GtdbTx-137"><span class="linenos">137</span></a>                        <span class="k">continue</span>
+</span><span id="GtdbTx-138"><a href="#GtdbTx-138"><span class="linenos">138</span></a>
+</span><span id="GtdbTx-139"><a href="#GtdbTx-139"><span class="linenos">139</span></a>                    <span class="c1"># Match ranks</span>
+</span><span id="GtdbTx-140"><a href="#GtdbTx-140"><span class="linenos">140</span></a>                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">gtdb_n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gtdb_nodes</span><span class="p">):</span>
+</span><span id="GtdbTx-141"><a href="#GtdbTx-141"><span class="linenos">141</span></a>                        <span class="k">if</span> <span class="p">(</span>
+</span><span id="GtdbTx-142"><a href="#GtdbTx-142"><span class="linenos">142</span></a>                            <span class="n">ncbi_nodes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">target_tax</span><span class="o">.</span><span class="n">undefined_node</span>
+</span><span id="GtdbTx-143"><a href="#GtdbTx-143"><span class="linenos">143</span></a>                            <span class="ow">and</span> <span class="n">gtdb_n</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undefined_node</span>
+</span><span id="GtdbTx-144"><a href="#GtdbTx-144"><span class="linenos">144</span></a>                        <span class="p">):</span>
+</span><span id="GtdbTx-145"><a href="#GtdbTx-145"><span class="linenos">145</span></a>                            <span class="k">if</span> <span class="n">gtdb_n</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">translated_nodes</span><span class="p">:</span>
+</span><span id="GtdbTx-146"><a href="#GtdbTx-146"><span class="linenos">146</span></a>                                <span class="n">translated_nodes</span><span class="p">[</span><span class="n">gtdb_n</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="GtdbTx-147"><a href="#GtdbTx-147"><span class="linenos">147</span></a>                            <span class="n">translated_nodes</span><span class="p">[</span><span class="n">gtdb_n</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ncbi_nodes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</span><span id="GtdbTx-148"><a href="#GtdbTx-148"><span class="linenos">148</span></a>
+</span><span id="GtdbTx-149"><a href="#GtdbTx-149"><span class="linenos">149</span></a>            <span class="n">close_files</span><span class="p">(</span><span class="n">fhs</span><span class="p">)</span>
+</span><span id="GtdbTx-150"><a href="#GtdbTx-150"><span class="linenos">150</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="GtdbTx-151"><a href="#GtdbTx-151"><span class="linenos">151</span></a>            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+</span><span id="GtdbTx-152"><a href="#GtdbTx-152"><span class="linenos">152</span></a>                <span class="s2">&quot;Translation between taxonomies [&quot;</span>
+</span><span id="GtdbTx-153"><a href="#GtdbTx-153"><span class="linenos">153</span></a>                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+</span><span id="GtdbTx-154"><a href="#GtdbTx-154"><span class="linenos">154</span></a>                <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
+</span><span id="GtdbTx-155"><a href="#GtdbTx-155"><span class="linenos">155</span></a>                <span class="o">+</span> <span class="n">target_tax</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+</span><span id="GtdbTx-156"><a href="#GtdbTx-156"><span class="linenos">156</span></a>                <span class="o">+</span> <span class="s2">&quot;] not yet implemented.&quot;</span>
+</span><span id="GtdbTx-157"><a href="#GtdbTx-157"><span class="linenos">157</span></a>            <span class="p">)</span>
 </span><span id="GtdbTx-158"><a href="#GtdbTx-158"><span class="linenos">158</span></a>
-</span><span id="GtdbTx-159"><a href="#GtdbTx-159"><span class="linenos">159</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="GtdbTx-160"><a href="#GtdbTx-160"><span class="linenos">160</span></a>        <span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="GtdbTx-161"><a href="#GtdbTx-161"><span class="linenos">161</span></a>        <span class="n">ranks</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="GtdbTx-162"><a href="#GtdbTx-162"><span class="linenos">162</span></a>        <span class="n">names</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="GtdbTx-163"><a href="#GtdbTx-163"><span class="linenos">163</span></a>        <span class="k">for</span> <span class="n">source</span><span class="p">,</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">fhs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="GtdbTx-164"><a href="#GtdbTx-164"><span class="linenos">164</span></a>            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="p">:</span>
-</span><span id="GtdbTx-165"><a href="#GtdbTx-165"><span class="linenos">165</span></a>                <span class="k">try</span><span class="p">:</span>
-</span><span id="GtdbTx-166"><a href="#GtdbTx-166"><span class="linenos">166</span></a>                    <span class="n">_</span><span class="p">,</span> <span class="n">lineage</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="GtdbTx-167"><a href="#GtdbTx-167"><span class="linenos">167</span></a>                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-</span><span id="GtdbTx-168"><a href="#GtdbTx-168"><span class="linenos">168</span></a>                    <span class="n">_</span><span class="p">,</span> <span class="n">lineage</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="GtdbTx-169"><a href="#GtdbTx-169"><span class="linenos">169</span></a>                <span class="n">lin</span> <span class="o">=</span> <span class="n">lineage</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
-</span><span id="GtdbTx-170"><a href="#GtdbTx-170"><span class="linenos">170</span></a>                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lin</span><span class="p">))[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-</span><span id="GtdbTx-171"><a href="#GtdbTx-171"><span class="linenos">171</span></a>                    <span class="c1"># assert rank</span>
-</span><span id="GtdbTx-172"><a href="#GtdbTx-172"><span class="linenos">172</span></a>                    <span class="k">assert</span> <span class="n">lin</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rank_codes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="GtdbTx-173"><a href="#GtdbTx-173"><span class="linenos">173</span></a>                    <span class="c1"># taxid = &quot;c__Deinococci&quot;, rank = &quot;class&quot;, name = &quot;Deinococci&quot;</span>
-</span><span id="GtdbTx-174"><a href="#GtdbTx-174"><span class="linenos">174</span></a>                    <span class="n">taxid</span> <span class="o">=</span> <span class="n">lin</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-</span><span id="GtdbTx-175"><a href="#GtdbTx-175"><span class="linenos">175</span></a>                    <span class="n">name</span> <span class="o">=</span> <span class="n">lin</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">3</span><span class="p">:]</span>
-</span><span id="GtdbTx-176"><a href="#GtdbTx-176"><span class="linenos">176</span></a>                    <span class="c1"># empty entry &quot;s__&quot;</span>
-</span><span id="GtdbTx-177"><a href="#GtdbTx-177"><span class="linenos">177</span></a>                    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
-</span><span id="GtdbTx-178"><a href="#GtdbTx-178"><span class="linenos">178</span></a>                        <span class="k">continue</span>
-</span><span id="GtdbTx-179"><a href="#GtdbTx-179"><span class="linenos">179</span></a>                    <span class="n">rank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rank_codes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-</span><span id="GtdbTx-180"><a href="#GtdbTx-180"><span class="linenos">180</span></a>                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="GtdbTx-181"><a href="#GtdbTx-181"><span class="linenos">181</span></a>                        <span class="n">parent_taxid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
-</span><span id="GtdbTx-182"><a href="#GtdbTx-182"><span class="linenos">182</span></a>                    <span class="k">else</span><span class="p">:</span>
-</span><span id="GtdbTx-183"><a href="#GtdbTx-183"><span class="linenos">183</span></a>                        <span class="n">parent_taxid</span> <span class="o">=</span> <span class="n">lin</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-</span><span id="GtdbTx-184"><a href="#GtdbTx-184"><span class="linenos">184</span></a>                    <span class="k">if</span> <span class="n">taxid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-</span><span id="GtdbTx-185"><a href="#GtdbTx-185"><span class="linenos">185</span></a>                        <span class="n">nodes</span><span class="p">[</span><span class="n">taxid</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_taxid</span>
-</span><span id="GtdbTx-186"><a href="#GtdbTx-186"><span class="linenos">186</span></a>                        <span class="n">names</span><span class="p">[</span><span class="n">taxid</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
-</span><span id="GtdbTx-187"><a href="#GtdbTx-187"><span class="linenos">187</span></a>                        <span class="n">ranks</span><span class="p">[</span><span class="n">taxid</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank</span>
-</span><span id="GtdbTx-188"><a href="#GtdbTx-188"><span class="linenos">188</span></a>
-</span><span id="GtdbTx-189"><a href="#GtdbTx-189"><span class="linenos">189</span></a>        <span class="k">return</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span>
+</span><span id="GtdbTx-159"><a href="#GtdbTx-159"><span class="linenos">159</span></a>        <span class="k">return</span> <span class="n">translated_nodes</span>
+</span><span id="GtdbTx-160"><a href="#GtdbTx-160"><span class="linenos">160</span></a>
+</span><span id="GtdbTx-161"><a href="#GtdbTx-161"><span class="linenos">161</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fhs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="GtdbTx-162"><a href="#GtdbTx-162"><span class="linenos">162</span></a>        <span class="n">nodes</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="GtdbTx-163"><a href="#GtdbTx-163"><span class="linenos">163</span></a>        <span class="n">ranks</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="GtdbTx-164"><a href="#GtdbTx-164"><span class="linenos">164</span></a>        <span class="n">names</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="GtdbTx-165"><a href="#GtdbTx-165"><span class="linenos">165</span></a>        <span class="k">for</span> <span class="n">source</span><span class="p">,</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">fhs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="GtdbTx-166"><a href="#GtdbTx-166"><span class="linenos">166</span></a>            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="p">:</span>
+</span><span id="GtdbTx-167"><a href="#GtdbTx-167"><span class="linenos">167</span></a>                <span class="k">try</span><span class="p">:</span>
+</span><span id="GtdbTx-168"><a href="#GtdbTx-168"><span class="linenos">168</span></a>                    <span class="n">_</span><span class="p">,</span> <span class="n">lineage</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="GtdbTx-169"><a href="#GtdbTx-169"><span class="linenos">169</span></a>                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+</span><span id="GtdbTx-170"><a href="#GtdbTx-170"><span class="linenos">170</span></a>                    <span class="n">_</span><span class="p">,</span> <span class="n">lineage</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="GtdbTx-171"><a href="#GtdbTx-171"><span class="linenos">171</span></a>                <span class="n">lin</span> <span class="o">=</span> <span class="n">lineage</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span>
+</span><span id="GtdbTx-172"><a href="#GtdbTx-172"><span class="linenos">172</span></a>                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lin</span><span class="p">))[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+</span><span id="GtdbTx-173"><a href="#GtdbTx-173"><span class="linenos">173</span></a>                    <span class="c1"># assert rank</span>
+</span><span id="GtdbTx-174"><a href="#GtdbTx-174"><span class="linenos">174</span></a>                    <span class="k">assert</span> <span class="n">lin</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rank_codes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="GtdbTx-175"><a href="#GtdbTx-175"><span class="linenos">175</span></a>                    <span class="c1"># taxid = &quot;c__Deinococci&quot;, rank = &quot;class&quot;, name = &quot;Deinococci&quot;</span>
+</span><span id="GtdbTx-176"><a href="#GtdbTx-176"><span class="linenos">176</span></a>                    <span class="n">taxid</span> <span class="o">=</span> <span class="n">lin</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span><span id="GtdbTx-177"><a href="#GtdbTx-177"><span class="linenos">177</span></a>                    <span class="n">name</span> <span class="o">=</span> <span class="n">lin</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">3</span><span class="p">:]</span>
+</span><span id="GtdbTx-178"><a href="#GtdbTx-178"><span class="linenos">178</span></a>                    <span class="c1"># empty entry &quot;s__&quot;</span>
+</span><span id="GtdbTx-179"><a href="#GtdbTx-179"><span class="linenos">179</span></a>                    <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+</span><span id="GtdbTx-180"><a href="#GtdbTx-180"><span class="linenos">180</span></a>                        <span class="k">continue</span>
+</span><span id="GtdbTx-181"><a href="#GtdbTx-181"><span class="linenos">181</span></a>                    <span class="n">rank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rank_codes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+</span><span id="GtdbTx-182"><a href="#GtdbTx-182"><span class="linenos">182</span></a>                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="GtdbTx-183"><a href="#GtdbTx-183"><span class="linenos">183</span></a>                        <span class="n">parent_taxid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_root_node</span>
+</span><span id="GtdbTx-184"><a href="#GtdbTx-184"><span class="linenos">184</span></a>                    <span class="k">else</span><span class="p">:</span>
+</span><span id="GtdbTx-185"><a href="#GtdbTx-185"><span class="linenos">185</span></a>                        <span class="n">parent_taxid</span> <span class="o">=</span> <span class="n">lin</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+</span><span id="GtdbTx-186"><a href="#GtdbTx-186"><span class="linenos">186</span></a>                    <span class="k">if</span> <span class="n">taxid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+</span><span id="GtdbTx-187"><a href="#GtdbTx-187"><span class="linenos">187</span></a>                        <span class="n">nodes</span><span class="p">[</span><span class="n">taxid</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_taxid</span>
+</span><span id="GtdbTx-188"><a href="#GtdbTx-188"><span class="linenos">188</span></a>                        <span class="n">names</span><span class="p">[</span><span class="n">taxid</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+</span><span id="GtdbTx-189"><a href="#GtdbTx-189"><span class="linenos">189</span></a>                        <span class="n">ranks</span><span class="p">[</span><span class="n">taxid</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank</span>
+</span><span id="GtdbTx-190"><a href="#GtdbTx-190"><span class="linenos">190</span></a>
+</span><span id="GtdbTx-191"><a href="#GtdbTx-191"><span class="linenos">191</span></a>        <span class="k">return</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">ranks</span><span class="p">,</span> <span class="n">names</span>
+</span><span id="GtdbTx-192"><a href="#GtdbTx-192"><span class="linenos">192</span></a>
+</span><span id="GtdbTx-193"><a href="#GtdbTx-193"><span class="linenos">193</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_lookup_version_taxa</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="GtdbTx-194"><a href="#GtdbTx-194"><span class="linenos">194</span></a>        <span class="n">res</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="GtdbTx-195"><a href="#GtdbTx-195"><span class="linenos">195</span></a>        <span class="k">for</span> <span class="n">acc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_from</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+</span><span id="GtdbTx-196"><a href="#GtdbTx-196"><span class="linenos">196</span></a>            <span class="k">for</span> <span class="n">tx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_to</span><span class="p">[</span><span class="n">version</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">acc</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">):</span>
+</span><span id="GtdbTx-197"><a href="#GtdbTx-197"><span class="linenos">197</span></a>                <span class="c1"># Return only rank of requested node</span>
+</span><span id="GtdbTx-198"><a href="#GtdbTx-198"><span class="linenos">198</span></a>                <span class="k">if</span> <span class="n">tx</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">node</span><span class="p">[:</span><span class="mi">1</span><span class="p">]):</span>
+</span><span id="GtdbTx-199"><a href="#GtdbTx-199"><span class="linenos">199</span></a>                    <span class="n">res</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tx</span><span class="p">)</span>
+</span><span id="GtdbTx-200"><a href="#GtdbTx-200"><span class="linenos">200</span></a>        <span class="k">return</span> <span class="n">res</span>
+</span><span id="GtdbTx-201"><a href="#GtdbTx-201"><span class="linenos">201</span></a>
+</span><span id="GtdbTx-202"><a href="#GtdbTx-202"><span class="linenos">202</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_download_parse_version_taxa</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+</span><span id="GtdbTx-203"><a href="#GtdbTx-203"><span class="linenos">203</span></a>        <span class="k">if</span> <span class="n">file</span><span class="p">:</span>
+</span><span id="GtdbTx-204"><a href="#GtdbTx-204"><span class="linenos">204</span></a>            <span class="n">fhs</span> <span class="o">=</span> <span class="n">open_files</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="p">[</span><span class="n">file</span><span class="p">])</span>
+</span><span id="GtdbTx-205"><a href="#GtdbTx-205"><span class="linenos">205</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="GtdbTx-206"><a href="#GtdbTx-206"><span class="linenos">206</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">url</span><span class="p">:</span>
+</span><span id="GtdbTx-207"><a href="#GtdbTx-207"><span class="linenos">207</span></a>                <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">_acc_rep_lin_ncbi.tsv.gz&quot;</span>
+</span><span id="GtdbTx-208"><a href="#GtdbTx-208"><span class="linenos">208</span></a>            <span class="n">fhs</span> <span class="o">=</span> <span class="n">download_files</span><span class="p">(</span><span class="n">urls</span><span class="o">=</span><span class="p">[</span><span class="n">url</span><span class="p">],</span> <span class="n">retry_attempts</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="GtdbTx-209"><a href="#GtdbTx-209"><span class="linenos">209</span></a>
+</span><span id="GtdbTx-210"><a href="#GtdbTx-210"><span class="linenos">210</span></a>        <span class="k">for</span> <span class="n">fh</span> <span class="ow">in</span> <span class="n">fhs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+</span><span id="GtdbTx-211"><a href="#GtdbTx-211"><span class="linenos">211</span></a>            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fh</span><span class="p">:</span>
+</span><span id="GtdbTx-212"><a href="#GtdbTx-212"><span class="linenos">212</span></a>                <span class="k">try</span><span class="p">:</span>
+</span><span id="GtdbTx-213"><a href="#GtdbTx-213"><span class="linenos">213</span></a>                    <span class="k">yield</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="GtdbTx-214"><a href="#GtdbTx-214"><span class="linenos">214</span></a>                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+</span><span id="GtdbTx-215"><a href="#GtdbTx-215"><span class="linenos">215</span></a>                    <span class="k">yield</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="GtdbTx-216"><a href="#GtdbTx-216"><span class="linenos">216</span></a>
+</span><span id="GtdbTx-217"><a href="#GtdbTx-217"><span class="linenos">217</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">build_conversion</span><span class="p">(</span>
+</span><span id="GtdbTx-218"><a href="#GtdbTx-218"><span class="linenos">218</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="GtdbTx-219"><a href="#GtdbTx-219"><span class="linenos">219</span></a>        <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="GtdbTx-220"><a href="#GtdbTx-220"><span class="linenos">220</span></a>        <span class="n">files</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+</span><span id="GtdbTx-221"><a href="#GtdbTx-221"><span class="linenos">221</span></a>        <span class="n">urls</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+</span><span id="GtdbTx-222"><a href="#GtdbTx-222"><span class="linenos">222</span></a>    <span class="p">):</span>
+</span><span id="GtdbTx-223"><a href="#GtdbTx-223"><span class="linenos">223</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="GtdbTx-224"><a href="#GtdbTx-224"><span class="linenos">224</span></a><span class="sd">        Download and build conversion table against another version.</span>
+</span><span id="GtdbTx-225"><a href="#GtdbTx-225"><span class="linenos">225</span></a><span class="sd">        Optional function, conversion tables are automatically downloaded</span>
+</span><span id="GtdbTx-226"><a href="#GtdbTx-226"><span class="linenos">226</span></a><span class="sd">        and built on first .convert() call.</span>
+</span><span id="GtdbTx-227"><a href="#GtdbTx-227"><span class="linenos">227</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="GtdbTx-228"><a href="#GtdbTx-228"><span class="linenos">228</span></a>        <span class="k">if</span> <span class="n">version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supported_versions</span><span class="p">:</span>
+</span><span id="GtdbTx-229"><a href="#GtdbTx-229"><span class="linenos">229</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="GtdbTx-230"><a href="#GtdbTx-230"><span class="linenos">230</span></a>                <span class="sa">f</span><span class="s2">&quot;Version [</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">] not supported for conversion: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_supported_versions</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="GtdbTx-231"><a href="#GtdbTx-231"><span class="linenos">231</span></a>            <span class="p">)</span>
+</span><span id="GtdbTx-232"><a href="#GtdbTx-232"><span class="linenos">232</span></a>
+</span><span id="GtdbTx-233"><a href="#GtdbTx-233"><span class="linenos">233</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_from</span><span class="p">:</span>
+</span><span id="GtdbTx-234"><a href="#GtdbTx-234"><span class="linenos">234</span></a>            <span class="c1"># Collect the accessions of the representative entries for each taxa in the current version</span>
+</span><span id="GtdbTx-235"><a href="#GtdbTx-235"><span class="linenos">235</span></a>            <span class="n">tx_accs</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="GtdbTx-236"><a href="#GtdbTx-236"><span class="linenos">236</span></a>            <span class="k">for</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rep</span><span class="p">,</span> <span class="n">lin</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_parse_version_taxa</span><span class="p">(</span>
+</span><span id="GtdbTx-237"><a href="#GtdbTx-237"><span class="linenos">237</span></a>                <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">url</span><span class="o">=</span><span class="n">urls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="GtdbTx-238"><a href="#GtdbTx-238"><span class="linenos">238</span></a>            <span class="p">):</span>
+</span><span id="GtdbTx-239"><a href="#GtdbTx-239"><span class="linenos">239</span></a>                <span class="k">if</span> <span class="n">rep</span> <span class="o">==</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span>
+</span><span id="GtdbTx-240"><a href="#GtdbTx-240"><span class="linenos">240</span></a>                    <span class="k">for</span> <span class="n">tx</span> <span class="ow">in</span> <span class="n">lin</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">):</span>
+</span><span id="GtdbTx-241"><a href="#GtdbTx-241"><span class="linenos">241</span></a>                        <span class="k">if</span> <span class="n">tx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tx_accs</span><span class="p">:</span>
+</span><span id="GtdbTx-242"><a href="#GtdbTx-242"><span class="linenos">242</span></a>                            <span class="n">tx_accs</span><span class="p">[</span><span class="n">tx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="GtdbTx-243"><a href="#GtdbTx-243"><span class="linenos">243</span></a>                        <span class="n">tx_accs</span><span class="p">[</span><span class="n">tx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span>
+</span><span id="GtdbTx-244"><a href="#GtdbTx-244"><span class="linenos">244</span></a>            <span class="c1"># Assign only at the end, in case of download/parse errors</span>
+</span><span id="GtdbTx-245"><a href="#GtdbTx-245"><span class="linenos">245</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_convert_from</span> <span class="o">=</span> <span class="n">tx_accs</span>
+</span><span id="GtdbTx-246"><a href="#GtdbTx-246"><span class="linenos">246</span></a>
+</span><span id="GtdbTx-247"><a href="#GtdbTx-247"><span class="linenos">247</span></a>        <span class="k">if</span> <span class="n">version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_to</span><span class="p">:</span>
+</span><span id="GtdbTx-248"><a href="#GtdbTx-248"><span class="linenos">248</span></a>            <span class="c1"># Collect the lineage for each accession</span>
+</span><span id="GtdbTx-249"><a href="#GtdbTx-249"><span class="linenos">249</span></a>            <span class="n">acc_lin</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="GtdbTx-250"><a href="#GtdbTx-250"><span class="linenos">250</span></a>            <span class="k">for</span> <span class="n">acc</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">lin</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_parse_version_taxa</span><span class="p">(</span>
+</span><span id="GtdbTx-251"><a href="#GtdbTx-251"><span class="linenos">251</span></a>                <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">url</span><span class="o">=</span><span class="n">urls</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span id="GtdbTx-252"><a href="#GtdbTx-252"><span class="linenos">252</span></a>            <span class="p">):</span>
+</span><span id="GtdbTx-253"><a href="#GtdbTx-253"><span class="linenos">253</span></a>                <span class="n">acc_lin</span><span class="p">[</span><span class="n">acc</span><span class="p">]</span> <span class="o">=</span> <span class="n">lin</span>
+</span><span id="GtdbTx-254"><a href="#GtdbTx-254"><span class="linenos">254</span></a>            <span class="c1"># Assign only at the end, in case of download/parse errors</span>
+</span><span id="GtdbTx-255"><a href="#GtdbTx-255"><span class="linenos">255</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_convert_to</span><span class="p">[</span><span class="n">version</span><span class="p">]</span> <span class="o">=</span> <span class="n">acc_lin</span>
+</span><span id="GtdbTx-256"><a href="#GtdbTx-256"><span class="linenos">256</span></a>
+</span><span id="GtdbTx-257"><a href="#GtdbTx-257"><span class="linenos">257</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="GtdbTx-258"><a href="#GtdbTx-258"><span class="linenos">258</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="GtdbTx-259"><a href="#GtdbTx-259"><span class="linenos">259</span></a><span class="sd">        Converts a taxonomic node from current version to another.</span>
+</span><span id="GtdbTx-260"><a href="#GtdbTx-260"><span class="linenos">260</span></a><span class="sd">        It uses a genomic centric strategy, based on the taxa of the representative</span>
+</span><span id="GtdbTx-261"><a href="#GtdbTx-261"><span class="linenos">261</span></a><span class="sd">        genome among versions.</span>
+</span><span id="GtdbTx-262"><a href="#GtdbTx-262"><span class="linenos">262</span></a><span class="sd">        It may return multiple nodes for ranks above species,</span>
+</span><span id="GtdbTx-263"><a href="#GtdbTx-263"><span class="linenos">263</span></a><span class="sd">        since multiple representatives can be split into more taxa.</span>
+</span><span id="GtdbTx-264"><a href="#GtdbTx-264"><span class="linenos">264</span></a><span class="sd">        It may return an empty set if node is not found in the current version</span>
+</span><span id="GtdbTx-265"><a href="#GtdbTx-265"><span class="linenos">265</span></a><span class="sd">        or if related representative is no longer available in the requested version.</span>
+</span><span id="GtdbTx-266"><a href="#GtdbTx-266"><span class="linenos">266</span></a>
+</span><span id="GtdbTx-267"><a href="#GtdbTx-267"><span class="linenos">267</span></a><span class="sd">        Example:</span>
+</span><span id="GtdbTx-268"><a href="#GtdbTx-268"><span class="linenos">268</span></a>
+</span><span id="GtdbTx-269"><a href="#GtdbTx-269"><span class="linenos">269</span></a><span class="sd">            from multitax import GtdbTx</span>
+</span><span id="GtdbTx-270"><a href="#GtdbTx-270"><span class="linenos">270</span></a><span class="sd">            tax = GtdbTx(version=&quot;95&quot;)</span>
+</span><span id="GtdbTx-271"><a href="#GtdbTx-271"><span class="linenos">271</span></a>
+</span><span id="GtdbTx-272"><a href="#GtdbTx-272"><span class="linenos">272</span></a><span class="sd">            # Species - always one-to-one</span>
+</span><span id="GtdbTx-273"><a href="#GtdbTx-273"><span class="linenos">273</span></a><span class="sd">            tax.convert(&#39;s__Giesbergeria metamorpha&#39;, version=&quot;226&quot;)</span>
+</span><span id="GtdbTx-274"><a href="#GtdbTx-274"><span class="linenos">274</span></a><span class="sd">            {&#39;s__Simplicispira metamorpha&#39;}</span>
+</span><span id="GtdbTx-275"><a href="#GtdbTx-275"><span class="linenos">275</span></a>
+</span><span id="GtdbTx-276"><a href="#GtdbTx-276"><span class="linenos">276</span></a><span class="sd">            # Other ranks - may be one-to-many</span>
+</span><span id="GtdbTx-277"><a href="#GtdbTx-277"><span class="linenos">277</span></a><span class="sd">            tax.convert(&#39;g__UBA6715&#39;, version=&quot;226&quot;)</span>
+</span><span id="GtdbTx-278"><a href="#GtdbTx-278"><span class="linenos">278</span></a><span class="sd">            {&#39;g__Aquirufa&#39;, &#39;g__Sandaracinomonas&#39;}</span>
+</span><span id="GtdbTx-279"><a href="#GtdbTx-279"><span class="linenos">279</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="GtdbTx-280"><a href="#GtdbTx-280"><span class="linenos">280</span></a>
+</span><span id="GtdbTx-281"><a href="#GtdbTx-281"><span class="linenos">281</span></a>        <span class="k">if</span> <span class="n">version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supported_versions</span><span class="p">:</span>
+</span><span id="GtdbTx-282"><a href="#GtdbTx-282"><span class="linenos">282</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="GtdbTx-283"><a href="#GtdbTx-283"><span class="linenos">283</span></a>                <span class="sa">f</span><span class="s2">&quot;Version [</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">] not supported: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_supported_versions</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="GtdbTx-284"><a href="#GtdbTx-284"><span class="linenos">284</span></a>            <span class="p">)</span>
+</span><span id="GtdbTx-285"><a href="#GtdbTx-285"><span class="linenos">285</span></a>
+</span><span id="GtdbTx-286"><a href="#GtdbTx-286"><span class="linenos">286</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_from</span> <span class="ow">or</span> <span class="n">version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_to</span><span class="p">:</span>
+</span><span id="GtdbTx-287"><a href="#GtdbTx-287"><span class="linenos">287</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">build_conversion</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span>
+</span><span id="GtdbTx-288"><a href="#GtdbTx-288"><span class="linenos">288</span></a>
+</span><span id="GtdbTx-289"><a href="#GtdbTx-289"><span class="linenos">289</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lookup_version_taxa</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -832,7 +939,9 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
     </div>
     <a class="headerlink" href="#GtdbTx.__init__"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="GtdbTx.__init__-70"><a href="#GtdbTx.__init__-70"><span class="linenos">70</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="GtdbTx.__init__-71"><a href="#GtdbTx.__init__-71"><span class="linenos">71</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="GtdbTx.__init__-71"><a href="#GtdbTx.__init__-71"><span class="linenos">71</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_convert_to</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="GtdbTx.__init__-72"><a href="#GtdbTx.__init__-72"><span class="linenos">72</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_convert_from</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="GtdbTx.__init__-73"><a href="#GtdbTx.__init__-73"><span class="linenos">73</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -841,6 +950,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 <p>Parameters:</p>
 
 <ul>
+<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/url).</li>
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
@@ -864,6 +974,138 @@ tax_gtdb = GtdbTx(files=["file1.gz", "file2.txt"])
 tax_silva = SilvaTx(urls=["https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_lsu_138.1.txt.gz"])
 tax_ott = OttTx(root_node="844192")
 tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
+</code></pre>
+</div>
+
+
+                            </div>
+                            <div id="GtdbTx.build_conversion" class="classattr">
+                                        <input id="GtdbTx.build_conversion-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">build_conversion</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">version</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">files</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>,</span><span class="param">	<span class="n">urls</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="GtdbTx.build_conversion-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#GtdbTx.build_conversion"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GtdbTx.build_conversion-217"><a href="#GtdbTx.build_conversion-217"><span class="linenos">217</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">build_conversion</span><span class="p">(</span>
+</span><span id="GtdbTx.build_conversion-218"><a href="#GtdbTx.build_conversion-218"><span class="linenos">218</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="GtdbTx.build_conversion-219"><a href="#GtdbTx.build_conversion-219"><span class="linenos">219</span></a>        <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="GtdbTx.build_conversion-220"><a href="#GtdbTx.build_conversion-220"><span class="linenos">220</span></a>        <span class="n">files</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+</span><span id="GtdbTx.build_conversion-221"><a href="#GtdbTx.build_conversion-221"><span class="linenos">221</span></a>        <span class="n">urls</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+</span><span id="GtdbTx.build_conversion-222"><a href="#GtdbTx.build_conversion-222"><span class="linenos">222</span></a>    <span class="p">):</span>
+</span><span id="GtdbTx.build_conversion-223"><a href="#GtdbTx.build_conversion-223"><span class="linenos">223</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="GtdbTx.build_conversion-224"><a href="#GtdbTx.build_conversion-224"><span class="linenos">224</span></a><span class="sd">        Download and build conversion table against another version.</span>
+</span><span id="GtdbTx.build_conversion-225"><a href="#GtdbTx.build_conversion-225"><span class="linenos">225</span></a><span class="sd">        Optional function, conversion tables are automatically downloaded</span>
+</span><span id="GtdbTx.build_conversion-226"><a href="#GtdbTx.build_conversion-226"><span class="linenos">226</span></a><span class="sd">        and built on first .convert() call.</span>
+</span><span id="GtdbTx.build_conversion-227"><a href="#GtdbTx.build_conversion-227"><span class="linenos">227</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="GtdbTx.build_conversion-228"><a href="#GtdbTx.build_conversion-228"><span class="linenos">228</span></a>        <span class="k">if</span> <span class="n">version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supported_versions</span><span class="p">:</span>
+</span><span id="GtdbTx.build_conversion-229"><a href="#GtdbTx.build_conversion-229"><span class="linenos">229</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="GtdbTx.build_conversion-230"><a href="#GtdbTx.build_conversion-230"><span class="linenos">230</span></a>                <span class="sa">f</span><span class="s2">&quot;Version [</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">] not supported for conversion: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_supported_versions</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="GtdbTx.build_conversion-231"><a href="#GtdbTx.build_conversion-231"><span class="linenos">231</span></a>            <span class="p">)</span>
+</span><span id="GtdbTx.build_conversion-232"><a href="#GtdbTx.build_conversion-232"><span class="linenos">232</span></a>
+</span><span id="GtdbTx.build_conversion-233"><a href="#GtdbTx.build_conversion-233"><span class="linenos">233</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_from</span><span class="p">:</span>
+</span><span id="GtdbTx.build_conversion-234"><a href="#GtdbTx.build_conversion-234"><span class="linenos">234</span></a>            <span class="c1"># Collect the accessions of the representative entries for each taxa in the current version</span>
+</span><span id="GtdbTx.build_conversion-235"><a href="#GtdbTx.build_conversion-235"><span class="linenos">235</span></a>            <span class="n">tx_accs</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="GtdbTx.build_conversion-236"><a href="#GtdbTx.build_conversion-236"><span class="linenos">236</span></a>            <span class="k">for</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rep</span><span class="p">,</span> <span class="n">lin</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_parse_version_taxa</span><span class="p">(</span>
+</span><span id="GtdbTx.build_conversion-237"><a href="#GtdbTx.build_conversion-237"><span class="linenos">237</span></a>                <span class="n">version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">url</span><span class="o">=</span><span class="n">urls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="GtdbTx.build_conversion-238"><a href="#GtdbTx.build_conversion-238"><span class="linenos">238</span></a>            <span class="p">):</span>
+</span><span id="GtdbTx.build_conversion-239"><a href="#GtdbTx.build_conversion-239"><span class="linenos">239</span></a>                <span class="k">if</span> <span class="n">rep</span> <span class="o">==</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span>
+</span><span id="GtdbTx.build_conversion-240"><a href="#GtdbTx.build_conversion-240"><span class="linenos">240</span></a>                    <span class="k">for</span> <span class="n">tx</span> <span class="ow">in</span> <span class="n">lin</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">):</span>
+</span><span id="GtdbTx.build_conversion-241"><a href="#GtdbTx.build_conversion-241"><span class="linenos">241</span></a>                        <span class="k">if</span> <span class="n">tx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tx_accs</span><span class="p">:</span>
+</span><span id="GtdbTx.build_conversion-242"><a href="#GtdbTx.build_conversion-242"><span class="linenos">242</span></a>                            <span class="n">tx_accs</span><span class="p">[</span><span class="n">tx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="GtdbTx.build_conversion-243"><a href="#GtdbTx.build_conversion-243"><span class="linenos">243</span></a>                        <span class="n">tx_accs</span><span class="p">[</span><span class="n">tx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span>
+</span><span id="GtdbTx.build_conversion-244"><a href="#GtdbTx.build_conversion-244"><span class="linenos">244</span></a>            <span class="c1"># Assign only at the end, in case of download/parse errors</span>
+</span><span id="GtdbTx.build_conversion-245"><a href="#GtdbTx.build_conversion-245"><span class="linenos">245</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_convert_from</span> <span class="o">=</span> <span class="n">tx_accs</span>
+</span><span id="GtdbTx.build_conversion-246"><a href="#GtdbTx.build_conversion-246"><span class="linenos">246</span></a>
+</span><span id="GtdbTx.build_conversion-247"><a href="#GtdbTx.build_conversion-247"><span class="linenos">247</span></a>        <span class="k">if</span> <span class="n">version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_to</span><span class="p">:</span>
+</span><span id="GtdbTx.build_conversion-248"><a href="#GtdbTx.build_conversion-248"><span class="linenos">248</span></a>            <span class="c1"># Collect the lineage for each accession</span>
+</span><span id="GtdbTx.build_conversion-249"><a href="#GtdbTx.build_conversion-249"><span class="linenos">249</span></a>            <span class="n">acc_lin</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="GtdbTx.build_conversion-250"><a href="#GtdbTx.build_conversion-250"><span class="linenos">250</span></a>            <span class="k">for</span> <span class="n">acc</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">lin</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_parse_version_taxa</span><span class="p">(</span>
+</span><span id="GtdbTx.build_conversion-251"><a href="#GtdbTx.build_conversion-251"><span class="linenos">251</span></a>                <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">files</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">url</span><span class="o">=</span><span class="n">urls</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span id="GtdbTx.build_conversion-252"><a href="#GtdbTx.build_conversion-252"><span class="linenos">252</span></a>            <span class="p">):</span>
+</span><span id="GtdbTx.build_conversion-253"><a href="#GtdbTx.build_conversion-253"><span class="linenos">253</span></a>                <span class="n">acc_lin</span><span class="p">[</span><span class="n">acc</span><span class="p">]</span> <span class="o">=</span> <span class="n">lin</span>
+</span><span id="GtdbTx.build_conversion-254"><a href="#GtdbTx.build_conversion-254"><span class="linenos">254</span></a>            <span class="c1"># Assign only at the end, in case of download/parse errors</span>
+</span><span id="GtdbTx.build_conversion-255"><a href="#GtdbTx.build_conversion-255"><span class="linenos">255</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_convert_to</span><span class="p">[</span><span class="n">version</span><span class="p">]</span> <span class="o">=</span> <span class="n">acc_lin</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Download and build conversion table against another version.
+Optional function, conversion tables are automatically downloaded
+and built on first .convert() call.</p>
+</div>
+
+
+                            </div>
+                            <div id="GtdbTx.convert" class="classattr">
+                                        <input id="GtdbTx.convert-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">convert</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">node</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">version</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>:</span></span>
+
+                <label class="view-source-button" for="GtdbTx.convert-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#GtdbTx.convert"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GtdbTx.convert-257"><a href="#GtdbTx.convert-257"><span class="linenos">257</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="GtdbTx.convert-258"><a href="#GtdbTx.convert-258"><span class="linenos">258</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="GtdbTx.convert-259"><a href="#GtdbTx.convert-259"><span class="linenos">259</span></a><span class="sd">        Converts a taxonomic node from current version to another.</span>
+</span><span id="GtdbTx.convert-260"><a href="#GtdbTx.convert-260"><span class="linenos">260</span></a><span class="sd">        It uses a genomic centric strategy, based on the taxa of the representative</span>
+</span><span id="GtdbTx.convert-261"><a href="#GtdbTx.convert-261"><span class="linenos">261</span></a><span class="sd">        genome among versions.</span>
+</span><span id="GtdbTx.convert-262"><a href="#GtdbTx.convert-262"><span class="linenos">262</span></a><span class="sd">        It may return multiple nodes for ranks above species,</span>
+</span><span id="GtdbTx.convert-263"><a href="#GtdbTx.convert-263"><span class="linenos">263</span></a><span class="sd">        since multiple representatives can be split into more taxa.</span>
+</span><span id="GtdbTx.convert-264"><a href="#GtdbTx.convert-264"><span class="linenos">264</span></a><span class="sd">        It may return an empty set if node is not found in the current version</span>
+</span><span id="GtdbTx.convert-265"><a href="#GtdbTx.convert-265"><span class="linenos">265</span></a><span class="sd">        or if related representative is no longer available in the requested version.</span>
+</span><span id="GtdbTx.convert-266"><a href="#GtdbTx.convert-266"><span class="linenos">266</span></a>
+</span><span id="GtdbTx.convert-267"><a href="#GtdbTx.convert-267"><span class="linenos">267</span></a><span class="sd">        Example:</span>
+</span><span id="GtdbTx.convert-268"><a href="#GtdbTx.convert-268"><span class="linenos">268</span></a>
+</span><span id="GtdbTx.convert-269"><a href="#GtdbTx.convert-269"><span class="linenos">269</span></a><span class="sd">            from multitax import GtdbTx</span>
+</span><span id="GtdbTx.convert-270"><a href="#GtdbTx.convert-270"><span class="linenos">270</span></a><span class="sd">            tax = GtdbTx(version=&quot;95&quot;)</span>
+</span><span id="GtdbTx.convert-271"><a href="#GtdbTx.convert-271"><span class="linenos">271</span></a>
+</span><span id="GtdbTx.convert-272"><a href="#GtdbTx.convert-272"><span class="linenos">272</span></a><span class="sd">            # Species - always one-to-one</span>
+</span><span id="GtdbTx.convert-273"><a href="#GtdbTx.convert-273"><span class="linenos">273</span></a><span class="sd">            tax.convert(&#39;s__Giesbergeria metamorpha&#39;, version=&quot;226&quot;)</span>
+</span><span id="GtdbTx.convert-274"><a href="#GtdbTx.convert-274"><span class="linenos">274</span></a><span class="sd">            {&#39;s__Simplicispira metamorpha&#39;}</span>
+</span><span id="GtdbTx.convert-275"><a href="#GtdbTx.convert-275"><span class="linenos">275</span></a>
+</span><span id="GtdbTx.convert-276"><a href="#GtdbTx.convert-276"><span class="linenos">276</span></a><span class="sd">            # Other ranks - may be one-to-many</span>
+</span><span id="GtdbTx.convert-277"><a href="#GtdbTx.convert-277"><span class="linenos">277</span></a><span class="sd">            tax.convert(&#39;g__UBA6715&#39;, version=&quot;226&quot;)</span>
+</span><span id="GtdbTx.convert-278"><a href="#GtdbTx.convert-278"><span class="linenos">278</span></a><span class="sd">            {&#39;g__Aquirufa&#39;, &#39;g__Sandaracinomonas&#39;}</span>
+</span><span id="GtdbTx.convert-279"><a href="#GtdbTx.convert-279"><span class="linenos">279</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="GtdbTx.convert-280"><a href="#GtdbTx.convert-280"><span class="linenos">280</span></a>
+</span><span id="GtdbTx.convert-281"><a href="#GtdbTx.convert-281"><span class="linenos">281</span></a>        <span class="k">if</span> <span class="n">version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_supported_versions</span><span class="p">:</span>
+</span><span id="GtdbTx.convert-282"><a href="#GtdbTx.convert-282"><span class="linenos">282</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="GtdbTx.convert-283"><a href="#GtdbTx.convert-283"><span class="linenos">283</span></a>                <span class="sa">f</span><span class="s2">&quot;Version [</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">] not supported: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_supported_versions</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="GtdbTx.convert-284"><a href="#GtdbTx.convert-284"><span class="linenos">284</span></a>            <span class="p">)</span>
+</span><span id="GtdbTx.convert-285"><a href="#GtdbTx.convert-285"><span class="linenos">285</span></a>
+</span><span id="GtdbTx.convert-286"><a href="#GtdbTx.convert-286"><span class="linenos">286</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_from</span> <span class="ow">or</span> <span class="n">version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_to</span><span class="p">:</span>
+</span><span id="GtdbTx.convert-287"><a href="#GtdbTx.convert-287"><span class="linenos">287</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">build_conversion</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span>
+</span><span id="GtdbTx.convert-288"><a href="#GtdbTx.convert-288"><span class="linenos">288</span></a>
+</span><span id="GtdbTx.convert-289"><a href="#GtdbTx.convert-289"><span class="linenos">289</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lookup_version_taxa</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Converts a taxonomic node from current version to another.
+It uses a genomic centric strategy, based on the taxa of the representative
+genome among versions.
+It may return multiple nodes for ranks above species,
+since multiple representatives can be split into more taxa.
+It may return an empty set if node is not found in the current version
+or if related representative is no longer available in the requested version.</p>
+
+<p>Example:</p>
+
+<pre><code>from multitax import GtdbTx
+tax = GtdbTx(version="95")
+
+# Species - always one-to-one
+tax.convert('s__Giesbergeria metamorpha', version="226")
+{'s__Simplicispira metamorpha'}
+
+# Other ranks - may be one-to-many
+tax.convert('g__UBA6715', version="226")
+{'g__Aquirufa', 'g__Sandaracinomonas'}
 </code></pre>
 </div>
 
@@ -1179,6 +1421,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 <p>Parameters:</p>
 
 <ul>
+<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/url).</li>
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
@@ -1622,6 +1865,7 @@ pprint(tax.stats())
 <p>Parameters:</p>
 
 <ul>
+<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/url).</li>
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
@@ -1955,6 +2199,7 @@ pprint(tax.stats())
 <p>Parameters:</p>
 
 <ul>
+<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/url).</li>
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
