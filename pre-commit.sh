@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euo pipefail
+
 ruff format
 ruff check --fix
 echo "Unit tests"
