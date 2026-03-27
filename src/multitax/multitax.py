@@ -36,12 +36,13 @@ class MultiTax(object):
         build_node_children: bool = False,
         build_rank_nodes: bool = False,
         extended_names: bool = False,
+        empty: bool = False,
     ):
         """
         Main constructor of MultiTax and sub-classes
 
         Parameters:
-        * **version** *[str]*: Version to download/parse or custom version name (with files/url).
+        * **version** *[str]*: Version to download/parse or custom version name (with files/urls).
         * **files** *[str, list]*: One or more local files to parse.
         * **urls** *[str, list]*: One or more urls to download and parse.
         * **output_prefix** *[str]*: Directory to write downloaded files.
@@ -56,6 +57,7 @@ class MultiTax(object):
         * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use).
         * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use).
         * **extended_names** *[bool]*: Parse extended names if available.
+        * **empty** *[bool]*: Create an empty instance.
 
         Example:
 
@@ -78,6 +80,7 @@ class MultiTax(object):
         self._nodes = {}
         self._ranks = {}
         self._names = {}
+
         # Aux. structures
         self._lineages = {}
         self._name_nodes = {}
@@ -85,11 +88,14 @@ class MultiTax(object):
         self._rank_nodes = {}
         self._translated_nodes = {}
 
-        # Set datetime
+        # Properties
         self.datetime = datetime.now()
+        self.version = None
+        self.undefined_node = undefined_node
+        self.undefined_name = undefined_name
+        self.undefined_rank = undefined_rank
 
         # Set version
-        self.version = None
         if files or urls:
             self.version = version
         else:
@@ -102,30 +108,26 @@ class MultiTax(object):
         # Store source of tax files (url or file)
         self.sources = []
 
-        # Open/Download/Write files
-        fhs = {}
-        if files:
-            fhs = open_files(files)
-        elif urls or self._default_urls.get(self.version):
-            fhs = download_files(
-                urls=urls if urls else self._default_urls[self.version],
-                output_prefix=output_prefix,
-                retry_attempts=3,
-            )
+        if not empty:
+            # Open/Download/Write files
+            fhs = {}
+            if files:
+                fhs = open_files(files)
+            elif urls or self._default_urls.get(self.version):
+                fhs = download_files(
+                    urls=urls if urls else self._default_urls[self.version],
+                    output_prefix=output_prefix,
+                    retry_attempts=3,
+                )
 
-        if fhs:
-            # Parse taxonomy
-            self._nodes, self._ranks, self._names = self._parse(
-                fhs, extended_names=extended_names
-            )
-            close_files(fhs)
-            # Save sources for stats (files or urls)
-            self.sources = list(fhs.keys())
-
-        # Set undefined values
-        self.undefined_node = undefined_node
-        self.undefined_name = undefined_name
-        self.undefined_rank = undefined_rank
+            if fhs:
+                # Parse taxonomy
+                self._nodes, self._ranks, self._names = self._parse(
+                    fhs, extended_names=extended_names
+                )
+                close_files(fhs)
+                # Save sources for stats (files or urls)
+                self.sources = list(fhs.keys())
 
         # Set root values
         self._set_root_node(
@@ -438,6 +440,24 @@ class MultiTax(object):
         # Delete aux. data structures
         self._reset_aux_data()
         self.check_consistency()
+
+    @classmethod
+    def from_customtx(cls, ctx):
+        """
+        Initialize a Tx sub-class based on a CustomTx instance.
+
+        Example:
+
+            tax_custom = CustomTx(version="custom_ncbi_files", files="my_custom_tax.tsv", cols=["node","parent","rank"])
+            tax_ncbi = NcbiTx.from_customtx(tax_custom)
+        """
+        nc = cls(empty=True)
+        nc.version = ctx.version
+        nc.sources = ctx.sources
+        nc._nodes = ctx._nodes
+        nc._names = ctx._names
+        nc._ranks = ctx._ranks
+        return nc
 
     def latest(self, node: str):
         """
