@@ -147,16 +147,6 @@ class MultiTax(object):
 
         self.check_consistency()
 
-    @classmethod
-    def from_customtx(cls, ctx):
-        nc = cls(empty=True)
-        nc.version = ctx.version
-        nc.sources = ctx.sources
-        nc._nodes = ctx._nodes
-        nc._names = ctx._names
-        nc._ranks = ctx._ranks
-        return nc
-
     def _exact_name(self, text: str, names: dict):
         """
         Returns list of nodes of a given exact name (case sensitive).
@@ -450,6 +440,24 @@ class MultiTax(object):
         # Delete aux. data structures
         self._reset_aux_data()
         self.check_consistency()
+
+    @classmethod
+    def from_customtx(cls, ctx):
+        """
+        Initialize a Tx sub-class based on a CustomTx instance.
+
+        Example:
+
+            tax_custom = CustomTx(version="custom_ncbi_files", files="my_custom_tax.tsv", cols=["node","parent","rank"])
+            tax_ncbi = NcbiTx.from_customtx(tax_custom)
+        """
+        nc = cls(empty=True)
+        nc.version = ctx.version
+        nc.sources = ctx.sources
+        nc._nodes = ctx._nodes
+        nc._names = ctx._names
+        nc._ranks = ctx._ranks
+        return nc
 
     def latest(self, node: str):
         """
