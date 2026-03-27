@@ -339,6 +339,17 @@ class TestFunctions(unittest.TestCase):
         self.assertCountEqual(list(stats["ranked_leaves"].keys()), [
                               "rank-4", "rank-5"])
 
+    def test_lca(self):
+        """
+        test lca function
+        """
+        tax = CustomTx(files=self.test_file)
+        self.assertCountEqual(tax.lca(["5.1","5.2"]), "4.4")
+        self.assertCountEqual(tax.lca(["4.1", "4.2", "4.3"]), "2.1")
+        self.assertCountEqual(tax.lca(["4.1", "4.4", "4.3"]), "1")
+        self.assertCountEqual(tax.lca(["4.4","3.4"]), "3.4")
+        self.assertCountEqual(tax.lca(["4.6"]), "4.6")
+
     def test_build_lineages(self):
         """
         test build_lineages function

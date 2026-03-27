@@ -11,6 +11,7 @@ from multitax.utils import (
 )
 from collections import Counter
 from datetime import datetime
+from pylca.pylca import LCA
 
 
 class MultiTax(object):
@@ -87,6 +88,7 @@ class MultiTax(object):
         self._node_children = {}
         self._rank_nodes = {}
         self._translated_nodes = {}
+        self._lca = None
 
         # Properties
         self.datetime = datetime.now()
@@ -205,6 +207,7 @@ class MultiTax(object):
         self._node_children = {}
         self._rank_nodes = {}
         self._translated_nodes = {}
+        self._lca = None
 
     def _set_root_node(self, root: str, parent: str, name: str, rank: str):
         """
@@ -267,6 +270,15 @@ class MultiTax(object):
         self._names[node] = name if name is not None else self.undefined_name
         self._ranks[node] = rank if rank is not None else self.undefined_rank
         self._reset_aux_data()
+
+    def build_lca(self):
+        """
+        Builds LCA structure based on pylca.
+        Optional function, LCA is built on first .lca() call.
+
+        Returns: None
+        """
+        self._lca = LCA(self._nodes)
 
     def build_lineages(self, root_node: str = None, ranks: list = None):
         """
@@ -358,6 +370,14 @@ class MultiTax(object):
             raise ValueError("Parent nodes missing: " + ",".join(lost_nodes))
 
         return None
+
+    def clear_lca(self):
+        """
+        Clear built LCA.
+
+        Returns: None
+        """
+        self._lca = None
 
     def clear_lineages(self):
         """
@@ -481,6 +501,16 @@ class MultiTax(object):
             return self._recurse_leaves(node)
         else:
             return []
+
+    def lca(self, nodes: list = None):
+        """
+        Returns the lowest common ancestor of two or more nodes.
+        """
+        # Setup on first use
+        if not self._lca:
+            self.build_lca()
+
+        return self._lca(*nodes)
 
     def lineage(self, node: str, root_node: str = None, ranks: list = None):
         """
