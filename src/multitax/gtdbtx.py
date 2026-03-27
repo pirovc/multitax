@@ -231,14 +231,17 @@ class GtdbTx(MultiTax):
 
         if not self._convert_from:
             # Collect the accessions of the representative entries for each taxa in the current version
+            tx_accs = {}
             for acc, rep, lin, _ in self._download_parse_version_taxa(
                 version=self.version, file=files[0], url=urls[0]
             ):
                 if rep == "t":
                     for tx in lin.split(";"):
-                        if tx not in self._convert_from:
-                            self._convert_from[tx] = []
-                        self._convert_from[tx].append(acc)
+                        if tx not in tx_accs:
+                            tx_accs[tx] = []
+                        tx_accs[tx].append(acc)
+            # Assign only at the end, in case of download/parse errors
+            self._convert_from = tx_accs
 
         if version not in self._convert_to:
             # Collect the lineage for each accession
@@ -247,7 +250,7 @@ class GtdbTx(MultiTax):
                 version=version, file=files[1], url=urls[1]
             ):
                 acc_lin[acc] = lin
-            # Assign only at the end, in case of download or parse errors
+            # Assign only at the end, in case of download/parse errors
             self._convert_to[version] = acc_lin
 
     def convert(self, node: str, version: str) -> set[str]:

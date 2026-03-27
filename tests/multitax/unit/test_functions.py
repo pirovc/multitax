@@ -1,5 +1,5 @@
 from multitax.utils import check_file
-from multitax import *
+from multitax import CustomTx, GtdbTx, NcbiTx, OttTx, SilvaTx, GreengenesTx
 from tests.multitax.utils import setup_dir
 import unittest
 
@@ -793,3 +793,25 @@ class TestFunctions(unittest.TestCase):
         self.assertCountEqual(tax.search_name("CCUG 26672", exact=False), [])
         self.assertCountEqual(tax_ex.search_name(
             "CCUG 26672", exact=False), ["788108"])
+
+
+    def test_gtdb_convert(self):
+        """
+        Test build_conversion and convert functionality (gtdb only)
+        """
+        gtdb_v1 = GtdbTx(version="v1", files="tests/multitax/data_minimal/gtdb_v1_tax.tsv.gz")
+        # To avoid ValueError Version not supported
+        gtdb_v1._supported_versions.append("v2")
+        gtdb_v1.build_conversion(version="v2", files=("tests/multitax/data_minimal/gtdb_v1_acc_rep_lin_ncbi.tsv.gz", "tests/multitax/data_minimal/gtdb_v2_acc_rep_lin_ncbi.tsv.gz"))
+        
+        # Same
+        self.assertEqual(first=gtdb_v1.convert("s__H", version="v2"), second={"s__H"})
+        # Species changed (one not representative added, should not make a difference)
+        self.assertEqual(first=gtdb_v1.convert("s__HH", version="v2"), second={"s__HH new"})
+        self.assertEqual(first=gtdb_v1._convert_to["v2"]["G000000033"], second="d__A;p__B;c__C;o__D;f__F;g__G;s__HH new")
+        # Representative removed
+        self.assertEqual(first=gtdb_v1.convert("s__HHH", version="v2"), second=set())
+        # Genus changed
+        self.assertEqual(first=gtdb_v1.convert("g__GG", version="v2"), second={"g__GG new"})
+        # Genus split
+        self.assertEqual(first=gtdb_v1.convert("g__GGG", version="v2"), second={"g__GGG 1", "g__GGG 2"})
