@@ -657,6 +657,36 @@ class TestFunctions(unittest.TestCase):
                   sep_multi="_")
         self.assertEqual(check_file(outfile), None)
 
+    def test_from_customtx(self):
+        """
+        test from_customtx classfunction
+        """
+        ct = CustomTx(files=self.test_file)
+        
+        nt = NcbiTx.from_customtx(ct)
+        self.assertEqual(nt.__class__, NcbiTx)
+        self.assertEqual(nt.stats(), ct.stats())
+        
+        gt = GtdbTx.from_customtx(ct)
+        self.assertEqual(gt.__class__, GtdbTx)
+        self.assertEqual(gt.stats(), ct.stats())
+
+        ot = OttTx.from_customtx( ct)
+        self.assertEqual(ot.__class__, OttTx)
+        self.assertEqual(ot.stats(), ct.stats())
+
+        gt = GreengenesTx.from_customtx( ct)
+        self.assertEqual(gt.__class__, GreengenesTx)
+        self.assertEqual(gt.stats(), ct.stats())
+        
+        st = SilvaTx.from_customtx(ct)
+        self.assertEqual(st.__class__, SilvaTx)
+        self.assertEqual(st.stats(), ct.stats())
+    
+        ct2 = CustomTx.from_customtx(ct)
+        self.assertEqual(ct2.__class__, CustomTx)
+        self.assertEqual(ct2.stats(), ct2.stats())
+
     def test_ott_forwards(self):
         """
         Test forwards functionality (ott only)

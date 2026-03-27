@@ -311,10 +311,11 @@ tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, 
                                     <div><dt><a href="multitax/multitax.html#MultiTax">multitax.multitax.MultiTax</a></dt>
                                 <dd id="CustomTx.datetime" class="variable"><a href="multitax/multitax.html#MultiTax.datetime">datetime</a></dd>
                 <dd id="CustomTx.version" class="variable"><a href="multitax/multitax.html#MultiTax.version">version</a></dd>
-                <dd id="CustomTx.sources" class="variable"><a href="multitax/multitax.html#MultiTax.sources">sources</a></dd>
                 <dd id="CustomTx.undefined_node" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_node">undefined_node</a></dd>
                 <dd id="CustomTx.undefined_name" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_name">undefined_name</a></dd>
                 <dd id="CustomTx.undefined_rank" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_rank">undefined_rank</a></dd>
+                <dd id="CustomTx.sources" class="variable"><a href="multitax/multitax.html#MultiTax.sources">sources</a></dd>
+                <dd id="CustomTx.from_customtx" class="function"><a href="multitax/multitax.html#MultiTax.from_customtx">from_customtx</a></dd>
                 <dd id="CustomTx.add" class="function"><a href="multitax/multitax.html#MultiTax.add">add</a></dd>
                 <dd id="CustomTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="CustomTx.build_translation" class="function"><a href="multitax/multitax.html#MultiTax.build_translation">build_translation</a></dd>
@@ -412,10 +413,11 @@ tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, 
                                     <div><dt><a href="multitax/multitax.html#MultiTax">multitax.multitax.MultiTax</a></dt>
                                 <dd id="DummyTx.datetime" class="variable"><a href="multitax/multitax.html#MultiTax.datetime">datetime</a></dd>
                 <dd id="DummyTx.version" class="variable"><a href="multitax/multitax.html#MultiTax.version">version</a></dd>
-                <dd id="DummyTx.sources" class="variable"><a href="multitax/multitax.html#MultiTax.sources">sources</a></dd>
                 <dd id="DummyTx.undefined_node" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_node">undefined_node</a></dd>
                 <dd id="DummyTx.undefined_name" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_name">undefined_name</a></dd>
                 <dd id="DummyTx.undefined_rank" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_rank">undefined_rank</a></dd>
+                <dd id="DummyTx.sources" class="variable"><a href="multitax/multitax.html#MultiTax.sources">sources</a></dd>
+                <dd id="DummyTx.from_customtx" class="function"><a href="multitax/multitax.html#MultiTax.from_customtx">from_customtx</a></dd>
                 <dd id="DummyTx.add" class="function"><a href="multitax/multitax.html#MultiTax.add">add</a></dd>
                 <dd id="DummyTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="DummyTx.build_translation" class="function"><a href="multitax/multitax.html#MultiTax.build_translation">build_translation</a></dd>
@@ -561,7 +563,7 @@ tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, 
 <p>Parameters:</p>
 
 <ul>
-<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/url).</li>
+<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/urls).</li>
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
@@ -576,6 +578,7 @@ tax_custom2 = CustomTx(files="my_custom_tax.tsv", cols={"node": 0, "parent": 1, 
 <li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use).</li>
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use).</li>
 <li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available.</li>
+<li><strong>empty</strong> <em>[bool]</em>: Create an empty instance.</li>
 </ul>
 
 <p>Example:</p>
@@ -596,10 +599,11 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
                                     <div><dt><a href="multitax/multitax.html#MultiTax">multitax.multitax.MultiTax</a></dt>
                                 <dd id="GreengenesTx.datetime" class="variable"><a href="multitax/multitax.html#MultiTax.datetime">datetime</a></dd>
                 <dd id="GreengenesTx.version" class="variable"><a href="multitax/multitax.html#MultiTax.version">version</a></dd>
-                <dd id="GreengenesTx.sources" class="variable"><a href="multitax/multitax.html#MultiTax.sources">sources</a></dd>
                 <dd id="GreengenesTx.undefined_node" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_node">undefined_node</a></dd>
                 <dd id="GreengenesTx.undefined_name" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_name">undefined_name</a></dd>
                 <dd id="GreengenesTx.undefined_rank" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_rank">undefined_rank</a></dd>
+                <dd id="GreengenesTx.sources" class="variable"><a href="multitax/multitax.html#MultiTax.sources">sources</a></dd>
+                <dd id="GreengenesTx.from_customtx" class="function"><a href="multitax/multitax.html#MultiTax.from_customtx">from_customtx</a></dd>
                 <dd id="GreengenesTx.add" class="function"><a href="multitax/multitax.html#MultiTax.add">add</a></dd>
                 <dd id="GreengenesTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="GreengenesTx.build_translation" class="function"><a href="multitax/multitax.html#MultiTax.build_translation">build_translation</a></dd>
@@ -950,7 +954,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 <p>Parameters:</p>
 
 <ul>
-<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/url).</li>
+<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/urls).</li>
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
@@ -965,6 +969,7 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
 <li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use).</li>
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use).</li>
 <li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available.</li>
+<li><strong>empty</strong> <em>[bool]</em>: Create an empty instance.</li>
 </ul>
 
 <p>Example:</p>
@@ -1117,10 +1122,11 @@ tax.convert('g__UBA6715', version="226")
                                     <div><dt><a href="multitax/multitax.html#MultiTax">multitax.multitax.MultiTax</a></dt>
                                 <dd id="GtdbTx.datetime" class="variable"><a href="multitax/multitax.html#MultiTax.datetime">datetime</a></dd>
                 <dd id="GtdbTx.version" class="variable"><a href="multitax/multitax.html#MultiTax.version">version</a></dd>
-                <dd id="GtdbTx.sources" class="variable"><a href="multitax/multitax.html#MultiTax.sources">sources</a></dd>
                 <dd id="GtdbTx.undefined_node" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_node">undefined_node</a></dd>
                 <dd id="GtdbTx.undefined_name" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_name">undefined_name</a></dd>
                 <dd id="GtdbTx.undefined_rank" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_rank">undefined_rank</a></dd>
+                <dd id="GtdbTx.sources" class="variable"><a href="multitax/multitax.html#MultiTax.sources">sources</a></dd>
+                <dd id="GtdbTx.from_customtx" class="function"><a href="multitax/multitax.html#MultiTax.from_customtx">from_customtx</a></dd>
                 <dd id="GtdbTx.add" class="function"><a href="multitax/multitax.html#MultiTax.add">add</a></dd>
                 <dd id="GtdbTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="GtdbTx.build_translation" class="function"><a href="multitax/multitax.html#MultiTax.build_translation">build_translation</a></dd>
@@ -1421,7 +1427,7 @@ tax.convert('g__UBA6715', version="226")
 <p>Parameters:</p>
 
 <ul>
-<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/url).</li>
+<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/urls).</li>
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
@@ -1436,6 +1442,7 @@ tax.convert('g__UBA6715', version="226")
 <li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use).</li>
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use).</li>
 <li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available.</li>
+<li><strong>empty</strong> <em>[bool]</em>: Create an empty instance.</li>
 </ul>
 
 <p>Example:</p>
@@ -1631,10 +1638,11 @@ pprint(tax.stats())
                                     <div><dt><a href="multitax/multitax.html#MultiTax">multitax.multitax.MultiTax</a></dt>
                                 <dd id="NcbiTx.datetime" class="variable"><a href="multitax/multitax.html#MultiTax.datetime">datetime</a></dd>
                 <dd id="NcbiTx.version" class="variable"><a href="multitax/multitax.html#MultiTax.version">version</a></dd>
-                <dd id="NcbiTx.sources" class="variable"><a href="multitax/multitax.html#MultiTax.sources">sources</a></dd>
                 <dd id="NcbiTx.undefined_node" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_node">undefined_node</a></dd>
                 <dd id="NcbiTx.undefined_name" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_name">undefined_name</a></dd>
                 <dd id="NcbiTx.undefined_rank" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_rank">undefined_rank</a></dd>
+                <dd id="NcbiTx.sources" class="variable"><a href="multitax/multitax.html#MultiTax.sources">sources</a></dd>
+                <dd id="NcbiTx.from_customtx" class="function"><a href="multitax/multitax.html#MultiTax.from_customtx">from_customtx</a></dd>
                 <dd id="NcbiTx.add" class="function"><a href="multitax/multitax.html#MultiTax.add">add</a></dd>
                 <dd id="NcbiTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="NcbiTx.build_translation" class="function"><a href="multitax/multitax.html#MultiTax.build_translation">build_translation</a></dd>
@@ -1865,7 +1873,7 @@ pprint(tax.stats())
 <p>Parameters:</p>
 
 <ul>
-<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/url).</li>
+<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/urls).</li>
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
@@ -1880,6 +1888,7 @@ pprint(tax.stats())
 <li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use).</li>
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use).</li>
 <li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available.</li>
+<li><strong>empty</strong> <em>[bool]</em>: Create an empty instance.</li>
 </ul>
 
 <p>Example:</p>
@@ -2075,10 +2084,11 @@ pprint(tax.stats())
                                     <div><dt><a href="multitax/multitax.html#MultiTax">multitax.multitax.MultiTax</a></dt>
                                 <dd id="OttTx.datetime" class="variable"><a href="multitax/multitax.html#MultiTax.datetime">datetime</a></dd>
                 <dd id="OttTx.version" class="variable"><a href="multitax/multitax.html#MultiTax.version">version</a></dd>
-                <dd id="OttTx.sources" class="variable"><a href="multitax/multitax.html#MultiTax.sources">sources</a></dd>
                 <dd id="OttTx.undefined_node" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_node">undefined_node</a></dd>
                 <dd id="OttTx.undefined_name" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_name">undefined_name</a></dd>
                 <dd id="OttTx.undefined_rank" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_rank">undefined_rank</a></dd>
+                <dd id="OttTx.sources" class="variable"><a href="multitax/multitax.html#MultiTax.sources">sources</a></dd>
+                <dd id="OttTx.from_customtx" class="function"><a href="multitax/multitax.html#MultiTax.from_customtx">from_customtx</a></dd>
                 <dd id="OttTx.add" class="function"><a href="multitax/multitax.html#MultiTax.add">add</a></dd>
                 <dd id="OttTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="OttTx.build_translation" class="function"><a href="multitax/multitax.html#MultiTax.build_translation">build_translation</a></dd>
@@ -2199,7 +2209,7 @@ pprint(tax.stats())
 <p>Parameters:</p>
 
 <ul>
-<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/url).</li>
+<li><strong>version</strong> <em>[str]</em>: Version to download/parse or custom version name (with files/urls).</li>
 <li><strong>files</strong> <em>[str, list]</em>: One or more local files to parse.</li>
 <li><strong>urls</strong> <em>[str, list]</em>: One or more urls to download and parse.</li>
 <li><strong>output_prefix</strong> <em>[str]</em>: Directory to write downloaded files.</li>
@@ -2214,6 +2224,7 @@ pprint(tax.stats())
 <li><strong>build_name_nodes</strong> <em>[bool]</em>: Build name,nodes dict (otherwise it will be created on first use).</li>
 <li><strong>build_rank_nodes</strong> <em>[bool]</em>: Build rank,nodes dict (otherwise it will be created on first use).</li>
 <li><strong>extended_names</strong> <em>[bool]</em>: Parse extended names if available.</li>
+<li><strong>empty</strong> <em>[bool]</em>: Create an empty instance.</li>
 </ul>
 
 <p>Example:</p>
@@ -2234,10 +2245,11 @@ tax_gg = GreengenesTx(output_prefix="save/to/prefix_")
                                     <div><dt><a href="multitax/multitax.html#MultiTax">multitax.multitax.MultiTax</a></dt>
                                 <dd id="SilvaTx.datetime" class="variable"><a href="multitax/multitax.html#MultiTax.datetime">datetime</a></dd>
                 <dd id="SilvaTx.version" class="variable"><a href="multitax/multitax.html#MultiTax.version">version</a></dd>
-                <dd id="SilvaTx.sources" class="variable"><a href="multitax/multitax.html#MultiTax.sources">sources</a></dd>
                 <dd id="SilvaTx.undefined_node" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_node">undefined_node</a></dd>
                 <dd id="SilvaTx.undefined_name" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_name">undefined_name</a></dd>
                 <dd id="SilvaTx.undefined_rank" class="variable"><a href="multitax/multitax.html#MultiTax.undefined_rank">undefined_rank</a></dd>
+                <dd id="SilvaTx.sources" class="variable"><a href="multitax/multitax.html#MultiTax.sources">sources</a></dd>
+                <dd id="SilvaTx.from_customtx" class="function"><a href="multitax/multitax.html#MultiTax.from_customtx">from_customtx</a></dd>
                 <dd id="SilvaTx.add" class="function"><a href="multitax/multitax.html#MultiTax.add">add</a></dd>
                 <dd id="SilvaTx.build_lineages" class="function"><a href="multitax/multitax.html#MultiTax.build_lineages">build_lineages</a></dd>
                 <dd id="SilvaTx.build_translation" class="function"><a href="multitax/multitax.html#MultiTax.build_translation">build_translation</a></dd>
