@@ -258,8 +258,8 @@ class MultiTax(object):
 
     def add(self, node: str, parent: str, name: str = None, rank: str = None):
         """
-        Add node to taxonomy.
-        Deletes built lineages and translations.
+        Adds node to taxonomy.
+        Deletes built lineages, translations and lca.
         """
         if parent not in self._nodes:
             raise ValueError("Parent node [" + parent + "] not found.")
@@ -407,7 +407,7 @@ class MultiTax(object):
         Filters taxonomy given a list of nodes.
         By default keep all the ancestors of the given nodes.
         If desc=True, keep all descendants instead.
-        Deletes built lineages and translations.
+        Deletes built lineages, translations and lca.
 
         Example:
 
@@ -505,6 +505,12 @@ class MultiTax(object):
     def lca(self, nodes: list = None):
         """
         Returns the lowest common ancestor of two or more nodes.
+
+        Example:
+
+            from multitax import GtdbTx
+            tax = GtdbTx()
+            tax.lca(["s__Escherichia coli", "s__Escherichia fergusonii"])
         """
         for node in nodes:
             if node not in self._nodes:
@@ -609,7 +615,7 @@ class MultiTax(object):
     def prune(self, nodes: list):
         """
         Prunes branches of the tree under the given nodes.
-        Deletes built lineages and translations.
+        Deletes built lineages, translations and lca.
         """
 
         if isinstance(nodes, str):
@@ -649,7 +655,7 @@ class MultiTax(object):
         """
         Removes node from taxonomy. Can break the tree if a parent node is removed. To remove a certain branch, use prune.
         Running check consistency after removing a node is recommended.
-        Deletes built lineages and translations.
+        Deletes built lineages, translations and lca.
         """
         if node not in self._nodes:
             raise ValueError("Node [" + node + "] not found.")
