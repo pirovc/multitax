@@ -506,6 +506,10 @@ class MultiTax(object):
         """
         Returns the lowest common ancestor of two or more nodes.
         """
+        for node in nodes:
+            if node not in self._nodes:
+                raise ValueError("Node [" + node + "] not found.")
+
         # Setup on first use
         if not self._lca:
             self.build_lca()
