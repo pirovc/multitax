@@ -7,6 +7,7 @@ import random
 
 sys.path.append("tests/multitax/")
 
+verbose = True if "-v" in sys.argv else False
 
 @unittest.skip('Skip online by default')
 class TestOnline(unittest.TestCase):
@@ -30,6 +31,8 @@ class TestOnline(unittest.TestCase):
         Default test online
         """
         for t in self.taxonomies:
+            if verbose:
+                print(t)
             tax = self.taxonomies[t]["class"]()
             self.assertGreater(tax.stats()["nodes"], 0, t + " failed")
 
@@ -38,6 +41,19 @@ class TestOnline(unittest.TestCase):
         Saving files on disk
         """
         for t in self.taxonomies:
+            if verbose:
+                print(t)
             tax = self.taxonomies[t]["class"](output_prefix=self.tmp_dir)
             self.assertGreater(
                 tax.stats()["nodes"], 0, t + " failed with urls and output_prefix")
+
+    def test_online_all_versions(self):
+        """
+        Default test online for all versions
+        """
+        for t in self.taxonomies:
+            for v in self.taxonomies[t]["class"]._supported_versions:
+                if verbose:
+                    print(t, v)
+                tax = self.taxonomies[t]["class"](version=v)
+                self.assertGreater(tax.stats()["nodes"], 0, t + " version " + v + " failed")

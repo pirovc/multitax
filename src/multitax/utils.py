@@ -92,6 +92,15 @@ def filter_function(elements, function, value):
     return [elements[i] for i, v in enumerate(map(function, elements)) if v == value]
 
 
+def format_repr(inst):
+    vals = [
+        f"version={repr(inst.version)}",
+        f"source={repr(inst.sources)}",
+        f"datetime={repr(inst.datetime)}",
+    ]
+    return f"{inst.__class__.__name__}({', '.join(vals)})"
+
+
 def join_check(elements, sep: str):
     if elements:
         return sep.join(map(str, elements))

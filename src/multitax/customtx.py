@@ -1,3 +1,4 @@
+from multitax.utils import format_repr
 from .multitax import MultiTax
 import warnings
 
@@ -15,7 +16,7 @@ class CustomTx(MultiTax):
         Parameters:
         * **cols** *[list, dict]*: List of fields to be parsed or a dictionary with {field: column index}. Options: "node", "parent", "rank", "name"
         * **sep** *[str]*: Separator of fields
-        * **\*\*kwargs** defined at `multitax.multitax.MultiTax`
+        * **\\*\\*kwargs** defined at `multitax.multitax.MultiTax`
 
         Example:
 
@@ -28,10 +29,9 @@ class CustomTx(MultiTax):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        stats = ["{}={}".format(k, repr(v)) for (k, v) in self.stats().items()]
-        return "CustomTx({})".format(", ".join(stats))
+        return format_repr(inst=self)
 
-    def _build_translation(self, target_tax, files: list = None, urls: list = None):
+    def _build_translation(self, target_tax, file: str = None, url: str = None):
         warnings.warn(
             "Translation between taxonomies ["
             + self.__class__.__name__

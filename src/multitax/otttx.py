@@ -1,10 +1,15 @@
 from .multitax import MultiTax
-from multitax.utils import filter_function
+from multitax.utils import filter_function, format_repr
 import warnings
 
 
 class OttTx(MultiTax):
-    _default_urls = ["https://files.opentreeoflife.org/ott/ott3.7.3/ott3.7.3.tgz"]
+    _default_version = "3.7.3"
+    _supported_versions = ["3.6", "3.7.3"]
+    _default_urls = {
+        "3.6": "https://files.opentreeoflife.org/ott/ott3.6/ott3.6.tgz",
+        "3.7.3": "https://files.opentreeoflife.org/ott/ott3.7.3/ott3.7.3.tgz",
+    }
     _default_root_node = "805080"
 
     def __init__(self, **kwargs):
@@ -13,10 +18,9 @@ class OttTx(MultiTax):
         super().__init__(**kwargs)
 
     def __repr__(self):
-        stats = ["{}={}".format(k, repr(v)) for (k, v) in self.stats().items()]
-        return "OttTx({})".format(", ".join(stats))
+        return format_repr(inst=self)
 
-    def _build_translation(self, target_tax, files: list = None, urls: list = None):
+    def _build_translation(self, target_tax, file: str = None, url: str = None):
         warnings.warn(
             "Translation between taxonomies ["
             + self.__class__.__name__
@@ -159,8 +163,8 @@ class OttTx(MultiTax):
 
             return list(set(n + ret))
 
-    def stats(self):
-        s = super().stats()
+    def stats(self, **kwargs):
+        s = super().stats(**kwargs)
         if self._forwards:
             s["forwards"] = len(self._forwards)
         if self._extended_name_nodes:

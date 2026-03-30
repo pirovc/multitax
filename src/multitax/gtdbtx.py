@@ -1,14 +1,61 @@
 from .multitax import MultiTax
-from multitax.utils import open_files
-from multitax.utils import download_files
+from multitax.utils import close_files, open_files, download_files, format_repr
 import warnings
 
 
 class GtdbTx(MultiTax):
-    _default_urls = [
-        "https://data.gtdb.aau.ecogenomic.org/releases/latest/ar53_taxonomy.tsv.gz",
-        "https://data.gtdb.aau.ecogenomic.org/releases/latest/bac120_taxonomy.tsv.gz",
+    _default_version = "226"
+    _supported_versions = [
+        "80",
+        "83",
+        "86.2",
+        "89",
+        "95",
+        "202",
+        "207",
+        "214.1",
+        "220",
+        "226",
     ]
+
+    _url_prefix = "https://data.gtdb.ecogenomic.org/releases/"
+    _default_urls = {
+        "80": [f"{_url_prefix}release80/80.0/bac_taxonomy_r80.tsv"],
+        "83": [f"{_url_prefix}release83/83.0/bac_taxonomy_r83.tsv"],
+        "86.2": [
+            f"{_url_prefix}release86/86.2/ar122_taxonomy_r86.2.tsv",
+            f"{_url_prefix}release86/86.2/bac120_taxonomy_r86.2.tsv",
+        ],
+        "89": [
+            f"{_url_prefix}release89/89.0/ar122_taxonomy_r89.tsv",
+            f"{_url_prefix}release89/89.0/bac120_taxonomy_r89.tsv",
+        ],
+        "95": [
+            f"{_url_prefix}release95/95.0/ar122_taxonomy_r95.tsv.gz",
+            f"{_url_prefix}release95/95.0/bac120_taxonomy_r95.tsv.gz",
+        ],
+        "202": [
+            f"{_url_prefix}release202/202.0/ar122_taxonomy_r202.tsv.gz",
+            f"{_url_prefix}release202/202.0/bac120_taxonomy_r202.tsv.gz",
+        ],
+        "207": [
+            f"{_url_prefix}release207/207.0/ar53_taxonomy_r207.tsv.gz",
+            f"{_url_prefix}release207/207.0/bac120_taxonomy_r207.tsv.gz",
+        ],
+        "214.1": [
+            f"{_url_prefix}release214/214.1/ar53_taxonomy_r214.tsv.gz",
+            f"{_url_prefix}release214/214.1/bac120_taxonomy_r214.tsv.gz",
+        ],
+        "220": [
+            f"{_url_prefix}release220/220.0/ar53_taxonomy_r220.tsv.gz",
+            f"{_url_prefix}release220/220.0/bac120_taxonomy_r220.tsv.gz",
+        ],
+        "226": [
+            f"{_url_prefix}release226/226.0/ar53_taxonomy_r226.tsv.gz",
+            f"{_url_prefix}release226/226.0/bac120_taxonomy_r226.tsv.gz",
+        ],
+    }
+
     _rank_codes = [
         ("d__", "domain"),
         ("p__", "phylum"),
@@ -20,27 +67,26 @@ class GtdbTx(MultiTax):
     ]
 
     def __init__(self, **kwargs):
+        self._convert_to = {}
+        self._convert_from = {}
         super().__init__(**kwargs)
 
     def __repr__(self):
-        stats = ["{}={}".format(k, repr(v)) for (k, v) in self.stats().items()]
-        return "GtdbTx({})".format(", ".join(stats))
+        return format_repr(inst=self)
 
-    def _build_translation(self, target_tax, files: list = None, urls: list = None):
+    def _build_translation(self, target_tax, file: str = None, url: str = None):
         translated_nodes = {}
         if target_tax.__class__.__name__ == "NcbiTx":
-            if files:
-                fhs = open_files(files)
+            if file:
+                fhs = open_files([file])
             else:
-                _urls = [
-                    "https://data.gtdb.aau.ecogenomic.org/releases/latest/ar53_metadata.tsv.gz",
-                    "https://data.gtdb.aau.ecogenomic.org/releases/latest/bac120_metadata.tsv.gz",
-                ]
-                fhs = download_files(urls=urls if urls else _urls, retry_attempts=3)
+                if not url:
+                    url = f"https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/{self.version}_acc_rep_lin_ncbi.tsv.gz"
+                fhs = download_files(urls=[url], retry_attempts=3)
 
             accession_col = 0
-            gtdb_taxonomy_col = 19
-            ncbi_taxid_col = 80
+            gtdb_taxonomy_col = 2
+            ncbi_taxid_col = 3
 
             for source, fh in fhs.items():
                 for line in fh:
@@ -99,6 +145,7 @@ class GtdbTx(MultiTax):
                                 translated_nodes[gtdb_n] = set()
                             translated_nodes[gtdb_n].add(ncbi_nodes[i])
 
+            close_files(fhs)
         else:
             warnings.warn(
                 "Translation between taxonomies ["
@@ -141,3 +188,101 @@ class GtdbTx(MultiTax):
                         ranks[taxid] = rank
 
         return nodes, ranks, names
+
+    def _lookup_version_taxa(self, node, version: str):
+        res = set()
+        for acc in self._convert_from.get(node, ""):
+            for tx in self._convert_to[version].get(acc, "").split(";"):
+                # Return only rank of requested node
+                if tx.startswith(node[:1]):
+                    res.add(tx)
+        return res
+
+    def _download_parse_version_taxa(self, version, file, url):
+        if file:
+            fhs = open_files(files=[file])
+        else:
+            if not url:
+                url = f"https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/{self.version}_acc_rep_lin_ncbi.tsv.gz"
+            fhs = download_files(urls=[url], retry_attempts=3)
+
+        for fh in fhs.values():
+            for line in fh:
+                try:
+                    yield line.rstrip().split("\t")
+                except TypeError:
+                    yield line.decode().rstrip().split("\t")
+
+    def build_conversion(
+        self,
+        version: str,
+        files: tuple[str, str] = ("", ""),
+        urls: tuple[str, str] = ("", ""),
+    ):
+        """
+        Download and build conversion table against another version.
+        Optional function, conversion tables are automatically downloaded
+        and built on first .convert() call.
+        """
+        if version not in self._supported_versions:
+            raise ValueError(
+                f"Version [{version}] not supported for conversion: {', '.join(self._supported_versions)}"
+            )
+
+        if not self._convert_from:
+            # Collect the accessions of the representative entries for each taxa in the current version
+            tx_accs = {}
+            for acc, rep, lin, _ in self._download_parse_version_taxa(
+                version=self.version, file=files[0], url=urls[0]
+            ):
+                if rep == "t":
+                    for tx in lin.split(";"):
+                        if tx not in tx_accs:
+                            tx_accs[tx] = []
+                        tx_accs[tx].append(acc)
+            # Assign only at the end, in case of download/parse errors
+            self._convert_from = tx_accs
+
+        if version not in self._convert_to:
+            # Collect the lineage for each accession
+            acc_lin = {}
+            for acc, _, lin, _ in self._download_parse_version_taxa(
+                version=version, file=files[1], url=urls[1]
+            ):
+                acc_lin[acc] = lin
+            # Assign only at the end, in case of download/parse errors
+            self._convert_to[version] = acc_lin
+
+    def convert(self, node: str, version: str) -> set[str]:
+        """
+        Converts a taxonomic node from current version to another.
+        It uses a genomic centric strategy, based on the taxa of the representative
+        genome among versions.
+        It may return multiple nodes for ranks above species,
+        since multiple representatives can be split into more taxa.
+        It may return an empty set if node is not found in the current version
+        or if related representative is no longer available in the requested version.
+
+        Example:
+
+            from multitax import GtdbTx
+            tax = GtdbTx(version="95")
+
+            # Species - always one-to-one
+            tax.convert('s__Giesbergeria metamorpha', version="226")
+            {'s__Simplicispira metamorpha'}
+
+            # Other ranks - may be one-to-many
+            tax.convert('g__UBA6715', version="226")
+            {'g__Aquirufa', 'g__Sandaracinomonas'}
+        """
+
+        if version not in self._supported_versions:
+            raise ValueError(
+                f"Version [{version}] not supported: {', '.join(self._supported_versions)}"
+            )
+
+        if not self._convert_from or version not in self._convert_to:
+            self.build_conversion(version=version)
+
+        return self._lookup_version_taxa(node, version)

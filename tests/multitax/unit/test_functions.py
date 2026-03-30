@@ -1,5 +1,5 @@
 from multitax.utils import check_file
-from multitax import *
+from multitax import CustomTx, GtdbTx, NcbiTx, OttTx, SilvaTx, GreengenesTx
 from tests.multitax.utils import setup_dir
 import unittest
 
@@ -339,6 +339,17 @@ class TestFunctions(unittest.TestCase):
         self.assertCountEqual(list(stats["ranked_leaves"].keys()), [
                               "rank-4", "rank-5"])
 
+    def test_lca(self):
+        """
+        test lca function
+        """
+        tax = CustomTx(files=self.test_file)
+        self.assertCountEqual(tax.lca(["5.1","5.2"]), "4.4")
+        self.assertCountEqual(tax.lca(["4.1", "4.2", "4.3"]), "2.1")
+        self.assertCountEqual(tax.lca(["4.1", "4.4", "4.3"]), "1")
+        self.assertCountEqual(tax.lca(["4.4","3.4"]), "3.4")
+        self.assertCountEqual(tax.lca(["4.6"]), "4.6")
+
     def test_build_lineages(self):
         """
         test build_lineages function
@@ -397,16 +408,14 @@ class TestFunctions(unittest.TestCase):
         # GTDB->NCBI
         # Should be no translation yet (g__Paenibacillus is contained in both test sets)
         self.assertCountEqual(gtdb_tax.translate("g__Paenibacillus"), [])
-        gtdb_tax.build_translation(ncbi_tax, files=[
-                                   "tests/multitax/data_minimal/gtdb_ar_metadata.tsv.gz", "tests/multitax/data_minimal/gtdb_bac_metadata.tsv.gz"])
+        gtdb_tax.build_translation(ncbi_tax, file="tests/multitax/data_minimal/gtdb_acc_rep_lin_ncbi.tsv.gz")
         self.assertCountEqual(gtdb_tax.translate(
             "g__Paenibacillus"), ["44249"])
 
         # NCBI->GTDB
         # Should be no translation yet (g__Paenibacillus is contained in both test sets)
         self.assertCountEqual(ncbi_tax.translate("44249"), [])
-        ncbi_tax.build_translation(gtdb_tax, files=[
-                                   "tests/multitax/data_minimal/gtdb_ar_metadata.tsv.gz", "tests/multitax/data_minimal/gtdb_bac_metadata.tsv.gz"])
+        ncbi_tax.build_translation(gtdb_tax, file="tests/multitax/data_minimal/gtdb_acc_rep_lin_ncbi.tsv.gz")
         self.assertCountEqual(ncbi_tax.translate("44249"), ["g__Paenibacillus"])
 
         # Other translations not yet implemented
@@ -659,6 +668,36 @@ class TestFunctions(unittest.TestCase):
                   sep_multi="_")
         self.assertEqual(check_file(outfile), None)
 
+    def test_from_customtx(self):
+        """
+        test from_customtx classfunction
+        """
+        ct = CustomTx(files=self.test_file)
+        
+        nt = NcbiTx.from_customtx(ct)
+        self.assertEqual(nt.__class__, NcbiTx)
+        self.assertEqual(nt.stats(), ct.stats())
+        
+        gt = GtdbTx.from_customtx(ct)
+        self.assertEqual(gt.__class__, GtdbTx)
+        self.assertEqual(gt.stats(), ct.stats())
+
+        ot = OttTx.from_customtx( ct)
+        self.assertEqual(ot.__class__, OttTx)
+        self.assertEqual(ot.stats(), ct.stats())
+
+        gt = GreengenesTx.from_customtx( ct)
+        self.assertEqual(gt.__class__, GreengenesTx)
+        self.assertEqual(gt.stats(), ct.stats())
+        
+        st = SilvaTx.from_customtx(ct)
+        self.assertEqual(st.__class__, SilvaTx)
+        self.assertEqual(st.stats(), ct.stats())
+    
+        ct2 = CustomTx.from_customtx(ct)
+        self.assertEqual(ct2.__class__, CustomTx)
+        self.assertEqual(ct2.stats(), ct2.stats())
+
     def test_ott_forwards(self):
         """
         Test forwards functionality (ott only)
@@ -795,3 +834,25 @@ class TestFunctions(unittest.TestCase):
         self.assertCountEqual(tax.search_name("CCUG 26672", exact=False), [])
         self.assertCountEqual(tax_ex.search_name(
             "CCUG 26672", exact=False), ["788108"])
+
+
+    def test_gtdb_convert(self):
+        """
+        Test build_conversion and convert functionality (gtdb only)
+        """
+        gtdb_v1 = GtdbTx(version="v1", files="tests/multitax/data_minimal/gtdb_v1_tax.tsv.gz")
+        # To avoid ValueError Version not supported
+        gtdb_v1._supported_versions.append("v2")
+        gtdb_v1.build_conversion(version="v2", files=("tests/multitax/data_minimal/gtdb_v1_acc_rep_lin_ncbi.tsv.gz", "tests/multitax/data_minimal/gtdb_v2_acc_rep_lin_ncbi.tsv.gz"))
+        
+        # Same
+        self.assertEqual(first=gtdb_v1.convert("s__H", version="v2"), second={"s__H"})
+        # Species changed (one not representative added, should not make a difference)
+        self.assertEqual(first=gtdb_v1.convert("s__HH", version="v2"), second={"s__HH new"})
+        self.assertEqual(first=gtdb_v1._convert_to["v2"]["G000000033"], second="d__A;p__B;c__C;o__D;f__F;g__G;s__HH new")
+        # Representative removed
+        self.assertEqual(first=gtdb_v1.convert("s__HHH", version="v2"), second=set())
+        # Genus changed
+        self.assertEqual(first=gtdb_v1.convert("g__GG", version="v2"), second={"g__GG new"})
+        # Genus split
+        self.assertEqual(first=gtdb_v1.convert("g__GGG", version="v2"), second={"g__GGG 1", "g__GGG 2"})

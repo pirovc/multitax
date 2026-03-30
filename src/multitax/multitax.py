@@ -10,17 +10,19 @@ from multitax.utils import (
     check_dir,
 )
 from collections import Counter
-from . import __version__
+from datetime import datetime
+from pylca.pylca import LCA
 
 
 class MultiTax(object):
-    version = __version__
-
-    _default_urls = []
+    _default_version = "current"
+    _supported_versions = ["current"]
+    _default_urls = {}
     _default_root_node = "1"
 
     def __init__(
         self,
+        version: str = None,
         files: list = None,
         urls: list = None,
         output_prefix: str = None,
@@ -35,11 +37,13 @@ class MultiTax(object):
         build_node_children: bool = False,
         build_rank_nodes: bool = False,
         extended_names: bool = False,
+        empty: bool = False,
     ):
         """
         Main constructor of MultiTax and sub-classes
 
         Parameters:
+        * **version** *[str]*: Version to download/parse or custom version name (with files/urls).
         * **files** *[str, list]*: One or more local files to parse.
         * **urls** *[str, list]*: One or more urls to download and parse.
         * **output_prefix** *[str]*: Directory to write downloaded files.
@@ -54,6 +58,7 @@ class MultiTax(object):
         * **build_name_nodes** *[bool]*: Build name,nodes dict (otherwise it will be created on first use).
         * **build_rank_nodes** *[bool]*: Build rank,nodes dict (otherwise it will be created on first use).
         * **extended_names** *[bool]*: Parse extended names if available.
+        * **empty** *[bool]*: Create an empty instance.
 
         Example:
 
@@ -76,40 +81,55 @@ class MultiTax(object):
         self._nodes = {}
         self._ranks = {}
         self._names = {}
+
         # Aux. structures
         self._lineages = {}
         self._name_nodes = {}
         self._node_children = {}
         self._rank_nodes = {}
         self._translated_nodes = {}
+        self._lca = None
+
+        # Properties
+        self.datetime = datetime.now()
+        self.version = None
+        self.undefined_node = undefined_node
+        self.undefined_name = undefined_name
+        self.undefined_rank = undefined_rank
+
+        # Set version
+        if files or urls:
+            self.version = version
+        else:
+            self.version = self._default_version if not version else version
+            if self.version not in self._supported_versions:
+                raise ValueError(
+                    f"Version [{self.version}] not supported (possible versions: {', '.join(self._supported_versions)}). To set a custom version, use files or urls."
+                )
 
         # Store source of tax files (url or file)
         self.sources = []
 
-        # Open/Download/Write files
-        fhs = {}
-        if files:
-            fhs = open_files(files)
-        elif urls or self._default_urls:
-            fhs = download_files(
-                urls=urls if urls else self._default_urls,
-                output_prefix=output_prefix,
-                retry_attempts=3,
-            )
+        if not empty:
+            # Open/Download/Write files
+            fhs = {}
+            if files:
+                fhs = open_files(files)
+            elif urls or self._default_urls.get(self.version):
+                fhs = download_files(
+                    urls=urls if urls else self._default_urls[self.version],
+                    output_prefix=output_prefix,
+                    retry_attempts=3,
+                )
 
-        if fhs:
-            # Parse taxonomy
-            self._nodes, self._ranks, self._names = self._parse(
-                fhs, extended_names=extended_names
-            )
-            close_files(fhs)
-            # Save sources for stats (files or urls)
-            self.sources = list(fhs.keys())
-
-        # Set undefined values
-        self.undefined_node = undefined_node
-        self.undefined_name = undefined_name
-        self.undefined_rank = undefined_rank
+            if fhs:
+                # Parse taxonomy
+                self._nodes, self._ranks, self._names = self._parse(
+                    fhs, extended_names=extended_names
+                )
+                close_files(fhs)
+                # Save sources for stats (files or urls)
+                self.sources = list(fhs.keys())
 
         # Set root values
         self._set_root_node(
@@ -187,6 +207,7 @@ class MultiTax(object):
         self._node_children = {}
         self._rank_nodes = {}
         self._translated_nodes = {}
+        self._lca = None
 
     def _set_root_node(self, root: str, parent: str, name: str, rank: str):
         """
@@ -237,8 +258,8 @@ class MultiTax(object):
 
     def add(self, node: str, parent: str, name: str = None, rank: str = None):
         """
-        Add node to taxonomy.
-        Deletes built lineages and translations.
+        Adds node to taxonomy.
+        Deletes built lineages, translations and lca.
         """
         if parent not in self._nodes:
             raise ValueError("Parent node [" + parent + "] not found.")
@@ -249,6 +270,15 @@ class MultiTax(object):
         self._names[node] = name if name is not None else self.undefined_name
         self._ranks[node] = rank if rank is not None else self.undefined_rank
         self._reset_aux_data()
+
+    def build_lca(self):
+        """
+        Builds LCA structure based on pylca.
+        Optional function, LCA is built on first .lca() call.
+
+        Returns: None
+        """
+        self._lca = LCA(self._nodes)
 
     def build_lineages(self, root_node: str = None, ranks: list = None):
         """
@@ -264,15 +294,15 @@ class MultiTax(object):
                 node=node, root_node=root_node, ranks=ranks
             )
 
-    def build_translation(self, tax, files: list = None, urls: list = None):
+    def build_translation(self, tax, file: str = None, url: str = None):
         """
         Create a translation of current taxonomy to another
 
         Parameters:
 
         * **tax** [MultiTax]: A target taxonomy to be translated to.
-        * **files** *[str, list]*: One or more local files to parse.
-        * **urls** *[str, list]*: One or more urls to download and parse.
+        * **file** *[str]*: Local file to parse.
+        * **url** *[str]*: Url to download and parse.
 
         Example:
 
@@ -285,18 +315,15 @@ class MultiTax(object):
             gtdb_tax.translate("g__Escherichia")
                 {'1301', '547', '561', '570', '590', '620'}
 
-            # Using local files (NCBI <-> GTDB)
-            ncbi_tax.build_translation(gtdb_tax, files=["ar53_metadata.tsv.gz", "bac120_metadata.tsv.gz"])
+            # Using local file
+            ncbi_tax.build_translation(gtdb_tax, file="226_acc_rep_lin_ncbi.tsv.gz")
             ncbi_tax.translate("620")
                 {'g__Escherichia', 'g__Proteus', 'g__Serratia'}
         """
-        if files:
-            if isinstance(files, str):
-                files = [files]
-            for file in files:
-                check_file(file)
+        if file:
+            check_file(file)
 
-        self._translated_nodes = self._build_translation(tax, files, urls)
+        self._translated_nodes = self._build_translation(tax, file, url)
 
     def children(self, node: str):
         """
@@ -344,6 +371,14 @@ class MultiTax(object):
 
         return None
 
+    def clear_lca(self):
+        """
+        Clear built LCA.
+
+        Returns: None
+        """
+        self._lca = None
+
     def clear_lineages(self):
         """
         Clear built lineages.
@@ -372,7 +407,7 @@ class MultiTax(object):
         Filters taxonomy given a list of nodes.
         By default keep all the ancestors of the given nodes.
         If desc=True, keep all descendants instead.
-        Deletes built lineages and translations.
+        Deletes built lineages, translations and lca.
 
         Example:
 
@@ -426,6 +461,24 @@ class MultiTax(object):
         self._reset_aux_data()
         self.check_consistency()
 
+    @classmethod
+    def from_customtx(cls, ctx):
+        """
+        Initialize a Tx sub-class based on a CustomTx instance.
+
+        Example:
+
+            tax_custom = CustomTx(version="custom_ncbi_files", files="my_custom_tax.tsv", cols=["node","parent","rank"])
+            tax_ncbi = NcbiTx.from_customtx(tax_custom)
+        """
+        nc = cls(empty=True)
+        nc.version = ctx.version
+        nc.sources = ctx.sources
+        nc._nodes = ctx._nodes
+        nc._names = ctx._names
+        nc._ranks = ctx._ranks
+        return nc
+
     def latest(self, node: str):
         """
         Returns latest/updated version of a given node.
@@ -448,6 +501,26 @@ class MultiTax(object):
             return self._recurse_leaves(node)
         else:
             return []
+
+    def lca(self, nodes: list = None):
+        """
+        Returns the lowest common ancestor of two or more nodes.
+
+        Example:
+
+            from multitax import GtdbTx
+            tax = GtdbTx()
+            tax.lca(["s__Escherichia coli", "s__Escherichia fergusonii"])
+        """
+        for node in nodes:
+            if node not in self._nodes:
+                raise ValueError("Node [" + node + "] not found.")
+
+        # Setup on first use
+        if not self._lca:
+            self.build_lca()
+
+        return self._lca(*nodes)
 
     def lineage(self, node: str, root_node: str = None, ranks: list = None):
         """
@@ -542,7 +615,7 @@ class MultiTax(object):
     def prune(self, nodes: list):
         """
         Prunes branches of the tree under the given nodes.
-        Deletes built lineages and translations.
+        Deletes built lineages, translations and lca.
         """
 
         if isinstance(nodes, str):
@@ -582,7 +655,7 @@ class MultiTax(object):
         """
         Removes node from taxonomy. Can break the tree if a parent node is removed. To remove a certain branch, use prune.
         Running check consistency after removing a node is recommended.
-        Deletes built lineages and translations.
+        Deletes built lineages, translations and lca.
         """
         if node not in self._nodes:
             raise ValueError("Node [" + node + "] not found.")
@@ -650,7 +723,6 @@ class MultiTax(object):
         s["leaves"] = len(all_leaves)
         s["ranked_nodes"] = Counter(self._ranks.values())
         s["ranked_leaves"] = Counter(map(self.rank, all_leaves))
-
         return s
 
     def translate(self, node: str):
