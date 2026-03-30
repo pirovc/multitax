@@ -15,6 +15,26 @@ MultiTax is a Python package that provides a standardised set of functions for d
 
 MultiTax handles taxonomic nodes. Sequence identifiers are not directly supported, but can be integrated with the `add()` function.
 
+## Supported versions
+
+- NCBI:
+  - current
+  - custom with file/url for: `taxdump.tar.gz` or `nodes.dmp` (and optional `names.dmp` and `merged.dmp`)
+- GTDB:
+  - 80, 83, 86.2, 89, 95, 202, 207, 214.1, 220, 226
+  - custom with file/url
+- Silva
+  - ssu_138.2
+  - custom with file/url
+- Greengenes
+  - 2024.09
+  - custom with file/url
+- Ott
+  - 3.7.3
+  - custom with file/url
+- Custom
+  - custom with file/url with fields: `node`, `parent`, `rank`, `name`
+
 ## Installation
 
 ### pip
@@ -58,8 +78,6 @@ pip install .
 
 ```python
 >>> from multitax import GtdbTx  # or NcbiTx, SilvaTx, OttTx, GreengensTx
-
-# Download and parse in memory
 >>> tax = GtdbTx()
 
 # Download and parse specific version
@@ -82,6 +100,9 @@ GtdbTx(version='220', source=['https://data.gtdb.ecogenomic.org/releases/release
 ### Explore
 
 ```python
+>>> from multitax import GtdbTx  # or NcbiTx, SilvaTx, OttTx, GreengensTx
+>>> tax = GtdbTx()
+
 # List parent node
 >>> tax.parent("g__Escherichia")
 'f__Enterobacteriaceae'
@@ -98,6 +119,9 @@ GtdbTx(version='220', source=['https://data.gtdb.ecogenomic.org/releases/release
 >>> tax.closest_parent("s__Lentisphaera araneosa", ranks=["phylum", "class", "family"])
 'f__Lentisphaeraceae'
 
+# Optional, pre-build lineages in memory for faster access
+>>> tax.build_lineages()
+
 # Get lineage
 >>> tax.lineage("g__Escherichia")
 ['1', 'd__Bacteria', 'p__Pseudomonadota', 'c__Gammaproteobacteria', 'o__Enterobacterales', 'f__Enterobacteriaceae', 'g__Escherichia']
@@ -113,9 +137,6 @@ GtdbTx(version='220', source=['https://data.gtdb.ecogenomic.org/releases/release
 # Get lineage with defined ranks and root node
 >>> tax.lineage("g__Escherichia", root_node="p__Pseudomonadota", ranks=["phylum", "class", "family", "genus"])
 ['p__Pseudomonadota', 'c__Gammaproteobacteria', 'f__Enterobacteriaceae', 'g__Escherichia']
-
-# Build lineages in memory for faster access
->>> tax.build_lineages()
 
 # Get leaf nodes
 >>> tax.leaves("g__Hadarchaeum")
@@ -145,7 +166,10 @@ GtdbTx(version='220', source=['https://data.gtdb.ecogenomic.org/releases/release
 ### Filter
 
 ```python
-# Filter ancestors (desc=True for descendants)
+>>> from multitax import GtdbTx  # or NcbiTx, SilvaTx, OttTx, GreengensTx
+>>> tax = GtdbTx()
+
+# Filter ancestors, keeping only nodes up-to "g__Escherichia" and "s__Pseudomonas aeruginosa"
 >>> tax.filter(["g__Escherichia", "s__Pseudomonas aeruginosa"])
 >>> print(tax.stats())
 {'leaves': 2,
@@ -161,11 +185,32 @@ GtdbTx(version='220', source=['https://data.gtdb.ecogenomic.org/releases/release
                           'species': 1,
                           'root': 1}),
  'ranks': 11}
+
+# Filter descendants, keeping only children nodes from "d__Archaea"
+>>> tax = GtdbTx()
+>>> tax.filter(["d__Archaea"], desc=True)
+>>> print(tax.stats())
+{'leaves': 6968,
+ 'names': 9910,
+ 'nodes': 9910,
+ 'ranked_leaves': Counter({'species': 6968}),
+ 'ranked_nodes': Counter({'species': 6968,
+                          'genus': 2079,
+                          'family': 603,
+                          'order': 172,
+                          'class': 65,
+                          'phylum': 21,
+                          'domain': 1,
+                          'root': 1}),
+ 'ranks': 9910}
 ```
 
 ### Add, remove, prune
 
 ```python
+>>> from multitax import GtdbTx  # or NcbiTx, SilvaTx, OttTx, GreengensTx
+>>> tax = GtdbTx()
+
 # Add node to the tree
 >>> tax.add("my_custom_node", "g__Escherichia", name="my custom name", rank="strain")
 >>> tax.lineage("my_custom_node")
@@ -217,11 +262,11 @@ GtdbTx(version='220', source=['https://data.gtdb.ecogenomic.org/releases/release
 'f__Enterobacteriaceae'
 ```
 
-### Convert GTDB versions
+### Convert between GTDB versions
 
 ```python
 >>> from multitax import GtdbTx
-# Taxa from version 95 to version 226
+# Taxa from version 95 to version 226, based on representative genomes
 >>> tax = GtdbTx(version="95")
 >>> tax.convert("g__OLB14", version="226")
 {'g__Villigracilis'}
