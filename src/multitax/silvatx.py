@@ -5,9 +5,10 @@ import warnings
 
 class SilvaTx(MultiTax):
     _default_version = "ssu_138.2"
-    _supported_versions = ["ssu_138.2"]
+    _supported_versions = ["lsu_138.2", "ssu_138.2"]
     _default_urls = {
-        "ssu_138.2": "https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.2.txt.gz"
+        "ssu_138.2": "https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_ssu_138.2.txt.gz",
+        "lsu_138.2": "https://www.arb-silva.de/fileadmin/silva_databases/current/Exports/taxonomy/tax_slv_lsu_138.2.txt.gz",
     }
 
     def __init__(self, **kwargs):
