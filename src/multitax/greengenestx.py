@@ -5,9 +5,10 @@ import warnings
 
 class GreengenesTx(MultiTax):
     _default_version = "2024.09"
-    _supported_versions = ["2024.09"]
+    _supported_versions = ["2022.10", "2024.09"]
     _default_urls = {
-        "2024.09": "https://ftp.microbio.me/greengenes_release/current/2024.09.taxonomy.id.tsv.gz"
+        "2024.09": "https://ftp.microbio.me/greengenes_release/2024.09/2024.09.taxonomy.id.tsv.gz",
+        "2022.10": "https://ftp.microbio.me/greengenes_release/2022.10/2022.10.taxonomy.id.tsv.gz",
     }
 
     _rank_codes = [

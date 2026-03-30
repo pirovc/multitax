@@ -5,9 +5,10 @@ import warnings
 
 class OttTx(MultiTax):
     _default_version = "3.7.3"
-    _supported_versions = ["3.7.3"]
+    _supported_versions = ["3.6", "3.7.3"]
     _default_urls = {
-        "3.7.3": "https://files.opentreeoflife.org/ott/ott3.7.3/ott3.7.3.tgz"
+        "3.6": "https://files.opentreeoflife.org/ott/ott3.6/ott3.6.tgz",
+        "3.7.3": "https://files.opentreeoflife.org/ott/ott3.7.3/ott3.7.3.tgz",
     }
     _default_root_node = "805080"
 

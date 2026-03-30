@@ -18,22 +18,24 @@ MultiTax handles taxonomic nodes. Sequence identifiers are not directly supporte
 ## Supported versions
 
 - NCBI:
-  - current
+  - **current** (daily updated version)
   - custom with file/url for: `taxdump.tar.gz` or `nodes.dmp` (and optional `names.dmp` and `merged.dmp`)
 - GTDB:
-  - 80, 83, 86.2, 89, 95, 202, 207, 214.1, 220, 226
+  - 80, 83, 86.2, 89, 95, 202, 207, 214.1, 220, **226**
   - custom with file/url
 - Silva
-  - ssu_138.2
+  - lsu_138.2, **ssu_138.2**
   - custom with file/url
 - Greengenes
-  - 2024.09
+  - 2024.09, **2024.09**
   - custom with file/url
 - Ott
-  - 3.7.3
+  - 3.6, **3.7.3**
   - custom with file/url
 - Custom
   - custom with file/url with fields: `node`, `parent`, `rank`, `name`
+
+Defaults to **version in bold**.
 
 ## Installation
 
