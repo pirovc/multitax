@@ -27,7 +27,7 @@ MultiTax handles taxonomic nodes. Sequence identifiers are not directly supporte
   - lsu_138.2, **ssu_138.2**
   - custom with file/url
 - Greengenes
-  - 2024.09, **2024.09**
+  - 2022.10, **2024.09**
   - custom with file/url
 - Ott
   - 3.6, **3.7.3**
