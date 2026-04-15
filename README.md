@@ -19,9 +19,9 @@ MultiTax handles taxonomic nodes. Sequence identifiers are not directly supporte
 
 - NCBI:
   - **current** (daily updated version)
-  - custom with file/url for: `taxdump.tar.gz` or `nodes.dmp` (and optional `names.dmp` and `merged.dmp`)
+  - custom with file/url for: `taxdump.tar.gz` or `nodes.dmp` (and optional `names.dmp` and `merged.dmp`). Older versions can be obtained [here](https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump_archive/).
 - GTDB:
-  - 80, 83, 86.2, 89, 95, 202, 207, 214.1, 220, **226**
+  - 80, 83, 86.2, 89, 95, 202, 207, 214.1, 220, 226, **232**
   - custom with file/url
 - Silva
   - lsu_138.2, **ssu_138.2**
@@ -225,7 +225,7 @@ GtdbTx(version='220', source=['https://data.gtdb.ecogenomic.org/releases/release
 >>> tax.prune("g__Escherichia")
 ```
 
-## LCA (lowest common ancestor)
+### LCA (lowest common ancestor)
 
 ```python
 >>> from multitax import GtdbTx

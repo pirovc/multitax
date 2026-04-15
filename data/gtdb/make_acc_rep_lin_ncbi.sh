@@ -30,3 +30,6 @@ curl "${url_prefix}/release220/220.0/bac120_metadata_r220.tsv.gz" | zcat | tail 
 # 226
 curl "${url_prefix}/release226/226.0/ar53_metadata_r226.tsv.gz" | zcat | tail -n+2 | cut -f 1,19,20,81  | sed 's/^[R|G][S|B]_GC[A|F]_\([0-9]*\).[0-9]*/G\1/' | gzip > 226_acc_rep_lin_ncbi.tsv.gz
 curl "${url_prefix}/release226/226.0/bac120_metadata_r226.tsv.gz" | zcat | tail -n+2 | cut -f 1,19,20,81 | sed 's/^[R|G][S|B]_GC[A|F]_\([0-9]*\).[0-9]*/G\1/' | gzip >> 226_acc_rep_lin_ncbi.tsv.gz
+# 232
+curl "${url_prefix}/release232/232.0/ar53_metadata_r232.tsv.gz" | zcat | tail -n+2 | cut -f 1,19,20,81  | sed 's/^[R|G][S|B]_GC[A|F]_\([0-9]*\).[0-9]*/G\1/' | gzip > 232_acc_rep_lin_ncbi.tsv.gz
+curl "${url_prefix}/release232/232.0/bac120_metadata_r232.tsv.gz" | zcat | tail -n+2 | cut -f 1,19,20,81 | sed 's/^[R|G][S|B]_GC[A|F]_\([0-9]*\).[0-9]*/G\1/' | gzip >> 232_acc_rep_lin_ncbi.tsv.gz
