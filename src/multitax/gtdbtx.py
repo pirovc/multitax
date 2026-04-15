@@ -4,7 +4,7 @@ import warnings
 
 
 class GtdbTx(MultiTax):
-    _default_version = "226"
+    _default_version = "232"
     _supported_versions = [
         "80",
         "83",
@@ -16,6 +16,7 @@ class GtdbTx(MultiTax):
         "214.1",
         "220",
         "226",
+        "232",
     ]
 
     _url_prefix = "https://data.gtdb.ecogenomic.org/releases/"
@@ -53,6 +54,10 @@ class GtdbTx(MultiTax):
         "226": [
             f"{_url_prefix}release226/226.0/ar53_taxonomy_r226.tsv.gz",
             f"{_url_prefix}release226/226.0/bac120_taxonomy_r226.tsv.gz",
+        ],
+        "232": [
+            f"{_url_prefix}release232/232.0/ar53_taxonomy_r232.tsv.gz",
+            f"{_url_prefix}release232/232.0/bac120_taxonomy_r232.tsv.gz",
         ],
     }
 
