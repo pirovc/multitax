@@ -16,9 +16,19 @@ from pylca.pylca import LCA
 
 class MultiTax(object):
     _default_version = "current"
+
     _supported_versions = ["current"]
     _default_urls = {}
     _default_root_node = "1"
+    _standard_ranks = [
+        "domain",
+        "phylum",
+        "class",
+        "order",
+        "family",
+        "genus",
+        "species",
+    ]
 
     def __init__(
         self,
@@ -315,7 +325,7 @@ class MultiTax(object):
             gtdb_tax.translate("g__Escherichia")
                 {'1301', '547', '561', '570', '590', '620'}
 
-            # Using local file
+            # Using local file from https://github.com/pirovc/multitax/tree/main/data/gtdb
             ncbi_tax.build_translation(gtdb_tax, file="226_acc_rep_lin_ncbi.tsv.gz")
             ncbi_tax.translate("620")
                 {'g__Escherichia', 'g__Proteus', 'g__Serratia'}
@@ -725,14 +735,26 @@ class MultiTax(object):
         s["ranked_leaves"] = Counter(map(self.rank, all_leaves))
         return s
 
-    def translate(self, node: str):
+    def translate(self, node: str, fallback_parents: bool = False):
         """
-        Returns the translated node from another taxonomy. Translated nodes are generated with the build_translation function.
+        Returns the translated node(s) from another taxonomy. One node may translate to none, one or several nodes.
+        The translation have to first be generated with the `build_translation` function.
+
+        Parameters:
+        * **node** *[str]*: Node to translate.
+        * **fallback_parents** *[bool]*: translate closest parent node if given node does not have a direct translation.
+
+        Returns: set of matching nodes
+
         """
         if node in self._translated_nodes:
             return self._translated_nodes[node]
-        else:
-            return []
+        elif fallback_parents:
+            for parent_node in self.lineage(node, ranks=self._standard_ranks)[-2::-1]:
+                if parent_node in self._translated_nodes:
+                    return self._translated_nodes[parent_node]
+
+        return []
 
     def write(
         self,

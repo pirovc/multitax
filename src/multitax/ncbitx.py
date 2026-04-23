@@ -53,16 +53,11 @@ class NcbiTx(MultiTax):
                     if gtdb_leaf_node != target_tax.undefined_node:
                         gtdb_nodes = target_tax.lineage(
                             gtdb_leaf_node,
-                            ranks=[
-                                "domain",
-                                "phylum",
-                                "class",
-                                "order",
-                                "family",
-                                "genus",
-                                "species",
-                            ],
+                            ranks=self._standard_ranks,
                         )
+                        # Node not found in the taxonomy
+                        if not gtdb_nodes:
+                            continue
                     else:
                         continue
 
@@ -74,17 +69,10 @@ class NcbiTx(MultiTax):
                         if ncbi_leaf_node not in translated_nodes:
                             translated_nodes[ncbi_leaf_node] = set()
                         translated_nodes[ncbi_leaf_node].add(gtdb_leaf_node)
+
                         ncbi_nodes = self.lineage(
                             ncbi_leaf_node,
-                            ranks=[
-                                "domain",
-                                "phylum",
-                                "class",
-                                "order",
-                                "family",
-                                "genus",
-                                "species",
-                            ],
+                            ranks=self._standard_ranks,
                         )
                     else:
                         continue
