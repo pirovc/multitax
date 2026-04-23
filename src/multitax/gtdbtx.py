@@ -79,7 +79,9 @@ class GtdbTx(MultiTax):
     def __repr__(self):
         return format_repr(inst=self)
 
-    def _build_translation(self, target_tax, file: str = None, url: str = None):
+    def _build_translation(
+        self, target_tax, gtdb_rep_only: bool = False, file: str = None, url: str = None
+    ):
         translated_nodes = {}
         if target_tax.__class__.__name__ == "NcbiTx":
             if file:
@@ -90,6 +92,7 @@ class GtdbTx(MultiTax):
                 fhs = download_files(urls=[url], retry_attempts=3)
 
             accession_col = 0
+            gtdb_representative_col = 1
             gtdb_taxonomy_col = 2
             ncbi_taxid_col = 3
 
@@ -102,6 +105,10 @@ class GtdbTx(MultiTax):
 
                     # skip header
                     if fields[accession_col] == "accession":
+                        continue
+
+                    # skip not representatives if requested
+                    if gtdb_rep_only and fields[gtdb_representative_col] == "f":
                         continue
 
                     ncbi_leaf_node = target_tax.latest(fields[ncbi_taxid_col])
@@ -128,14 +135,18 @@ class GtdbTx(MultiTax):
                         continue
 
                     # Match ranks
-                    for i, gtdb_n in enumerate(gtdb_nodes):
-                        if (
-                            ncbi_nodes[i] != target_tax.undefined_node
-                            and gtdb_n != self.undefined_node
-                        ):
-                            if gtdb_n not in translated_nodes:
-                                translated_nodes[gtdb_n] = set()
-                            translated_nodes[gtdb_n].add(ncbi_nodes[i])
+                    for i, gtdb_n in enumerate(gtdb_nodes, 1):
+                        if gtdb_n == self.undefined_node:
+                            continue
+                        # Get closes available node for translation in the lineage up to current rank
+                        translated_node = next(
+                            x
+                            for x in reversed(ncbi_nodes[:i])
+                            if x is not target_tax.undefined_node
+                        )
+                        if gtdb_n not in translated_nodes:
+                            translated_nodes[gtdb_n] = []
+                        translated_nodes[gtdb_n].append(translated_node)
 
             close_files(fhs)
         else:
@@ -247,9 +258,12 @@ class GtdbTx(MultiTax):
 
     def convert(self, node: str, version: str) -> set[str]:
         """
-        Converts a taxonomic node from current version to another.
-        It uses a genomic centric strategy, based on the taxa of the representative
-        genome among versions.
+        Converts a taxonomic node from the loaded tax to another version.
+
+        It uses a genomic centric strategy: locates the GTDB species representative(s)
+        of the requested `node` lineage and converts to the assigned lineage(s) of that
+        genome in the requested `version`.
+
         It may return multiple nodes for ranks above species,
         since multiple representatives can be split into more taxa.
         It may return an empty set if node is not found in the current version
