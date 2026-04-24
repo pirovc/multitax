@@ -326,7 +326,7 @@ class MultiTax(object):
             # Automatically download translation files
             gtdb_tax.build_translation(ncbi_tax)
             gtdb_tax.translate("g__Escherichia")
-                {'1301', '547', '561', '570', '590', '620'}
+                ['561', '620', '590', '1224', '194', '543', '547', '570', '186803', '2005523', '841', '2', '1485', '2159', '216572', '1301', '128827', '815', '239759', '2791015', '1263', '1472649', '816', '171549', '2005473', '33024']
 
             # Using local file from https://github.com/pirovc/multitax/tree/main/data/gtdb
             ncbi_tax.build_translation(gtdb_tax, file="226_acc_rep_lin_ncbi.tsv.gz")
@@ -336,7 +336,7 @@ class MultiTax(object):
             # Translation based on GTDB representative genome only
             gtdb_tax.build_translation(ncbi_tax, gtdb_rep_only=True)
             gtdb_tax.translate("g__Escherichia")
-                {'561', '547'}
+                ['561', '547']
         """
         if file:
             check_file(file)
@@ -743,24 +743,29 @@ class MultiTax(object):
         s["ranked_leaves"] = Counter(map(self.rank, all_leaves))
         return s
 
-    def translate(self, node: str, fallback_parents: bool = False):
+    def translate(self, node: str, top_perc: float | None = None, counts: bool = False):
         """
         Returns the translated node(s) from another taxonomy. One node may translate to none, one or several nodes.
         The translation have to first be generated with the `build_translation` function.
 
         Parameters:
         * **node** *[str]*: Node to translate.
-        * **fallback_parents** *[bool]*: translate closest parent node if given node does not have a direct translation.
+        * **top_perc** *[float]*: Keep translations summing up to `top_perc` of the nodes.
+        * **counts** *[bool]*: Output a sorted list of tuples with translated node and total of genomes translated.
 
-        Returns: set of matching nodes
-
+        Returns: List of translated nodes (or list of tuples with counts)
         """
         if node in self._translated_nodes:
-            return self._translated_nodes[node]
-        elif fallback_parents:
-            for parent_node in self.lineage(node, ranks=self._standard_ranks)[-2::-1]:
-                if parent_node in self._translated_nodes:
-                    return self._translated_nodes[parent_node]
+            ret = Counter(self._translated_nodes[node])
+            i = None
+            if top_perc:
+                total = ret.total()
+                sm = 0
+                for i, (_, cnt) in enumerate(ret.most_common(), 1):
+                    sm += cnt
+                    if (sm / total) >= top_perc:
+                        break
+            return ret.most_common(i) if counts else [n[0] for n in ret.most_common(i)]
 
         return []
 
