@@ -23,7 +23,11 @@ class NcbiTx(MultiTax):
         return format_repr(inst=self)
 
     def _build_translation(
-        self, target_tax, gtdb_rep_only: bool = False, file: str = None, url: str = None
+        self,
+        target_tax,
+        representatives: bool = False,
+        file: str = None,
+        url: str = None,
     ):
         translated_nodes = {}
         if target_tax.__class__.__name__ == "GtdbTx":
@@ -51,7 +55,7 @@ class NcbiTx(MultiTax):
                         continue
 
                     # skip not representatives if requested
-                    if gtdb_rep_only and fields[gtdb_representative_col] == "f":
+                    if representatives and fields[gtdb_representative_col] == "f":
                         continue
 
                     # Build GTDB lineage from leaf (species on given lineage)

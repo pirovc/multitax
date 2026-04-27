@@ -80,7 +80,11 @@ class GtdbTx(MultiTax):
         return format_repr(inst=self)
 
     def _build_translation(
-        self, target_tax, gtdb_rep_only: bool = False, file: str = None, url: str = None
+        self,
+        target_tax,
+        representatives: bool = False,
+        file: str = None,
+        url: str = None,
     ):
         translated_nodes = {}
         if target_tax.__class__.__name__ == "NcbiTx":
@@ -108,7 +112,7 @@ class GtdbTx(MultiTax):
                         continue
 
                     # skip not representatives if requested
-                    if gtdb_rep_only and fields[gtdb_representative_col] == "f":
+                    if representatives and fields[gtdb_representative_col] == "f":
                         continue
 
                     ncbi_leaf_node = target_tax.latest(fields[ncbi_taxid_col])
@@ -219,11 +223,13 @@ class GtdbTx(MultiTax):
     def build_conversion(
         self,
         version: str,
+        representatives: bool = False,
         files: tuple[str, str] = ("", ""),
         urls: tuple[str, str] = ("", ""),
     ):
         """
         Download and build conversion table against another version.
+        Optionally build conversion based only on representative genomes of current version.
         Optional function, conversion tables are automatically downloaded
         and built on first .convert() call.
         """
@@ -238,11 +244,15 @@ class GtdbTx(MultiTax):
             for acc, rep, lin, _ in self._download_parse_version_taxa(
                 version=self.version, file=files[0], url=urls[0]
             ):
-                if rep == "t":
-                    for tx in lin.split(";"):
-                        if tx not in tx_accs:
-                            tx_accs[tx] = []
-                        tx_accs[tx].append(acc)
+                # Skip not representatives if requested
+                if representatives and rep == "f":
+                    continue
+
+                for tx in lin.split(";"):
+                    if tx not in tx_accs:
+                        tx_accs[tx] = []
+                    tx_accs[tx].append(acc)
+
             # Assign only at the end, in case of download/parse errors
             self._convert_from = tx_accs
 

@@ -843,7 +843,7 @@ class TestFunctions(unittest.TestCase):
         gtdb_v1 = GtdbTx(version="v1", files="tests/multitax/data_minimal/gtdb_v1_tax.tsv.gz")
         # To avoid ValueError Version not supported
         gtdb_v1._supported_versions.append("v2")
-        gtdb_v1.build_conversion(version="v2", files=("tests/multitax/data_minimal/gtdb_v1_acc_rep_lin_ncbi.tsv.gz", "tests/multitax/data_minimal/gtdb_v2_acc_rep_lin_ncbi.tsv.gz"))
+        gtdb_v1.build_conversion(version="v2", files=("tests/multitax/data_minimal/gtdb_v1_acc_rep_lin_ncbi.tsv.gz", "tests/multitax/data_minimal/gtdb_v2_acc_rep_lin_ncbi.tsv.gz"), representatives=True)
         
         # Same
         self.assertEqual(first=gtdb_v1.convert("s__H", version="v2"), second={"s__H"})

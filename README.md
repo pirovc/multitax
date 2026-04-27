@@ -358,7 +358,7 @@ genus   0.37    19.21   29.69   16.92   12.73   13.17   7.91    0.00
 species 0.11    3.07    3.63    2.71    2.12    2.39    5.03    80.94
 ```
 
-Alternatively, the translation can be also based solely on GTDB representatives (ith `gtdb_rep_only=True` param in `build_translation()` method. The conversion table in this scenario:
+Alternatively, the translation can be also based solely on GTDB representatives (ith `representatives=True` param in `build_translation()` method. The conversion table in this scenario:
 
 ```txt
         root    domain  phylum  class   order   family  genus   species
@@ -371,7 +371,7 @@ genus   0.24    17.79   29.42   17.12   13.13   13.68   8.63    0.00
 species 0.00    0.00    0.00    0.00    0.00    0.00    0.00    100.00
 ```
 
-Use `gtdb_rep_only` and/or `top_perc` with caution, since they may result in an "approximate" translation.
+Use `representatives` and/or `top_perc` with caution, since they may result in an "approximate" translation.
 
 ### Current status and possible translations
 

@@ -305,7 +305,7 @@ class MultiTax(object):
             )
 
     def build_translation(
-        self, tax, gtdb_rep_only: bool = False, file: str = None, url: str = None
+        self, tax, representatives: bool = False, file: str = None, url: str = None
     ):
         """
         Create a translation of current taxonomy to another
@@ -313,7 +313,7 @@ class MultiTax(object):
         Parameters:
 
         * **tax** [MultiTax]: A target taxonomy to be translated to.
-        * **gtdb_rep_only** *[bool]*: Use only GTDB representative genomes to translate nodes.
+        * **representatives** *[bool]*: Use only GTDB representative genomes to translate nodes.
         * **file** *[str]*: Local file to parse.
         * **url** *[str]*: Url to download and parse.
 
@@ -334,14 +334,16 @@ class MultiTax(object):
                 {'g__Escherichia', 'g__Proteus', 'g__Serratia'}
 
             # Translation based on GTDB representative genome only
-            gtdb_tax.build_translation(ncbi_tax, gtdb_rep_only=True)
+            gtdb_tax.build_translation(ncbi_tax, representatives=True)
             gtdb_tax.translate("g__Escherichia")
                 ['561', '547']
         """
         if file:
             check_file(file)
 
-        self._translated_nodes = self._build_translation(tax, gtdb_rep_only, file, url)
+        self._translated_nodes = self._build_translation(
+            tax, representatives, file, url
+        )
 
     def children(self, node: str):
         """
