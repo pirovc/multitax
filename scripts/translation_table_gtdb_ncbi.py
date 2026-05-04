@@ -4,7 +4,7 @@ from collections import Counter
 from multitax import GtdbTx, NcbiTx
 
 representatives = False
-top_perc = 1
+top_perc = None
 
 gtdb_tax = GtdbTx(version="232")
 ncbi_tax = NcbiTx(urls="https://data.gtdb.ecogenomic.org/releases/release232/232.0/auxillary_files/taxdump_20250907.tar.gz")
@@ -16,21 +16,20 @@ ncbi_tax.build_lca()
 gtdb_tax.build_translation(tax=ncbi_tax, representatives=representatives)
 
 table = {r: {} for r in ncbi_tax._standard_ranks}
-
 for r in ncbi_tax._standard_ranks:
     tres = []
     # For all nodes of each standard rank
     for leaf in gtdb_tax.nodes_rank(r):
         # Translate and apply LCA
-        lca = ncbi_tax.lca(gtdb_tax.translate(leaf, top_perc=top_perc if top_perc else 1))
+        lca = ncbi_tax.lca(gtdb_tax.translate(leaf, top_perc=top_perc))
         
-        # Get closest parent of the LCA node
-        cr = ncbi_tax.closest_parent(lca, ranks=ncbi_tax._standard_ranks)
+        # Get closest parent of the LCA node and rank
+        cr = ncbi_tax.rank(ncbi_tax.closest_parent(lca, ranks=ncbi_tax._standard_ranks))
         tres.append(cr)
     
     # Get ranks of translations
     # None is the result of the LCA to the root node (since it is "no rank" and not in _standard_ranks)
-    rank_counts = Counter(map(ncbi_tax.rank, tres))
+    rank_counts = Counter(tres)
     for item, count in rank_counts.items():
         rank_counts[item] /= len(tres)
     table[r] = rank_counts

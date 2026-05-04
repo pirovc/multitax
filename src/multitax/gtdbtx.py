@@ -95,7 +95,6 @@ class GtdbTx(MultiTax):
                     url = f"https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/{self.version}_acc_rep_lin_ncbi.tsv.gz"
                 fhs = download_files(urls=[url], retry_attempts=3)
 
-            accession_col = 0
             gtdb_representative_col = 1
             gtdb_taxonomy_col = 2
             ncbi_taxid_col = 3
@@ -106,10 +105,6 @@ class GtdbTx(MultiTax):
                         fields = line.rstrip().split("\t")
                     except TypeError:
                         fields = line.decode().rstrip().split("\t")
-
-                    # skip header
-                    if fields[accession_col] == "accession":
-                        continue
 
                     # skip not representatives if requested
                     if representatives and fields[gtdb_representative_col] == "f":
