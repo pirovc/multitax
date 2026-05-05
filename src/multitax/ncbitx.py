@@ -64,9 +64,9 @@ class NcbiTx(MultiTax):
 
                     # Get closes available node for translation in the lineage up to current rank
                     translated_node = next(
-                        x
-                        for x in reversed(gtdb_nodes[:i])
-                        if x is not target_tax.undefined_node
+                        node
+                        for node in reversed(gtdb_nodes[:i])
+                        if node is not target_tax.undefined_node
                     )
 
                     if ncbi_n not in translated_nodes:

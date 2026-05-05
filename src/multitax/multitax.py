@@ -753,7 +753,7 @@ class MultiTax(object):
 
         Parameters:
         * **node** *[str]*: Node to translate.
-        * **top_perc** *[float]*: Keep translations summing up to `top_perc` of the nodes.
+        * **top_perc** *[float]*: Keep translations summing up to `top_perc` of the nodes based on counts.
         * **counts** *[bool]*: Output a sorted list of tuples with the translated node and counts.
 
         Returns: List of translated nodes (or list of tuples with counts)

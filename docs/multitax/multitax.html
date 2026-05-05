@@ -917,7 +917,7 @@
 </span><span id="L-753"><a href="#L-753"><span class="linenos">753</span></a>
 </span><span id="L-754"><a href="#L-754"><span class="linenos">754</span></a><span class="sd">        Parameters:</span>
 </span><span id="L-755"><a href="#L-755"><span class="linenos">755</span></a><span class="sd">        * **node** *[str]*: Node to translate.</span>
-</span><span id="L-756"><a href="#L-756"><span class="linenos">756</span></a><span class="sd">        * **top_perc** *[float]*: Keep translations summing up to `top_perc` of the nodes.</span>
+</span><span id="L-756"><a href="#L-756"><span class="linenos">756</span></a><span class="sd">        * **top_perc** *[float]*: Keep translations summing up to `top_perc` of the nodes based on counts.</span>
 </span><span id="L-757"><a href="#L-757"><span class="linenos">757</span></a><span class="sd">        * **counts** *[bool]*: Output a sorted list of tuples with the translated node and counts.</span>
 </span><span id="L-758"><a href="#L-758"><span class="linenos">758</span></a>
 </span><span id="L-759"><a href="#L-759"><span class="linenos">759</span></a><span class="sd">        Returns: List of translated nodes (or list of tuples with counts)</span>
@@ -1764,7 +1764,7 @@
 </span><span id="MultiTax-754"><a href="#MultiTax-754"><span class="linenos">754</span></a>
 </span><span id="MultiTax-755"><a href="#MultiTax-755"><span class="linenos">755</span></a><span class="sd">        Parameters:</span>
 </span><span id="MultiTax-756"><a href="#MultiTax-756"><span class="linenos">756</span></a><span class="sd">        * **node** *[str]*: Node to translate.</span>
-</span><span id="MultiTax-757"><a href="#MultiTax-757"><span class="linenos">757</span></a><span class="sd">        * **top_perc** *[float]*: Keep translations summing up to `top_perc` of the nodes.</span>
+</span><span id="MultiTax-757"><a href="#MultiTax-757"><span class="linenos">757</span></a><span class="sd">        * **top_perc** *[float]*: Keep translations summing up to `top_perc` of the nodes based on counts.</span>
 </span><span id="MultiTax-758"><a href="#MultiTax-758"><span class="linenos">758</span></a><span class="sd">        * **counts** *[bool]*: Output a sorted list of tuples with the translated node and counts.</span>
 </span><span id="MultiTax-759"><a href="#MultiTax-759"><span class="linenos">759</span></a>
 </span><span id="MultiTax-760"><a href="#MultiTax-760"><span class="linenos">760</span></a><span class="sd">        Returns: List of translated nodes (or list of tuples with counts)</span>
@@ -3187,7 +3187,7 @@ pprint(tax.stats())
 </span><span id="MultiTax.translate-754"><a href="#MultiTax.translate-754"><span class="linenos">754</span></a>
 </span><span id="MultiTax.translate-755"><a href="#MultiTax.translate-755"><span class="linenos">755</span></a><span class="sd">        Parameters:</span>
 </span><span id="MultiTax.translate-756"><a href="#MultiTax.translate-756"><span class="linenos">756</span></a><span class="sd">        * **node** *[str]*: Node to translate.</span>
-</span><span id="MultiTax.translate-757"><a href="#MultiTax.translate-757"><span class="linenos">757</span></a><span class="sd">        * **top_perc** *[float]*: Keep translations summing up to `top_perc` of the nodes.</span>
+</span><span id="MultiTax.translate-757"><a href="#MultiTax.translate-757"><span class="linenos">757</span></a><span class="sd">        * **top_perc** *[float]*: Keep translations summing up to `top_perc` of the nodes based on counts.</span>
 </span><span id="MultiTax.translate-758"><a href="#MultiTax.translate-758"><span class="linenos">758</span></a><span class="sd">        * **counts** *[bool]*: Output a sorted list of tuples with the translated node and counts.</span>
 </span><span id="MultiTax.translate-759"><a href="#MultiTax.translate-759"><span class="linenos">759</span></a>
 </span><span id="MultiTax.translate-760"><a href="#MultiTax.translate-760"><span class="linenos">760</span></a><span class="sd">        Returns: List of translated nodes (or list of tuples with counts)</span>
@@ -3216,7 +3216,7 @@ The translation have to first be generated with the <code><a href="#MultiTax.bui
 
 <ul>
 <li><strong>node</strong> <em>[str]</em>: Node to translate.</li>
-<li><strong>top_perc</strong> <em>[float]</em>: Keep translations summing up to <code>top_perc</code> of the nodes.</li>
+<li><strong>top_perc</strong> <em>[float]</em>: Keep translations summing up to <code>top_perc</code> of the nodes based on counts.</li>
 <li><strong>counts</strong> <em>[bool]</em>: Output a sorted list of tuples with the translated node and counts.</li>
 </ul>
 
