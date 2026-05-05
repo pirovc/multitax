@@ -748,12 +748,13 @@ class MultiTax(object):
     def translate(self, node: str, top_perc: float | None = None, counts: bool = False):
         """
         Returns the translated node(s) from another taxonomy. One node may translate to none, one or several nodes.
+        `counts` additionally outputs the number of entries/genomes used to translate each node.
         The translation have to first be generated with the `build_translation` function.
 
         Parameters:
         * **node** *[str]*: Node to translate.
         * **top_perc** *[float]*: Keep translations summing up to `top_perc` of the nodes.
-        * **counts** *[bool]*: Output a sorted list of tuples with translated node and total of genomes translated.
+        * **counts** *[bool]*: Output a sorted list of tuples with the translated node and counts.
 
         Returns: List of translated nodes (or list of tuples with counts)
         """

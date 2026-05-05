@@ -101,6 +101,7 @@ class GtdbTx(MultiTax):
                 # Build NCBI and GTDB lineage from leaf based on standard ranks
                 ncbi_leaf_node = target_tax.latest(ncbi_txid)
                 gtdb_leaf_node = gtdb_lin.split(";")[-1]
+
                 if (
                     ncbi_leaf_node == target_tax.undefined_node
                     or gtdb_leaf_node == self.undefined_node

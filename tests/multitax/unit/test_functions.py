@@ -418,6 +418,17 @@ class TestFunctions(unittest.TestCase):
         ncbi_tax.build_translation(gtdb_tax, file="tests/multitax/data_minimal/gtdb_acc_rep_lin_ncbi.tsv.gz")
         self.assertCountEqual(ncbi_tax.translate("44249"), ["g__Paenibacillus"])
 
+        # Assert NCBI non-species leaf node was translated to GTDB species
+        self.assertCountEqual(ncbi_tax.rank("696749"), "no rank")
+        self.assertCountEqual(ncbi_tax.translate("696749"), ["s__Saccharolobus solfataricus"])
+
+        # Assert counts
+        self.assertCountEqual(ncbi_tax.translate("2"), ["d__Bacteria", "d__Archaea"])
+        self.assertCountEqual(ncbi_tax.translate("2", counts=True), [('d__Bacteria', 2), ('d__Archaea', 1)])
+        # Assert top_perc
+        self.assertCountEqual(ncbi_tax.translate("2", top_perc=0.6), ["d__Bacteria"])
+        self.assertCountEqual(ncbi_tax.translate("2", top_perc=0.7), ["d__Bacteria", "d__Archaea"])
+
         # Other translations not yet implemented
         ott_tax = OttTx(files="tests/multitax/data_minimal/ott.tgz")
         silva_tax = SilvaTx(files="tests/multitax/data_minimal/silva.txt.gz")
