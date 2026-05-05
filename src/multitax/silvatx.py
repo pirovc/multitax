@@ -17,7 +17,13 @@ class SilvaTx(MultiTax):
     def __repr__(self):
         return format_repr(inst=self)
 
-    def _build_translation(self, target_tax, file: str = None, url: str = None):
+    def _build_translation(
+        self,
+        target_tax,
+        representatives: bool = False,
+        file: str = None,
+        url: str = None,
+    ):
         warnings.warn(
             "Translation between taxonomies ["
             + self.__class__.__name__

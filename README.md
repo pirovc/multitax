@@ -237,6 +237,8 @@ GtdbTx(version='220', source=['https://data.gtdb.ecogenomic.org/releases/release
 
 ### Translate
 
+Detailed infos about NCBI-GTDB translation [here](#translation-between-taxonomies).
+
 ```python
 >>> from multitax import GtdbTx, NcbiTx
 >>> ncbi_tax = NcbiTx()
@@ -247,21 +249,27 @@ GtdbTx(version='220', source=['https://data.gtdb.ecogenomic.org/releases/release
 
 # GTDB -> NCBI
 >>> gtdb_tax.translate("s__Luteolibacter muciniphilus_A")
-{'239935', '2562705'}
+['1962973', '239935', '2562705']
 
 # Get a one-to-one translation using the lowest common ancestor
 >>> ncbi_tax.filter(["2", "2157"], desc=True)  # Optional, keep only Bacteria and Archaea to reduce LCA build time
 >>> ncbi_tax.build_lca()  # Optional, runs on the first .lca() call
 >>> ncbi_tax.lca(gtdb_tax.translate("s__Luteolibacter muciniphilus_A"))
-'1647988'
+'48461'
 
 # NCBI -> GTDB
 # Build translation
 >>> ncbi_tax.build_translation(gtdb_tax)
 >>> ncbi_tax.translate('620')
-{'g__Serratia', 'g__Escherichia', 'g__Proteus'}
+['g__Escherichia', 'g__ECMA0423', 'g__G047199095', 'g__Serratia', 'g__Proteus', 'g__Enterobacter']
 >>> gtdb_tax.lca(ncbi_tax.translate('620'))
 'f__Enterobacteriaceae'
+
+# Check number of genomes supporting translation, getting only top 99% based on counts
+>>> ncbi_tax.translate('620', counts=True)
+[('g__Escherichia', 2027), ('g__ECMA0423', 1126), ('g__G047199095', 14), ('g__Serratia', 4), ('g__Proteus', 3), ('g__Enterobacter', 2)]
+>>> ncbi_tax.translate('620', top_perc=0.99, counts=True)
+[('g__Escherichia', 2027), ('g__ECMA0423', 1126)]
 ```
 
 ### Convert between GTDB versions
@@ -330,7 +338,67 @@ c__Gammaproteobacteria     class    root|Bacteria|Proteobacteria|Gammaproteobact
 
 ## Translation between taxonomies
 
-Current implementation:
+Currently, only NCBI and GTDB have a translation implemented in MultiTax.
+
+The table below show the translation rates for each rank from GTDB genomes (R232) to the NCBI taxonomy (2025-09-07):
+
+```txt
+        root    domain  phylum  class   order   family  genus   species
+domain  100.00  0.00    0.00    0.00    0.00    0.00    0.00    0.00
+phylum  18.27   74.11   7.61    0.00    0.00    0.00    0.00    0.00
+class   10.54   64.03   20.16   5.27    0.00    0.00    0.00    0.00
+order   5.06    47.94   25.56   15.91   5.53    0.00    0.00    0.00
+family  2.71    39.77   29.38   13.98   9.68    4.49    0.00    0.00
+genus   0.70    20.53   29.70   16.53   12.54   12.84   7.15    0.00
+species 0.13    3.16    3.66    2.73    2.14    2.41    5.07    80.70
+```
+
+Besides at species level (80.70%), the translation rates are very low, e.g. only 7.15% of genus nodes from GTDB translate to a unique genus on NCBI. A complete 1-to-1 translation between GTDB-NCBI is not feasible since they are based on different concepts. The table above was created by applying the `translate`, `lca` and `closest_parent` methods from MultiTax with the script: `scripts/translation_table_gtdb-ncbi.py`.
+
+The translation can be tweaked to use the majority of translated nodes with the `top_perc` parameter in the `translate` method. This is useful to get better resolution in the translated nodes by ignoring minor differences/outliers. For example, using `top_perc=0.95`:
+
+```txt
+        root    domain  phylum  class   order   family  genus   species
+domain  0.00    100.00  0.00    0.00    0.00    0.00    0.00    0.00
+phylum  2.03    80.20   17.77   0.00    0.00    0.00    0.00    0.00
+class   1.55    61.71   29.30   7.44    0.00    0.00    0.00    0.00
+order   0.81    43.39   31.01   18.03   6.76    0.00    0.00    0.00
+family  0.64    36.05   32.19   15.18   10.45   5.50    0.00    0.00
+genus   0.37    19.21   29.69   16.92   12.73   13.17   7.91    0.00
+species 0.11    3.07    3.63    2.71    2.12    2.39    5.03    80.94
+```
+
+Alternatively, the translation can be based solely on GTDB representatives with `representatives=True` parameter in `build_translation()` method. The conversion table in this scenario give an 1-to-1 species translation:
+
+```txt
+        root    domain  phylum  class   order   family  genus   species
+domain  100.00  0.00    0.00    0.00    0.00    0.00    0.00    0.00
+phylum  15.23   75.13   9.64    0.00    0.00    0.00    0.00    0.00
+class   7.13    65.89   21.24   5.74    0.00    0.00    0.00    0.00
+order   2.72    47.21   27.05   16.59   6.42    0.00    0.00    0.00
+family  1.10    37.88   30.40   14.82   10.37   5.42    0.00    0.00
+genus   0.24    17.79   29.42   17.12   13.13   13.68   8.63    0.00
+species 0.00    0.00    0.00    0.00    0.00    0.00    0.00    100.00
+```
+
+Use `representatives` and/or `top_perc` with caution, since they result in an "approximate" translation.
+
+The translation from NCBI (2025-09-07) considering only archaeal and bacterial taxa to GTDB (R232):
+
+```txt
+        missing root    domain  phylum  class   order   family  genus   species
+domain  0.00    100.00  0.00    0.00    0.00    0.00    0.00    0.00    0.00
+phylum  6.90    14.22   31.03   47.84   0.00    0.00    0.00    0.00    0.00
+class   8.70    13.83   32.41   7.91    37.15   0.00    0.00    0.00    0.00
+order   8.92    9.48    24.54   4.28    9.85    42.94   0.00    0.00    0.00
+family  9.14    4.74    20.14   3.81    6.18    10.91   45.09   0.00    0.00
+genus   13.74   1.11    6.81    1.44    2.81    2.79    16.82   54.48   0.00
+species 82.80   0.03    0.20    0.05    0.09    0.11    0.31    0.82    15.58
+```
+
+This is only partially possible based on the genomes included in the GTDB release, therefore the `missing` column. Script available: `scripts/translation_table_ncbi-gtdb.py`
+
+### Current status and possible translations
 
  |from/to |NCBI     |GTDB     |SILVA    |OTT      |GG       |
  |--------|---------|---------|---------|---------|---------|

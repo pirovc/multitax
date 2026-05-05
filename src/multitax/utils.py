@@ -88,6 +88,22 @@ def download_files(urls: list, output_prefix: str = None, retry_attempts: int = 
     raise Exception("One or more files could not be downloaded: " + ", ".join(urls))
 
 
+def download_parse_data_gtdb(version, file, url):
+    if file:
+        fhs = open_files(files=[file])
+    else:
+        if not url:
+            url = f"https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/{version}_acc_rep_lin_ncbi.tsv.gz"
+        fhs = download_files(urls=[url], retry_attempts=3)
+
+    for fh in fhs.values():
+        for line in fh:
+            try:
+                yield line.rstrip().split("\t")
+            except TypeError:
+                yield line.decode().rstrip().split("\t")
+
+
 def filter_function(elements, function, value):
     return [elements[i] for i, v in enumerate(map(function, elements)) if v == value]
 
