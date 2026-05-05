@@ -31,5 +31,5 @@ include-package-data = false
 write_to = "VERSION.txt"
 
 [tool.ruff]
-include = [ "pyproject.toml", "src/multitax/*.py" ]
+include = [ "pyproject.toml", "src/multitax/*.py", "scripts/*.py"]
 
