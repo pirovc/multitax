@@ -237,6 +237,8 @@ GtdbTx(version='220', source=['https://data.gtdb.ecogenomic.org/releases/release
 
 ### Translate
 
+Detailed infos about NCBI-GTDB translation [here](#translation-between-taxonomies).
+
 ```python
 >>> from multitax import GtdbTx, NcbiTx
 >>> ncbi_tax = NcbiTx()
@@ -247,21 +249,27 @@ GtdbTx(version='220', source=['https://data.gtdb.ecogenomic.org/releases/release
 
 # GTDB -> NCBI
 >>> gtdb_tax.translate("s__Luteolibacter muciniphilus_A")
-{'239935', '2562705'}
+['1962973', '239935', '2562705']
 
 # Get a one-to-one translation using the lowest common ancestor
 >>> ncbi_tax.filter(["2", "2157"], desc=True)  # Optional, keep only Bacteria and Archaea to reduce LCA build time
 >>> ncbi_tax.build_lca()  # Optional, runs on the first .lca() call
 >>> ncbi_tax.lca(gtdb_tax.translate("s__Luteolibacter muciniphilus_A"))
-'1647988'
+'48461'
 
 # NCBI -> GTDB
 # Build translation
 >>> ncbi_tax.build_translation(gtdb_tax)
 >>> ncbi_tax.translate('620')
-{'g__Serratia', 'g__Escherichia', 'g__Proteus'}
+['g__Escherichia', 'g__ECMA0423', 'g__G047199095', 'g__Serratia', 'g__Proteus', 'g__Enterobacter']
 >>> gtdb_tax.lca(ncbi_tax.translate('620'))
 'f__Enterobacteriaceae'
+
+# Check number of genomes supporting translation, getting only top 99% based on counts
+>>> ncbi_tax.translate('620', counts=True)
+[('g__Escherichia', 2027), ('g__ECMA0423', 1126), ('g__G047199095', 14), ('g__Serratia', 4), ('g__Proteus', 3), ('g__Enterobacter', 2)]
+>>> ncbi_tax.translate('620', top_perc=0.99, counts=True)
+[('g__Escherichia', 2027), ('g__ECMA0423', 1126)]
 ```
 
 ### Convert between GTDB versions
