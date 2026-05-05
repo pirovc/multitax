@@ -1,11 +1,5 @@
 from .multitax import MultiTax
-from multitax.utils import (
-    close_files,
-    filter_function,
-    format_repr,
-    open_files,
-    download_files,
-)
+from multitax.utils import filter_function, format_repr, download_parse_data_gtdb
 import warnings
 
 
@@ -29,77 +23,56 @@ class NcbiTx(MultiTax):
         file: str = None,
         url: str = None,
     ):
-        translated_nodes = {}
+        translated_nodes: dict[str, list] = {}
         if target_tax.__class__.__name__ == "GtdbTx":
-            if file:
-                fhs = open_files([file])
-            else:
-                if not url:
-                    url = f"https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/{target_tax.version}_acc_rep_lin_ncbi.tsv.gz"
-                fhs = download_files(urls=[url], retry_attempts=3)
+            for acc, rep, gtdb_lin, ncbi_txid in download_parse_data_gtdb(
+                version=target_tax.version, file=file, url=url
+            ):
+                # skip not representatives if requested
+                if representatives and rep == "f":
+                    continue
 
-            gtdb_representative_col = 1
-            gtdb_taxonomy_col = 2
-            ncbi_taxid_col = 3
+                # Build NCBI and GTDB lineage from leaf based on standard ranks
+                ncbi_leaf_node = self.latest(ncbi_txid)
+                gtdb_leaf_node = gtdb_lin.split(";")[-1]
+                if (
+                    ncbi_leaf_node == self.undefined_node
+                    or gtdb_leaf_node == target_tax.undefined_node
+                ):
+                    continue
+                gtdb_nodes = target_tax.lineage(
+                    gtdb_leaf_node,
+                    ranks=target_tax._standard_ranks,
+                )
+                if not gtdb_nodes:
+                    continue
+                ncbi_nodes = self.lineage(
+                    ncbi_leaf_node,
+                    ranks=self._standard_ranks,
+                )
 
-            for source, fh in fhs.items():
-                for line in fh:
-                    try:
-                        fields = line.rstrip().split("\t")
-                    except TypeError:
-                        fields = line.decode().rstrip().split("\t")
+                # Additionaly add connection from NCBI leaf to GTDB species
+                # since the NCBI taxid can be of a strain
+                if ncbi_leaf_node not in translated_nodes:
+                    translated_nodes[ncbi_leaf_node] = []
+                translated_nodes[ncbi_leaf_node].append(gtdb_leaf_node)
 
-                    # skip not representatives if requested
-                    if representatives and fields[gtdb_representative_col] == "f":
+                # Match ranks
+                for i, ncbi_n in enumerate(ncbi_nodes, 1):
+                    if ncbi_n == self.undefined_node:
                         continue
 
-                    # Build GTDB lineage from leaf (species on given lineage)
-                    # to accomodate possible changes in the loaded tax
-                    gtdb_leaf_node = fields[gtdb_taxonomy_col].split(";")[-1]
-                    if gtdb_leaf_node != target_tax.undefined_node:
-                        gtdb_nodes = target_tax.lineage(
-                            gtdb_leaf_node,
-                            ranks=self._standard_ranks,
-                        )
-                        # Node not found in the taxonomy
-                        if not gtdb_nodes:
-                            continue
-                    else:
-                        continue
+                    # Get closes available node for translation in the lineage up to current rank
+                    translated_node = next(
+                        x
+                        for x in reversed(gtdb_nodes[:i])
+                        if x is not target_tax.undefined_node
+                    )
 
-                    # Build NCBI lineage from leaf
-                    ncbi_leaf_node = self.latest(fields[ncbi_taxid_col])
-                    if ncbi_leaf_node != self.undefined_node:
-                        # Additional add connection from leaf to species on GTDB
-                        # that could represent strain, etc on NCBI tax
-                        if ncbi_leaf_node not in translated_nodes:
-                            translated_nodes[ncbi_leaf_node] = []
-                        translated_nodes[ncbi_leaf_node].append(gtdb_leaf_node)
+                    if ncbi_n not in translated_nodes:
+                        translated_nodes[ncbi_n] = []
+                    translated_nodes[ncbi_n].append(translated_node)
 
-                        ncbi_nodes = self.lineage(
-                            ncbi_leaf_node,
-                            ranks=self._standard_ranks,
-                        )
-                    else:
-                        continue
-
-                    # Match ranks
-                    for i, ncbi_n in enumerate(ncbi_nodes, 1):
-                        if ncbi_n == self.undefined_node:
-                            continue
-
-                        # Get closes available node for translation in the lineage up to current rank
-                        translated_node = next(
-                            x
-                            for x in reversed(gtdb_nodes[:i])
-                            if x is not target_tax.undefined_node
-                        )
-
-                        if ncbi_n not in translated_nodes:
-                            translated_nodes[ncbi_n] = []
-                        translated_nodes[ncbi_n].append(translated_node)
-
-            close_files(fhs)
         else:
             warnings.warn(
                 "Translation between taxonomies ["

@@ -330,7 +330,9 @@ c__Gammaproteobacteria     class    root|Bacteria|Proteobacteria|Gammaproteobact
 
 ## Translation between taxonomies
 
-Currently, only NCBI and GTDB have a translation implemented. There is no 1-to-1 translation between GTDB-NCBI because they are based on different concepts. Since GTDB uses a sub-set of NCBI genomes (bacterial and archaeal genomes only), it is possible to "translate" nodes among those taxonomies. Below you find a compatibility table between standard ranks for all GTDB genomes (R232) against the NCBI taxonomy:
+Currently, only NCBI and GTDB have a translation implemented in MultiTax.
+
+The table below show the translation rates for each rank from GTDB genomes (R232) to the NCBI taxonomy (2025-09-07):
 
 ```txt
         root    domain  phylum  class   order   family  genus   species
@@ -343,9 +345,9 @@ genus   0.70    20.53   29.70   16.53   12.54   12.84   7.15    0.00
 species 0.13    3.16    3.66    2.73    2.14    2.41    5.07    80.70
 ```
 
-Besides at species level (80.70%), the 1-to-1 rank translation rates are very low, e.g. only 7.15% of genus nodes from GTDB translate to a unique genus on NCBI. The higher level values are achieved by applying the `lca()` method for the translated nodes and using the closest standard rank, script available: `scripts/translation_table_gtdb-ncbi.py`.
+Besides at species level (80.70%), the translation rates are very low, e.g. only 7.15% of genus nodes from GTDB translate to a unique genus on NCBI. A complete 1-to-1 translation between GTDB-NCBI is not feasible since they are based on different concepts. The table above was created by applying the `translate`, `lca` and `closest_parent` methods from MultiTax with the script: `scripts/translation_table_gtdb-ncbi.py`.
 
-The translation can be tweaked to use the majority of tranalated nodes with the `top_perc` parameter in the `translate()` method. This is useful to get better resolution in the translated nodes by ignoring minor differences. For example, using `top_perc=0.95`:
+The translation can be tweaked to use the majority of translated nodes with the `top_perc` parameter in the `translate` method. This is useful to get better resolution in the translated nodes by ignoring minor differences/outliers. For example, using `top_perc=0.95`:
 
 ```txt
         root    domain  phylum  class   order   family  genus   species
@@ -358,7 +360,7 @@ genus   0.37    19.21   29.69   16.92   12.73   13.17   7.91    0.00
 species 0.11    3.07    3.63    2.71    2.12    2.39    5.03    80.94
 ```
 
-Alternatively, the translation can be also based solely on GTDB representatives (ith `representatives=True` param in `build_translation()` method. The conversion table in this scenario give an 1-to-1 species translation:
+Alternatively, the translation can be based solely on GTDB representatives with `representatives=True` parameter in `build_translation()` method. The conversion table in this scenario give an 1-to-1 species translation:
 
 ```txt
         root    domain  phylum  class   order   family  genus   species
@@ -371,9 +373,9 @@ genus   0.24    17.79   29.42   17.12   13.13   13.68   8.63    0.00
 species 0.00    0.00    0.00    0.00    0.00    0.00    0.00    100.00
 ```
 
-Use `representatives` and/or `top_perc` with caution, since they may result in an "approximate" translation.
+Use `representatives` and/or `top_perc` with caution, since they result in an "approximate" translation.
 
-The translation from NCBI considering only archaeal and bacterial taxa to GTDB (R232):
+The translation from NCBI (2025-09-07) considering only archaeal and bacterial taxa to GTDB (R232):
 
 ```txt
         missing root    domain  phylum  class   order   family  genus   species
@@ -386,7 +388,7 @@ genus   13.74   1.11    6.81    1.44    2.81    2.79    16.82   54.48   0.00
 species 82.80   0.03    0.20    0.05    0.09    0.11    0.31    0.82    15.58
 ```
 
-note that the translation from GTDB to NCBI is only partially possible and it is based on the genomes included in the GTDB release, therefore the `missing` column. Script available: `scripts/translation_table_ncbi-gtdb.py`
+This is only partially possible based on the genomes included in the GTDB release, therefore the `missing` column. Script available: `scripts/translation_table_ncbi-gtdb.py`
 
 ### Current status and possible translations
 

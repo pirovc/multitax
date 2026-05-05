@@ -1,5 +1,8 @@
 from .multitax import MultiTax
-from multitax.utils import close_files, open_files, download_files, format_repr
+from multitax.utils import (
+    format_repr,
+    download_parse_data_gtdb,
+)
 import warnings
 
 
@@ -86,68 +89,48 @@ class GtdbTx(MultiTax):
         file: str = None,
         url: str = None,
     ):
-        translated_nodes = {}
+        translated_nodes: dict[str, list] = {}
         if target_tax.__class__.__name__ == "NcbiTx":
-            if file:
-                fhs = open_files([file])
-            else:
-                if not url:
-                    url = f"https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/{self.version}_acc_rep_lin_ncbi.tsv.gz"
-                fhs = download_files(urls=[url], retry_attempts=3)
+            for acc, rep, gtdb_lin, ncbi_txid in download_parse_data_gtdb(
+                version=self.version, file=file, url=url
+            ):
+                # skip not representatives if requested
+                if representatives and rep == "f":
+                    continue
 
-            gtdb_representative_col = 1
-            gtdb_taxonomy_col = 2
-            ncbi_taxid_col = 3
+                # Build NCBI and GTDB lineage from leaf based on standard ranks
+                ncbi_leaf_node = target_tax.latest(ncbi_txid)
+                gtdb_leaf_node = gtdb_lin.split(";")[-1]
+                if (
+                    ncbi_leaf_node == target_tax.undefined_node
+                    or gtdb_leaf_node == self.undefined_node
+                ):
+                    continue
+                ncbi_nodes = target_tax.lineage(
+                    ncbi_leaf_node,
+                    ranks=target_tax._standard_ranks,
+                )
+                if not ncbi_nodes:
+                    continue
+                gtdb_nodes = self.lineage(
+                    gtdb_leaf_node,
+                    ranks=self._standard_ranks,
+                )
 
-            for source, fh in fhs.items():
-                for line in fh:
-                    try:
-                        fields = line.rstrip().split("\t")
-                    except TypeError:
-                        fields = line.decode().rstrip().split("\t")
-
-                    # skip not representatives if requested
-                    if representatives and fields[gtdb_representative_col] == "f":
+                # Match ranks
+                for i, gtdb_n in enumerate(gtdb_nodes, 1):
+                    if gtdb_n == self.undefined_node:
                         continue
 
-                    ncbi_leaf_node = target_tax.latest(fields[ncbi_taxid_col])
-                    if ncbi_leaf_node != target_tax.undefined_node:
-                        ncbi_nodes = target_tax.lineage(
-                            ncbi_leaf_node,
-                            ranks=self._standard_ranks,
-                        )
-                        # Node not found in the taxonomy
-                        if not ncbi_nodes:
-                            continue
-                    else:
-                        continue
-
-                    # Build GTDB lineage from leaf (species on given lineage)
-                    # to accomodate possible changes in the loaded tax
-                    gtdb_leaf_node = fields[gtdb_taxonomy_col].split(";")[-1]
-                    if gtdb_leaf_node != self.undefined_node:
-                        gtdb_nodes = self.lineage(
-                            gtdb_leaf_node,
-                            ranks=self._standard_ranks,
-                        )
-                    else:
-                        continue
-
-                    # Match ranks
-                    for i, gtdb_n in enumerate(gtdb_nodes, 1):
-                        if gtdb_n == self.undefined_node:
-                            continue
-                        # Get closes available node for translation in the lineage up to current rank
-                        translated_node = next(
-                            x
-                            for x in reversed(ncbi_nodes[:i])
-                            if x is not target_tax.undefined_node
-                        )
-                        if gtdb_n not in translated_nodes:
-                            translated_nodes[gtdb_n] = []
-                        translated_nodes[gtdb_n].append(translated_node)
-
-            close_files(fhs)
+                    # Get closes available node for translation in the lineage up to current rank
+                    translated_node = next(
+                        x
+                        for x in reversed(ncbi_nodes[:i])
+                        if x is not target_tax.undefined_node
+                    )
+                    if gtdb_n not in translated_nodes:
+                        translated_nodes[gtdb_n] = []
+                    translated_nodes[gtdb_n].append(translated_node)
         else:
             warnings.warn(
                 "Translation between taxonomies ["
@@ -200,21 +183,6 @@ class GtdbTx(MultiTax):
                     res.add(tx)
         return res
 
-    def _download_parse_version_taxa(self, version, file, url):
-        if file:
-            fhs = open_files(files=[file])
-        else:
-            if not url:
-                url = f"https://github.com/pirovc/multitax/raw/refs/heads/main/data/gtdb/{version}_acc_rep_lin_ncbi.tsv.gz"
-            fhs = download_files(urls=[url], retry_attempts=3)
-
-        for fh in fhs.values():
-            for line in fh:
-                try:
-                    yield line.rstrip().split("\t")
-                except TypeError:
-                    yield line.decode().rstrip().split("\t")
-
     def build_conversion(
         self,
         version: str,
@@ -236,7 +204,7 @@ class GtdbTx(MultiTax):
         if not self._convert_from:
             # Collect the accessions of the representative entries for each taxa in the current version
             tx_accs = {}
-            for acc, rep, lin, _ in self._download_parse_version_taxa(
+            for acc, rep, lin, _ in download_parse_data_gtdb(
                 version=self.version, file=files[0], url=urls[0]
             ):
                 # Skip not representatives if requested
@@ -254,7 +222,7 @@ class GtdbTx(MultiTax):
         if version not in self._convert_to:
             # Collect the lineage for each accession
             acc_lin = {}
-            for acc, _, lin, _ in self._download_parse_version_taxa(
+            for acc, _, lin, _ in download_parse_data_gtdb(
                 version=version, file=files[1], url=urls[1]
             ):
                 acc_lin[acc] = lin
